@@ -32,7 +32,7 @@ from gpt_ensemble_TP import GPTEnsemble
 
 
 _MODELS = {
-    "gpt_dolomite": GPTDense,
+    "gpt_dense": GPTDense,
     "gpt_ensemble": GPTEnsemble,
 }
 
