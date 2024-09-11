@@ -19,7 +19,7 @@ torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
 # Experimental features to reduce compilation times, will be on by default in future
 torch._inductor.config.fx_graph_cache = True 
-torch._functorch.config.enable_autograd_cache = True
+# torch._functorch.config.enable_autograd_cache = True
 
 default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -31,13 +31,14 @@ from gpt_dense_TP import GPTDense
 from gpt_ensemble_TP import GPTEnsemble
 from gpt_parallel_TP import GPTParallel
 from gpt_ladder_TP import GPTLadder
-
+from gpt_residual_TP import GPTResidual
 
 _MODELS = {
     "gpt_dense": GPTDense,
     "gpt_ensemble": GPTEnsemble,
     "gpt_parallel": GPTParallel,
     "gpt_ladder": GPTLadder,
+    "gpt_residual":GPTResidual,
 }
 
 
@@ -136,7 +137,11 @@ def generate(
     seq = empty
     input_pos = torch.arange(0, T, device=device)
 
+    prefill_start = time.perf_counter()
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs).clone()
+    prefill_latency = time.perf_counter() - prefill_start
+    print(f"Prefill latency: {prefill_latency:.02f} sec")
+    
     seq[:, T] = next_token.squeeze()
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
@@ -154,16 +159,28 @@ def encode_tokens(tokenizer, string, bos=True, device=default_device):
     return torch.tensor(tokens, dtype=torch.int, device=device)
 
 
-def _load_model(model_name, device, precision):
+def _load_model(model_name, device, precision, use_tp):
     with torch.device('meta'):
-        model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+        if model_name == 'gpt_residual':
+            _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1], args.hidden_size, args.vocab_size, args.intermediate_size)
+        else:
+            model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
 
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)
 
+    if not args.two_stream:
+        model.all_reduce_stream = None
+    model._inital_turbo_module(turbo_mode=args.turbo_mode, nonturbo_initial_layers=args.nonturbo_initial_layers, nonturbo_final_layers=args.nonturbo_final_layers, additional_non_turbo_modules=args.additional_non_turbo_modules)
+    
     for p in model.parameters():
         torch.nn.init.normal_(p, mean=0, std=0.02)
 
+    if use_tp:
+        from tp import apply_tp
+        print("Applying tensor parallel to model ...")
+        apply_tp(model)
+        
     print(model)
 
     return model.eval()
@@ -220,7 +237,7 @@ def main(
 
     print("Loading model ...")
     t0 = time.time()
-    model = _load_model(model_name, device, precision)
+    model = _load_model(model_name, device, precision, use_tp)
 
     device_sync(device=device) # MKG
     print(f"Time to load model: {time.time() - t0:.02f} seconds")
@@ -253,19 +270,28 @@ def main(
         if (i != num_samples - 1 or not profile) or (use_tp and rank != 0):
             prof = contextlib.nullcontext()
         else:
+            # torch.profiler._utils._init_for_cuda_graphs()
+            # prof = torch.profiler.profile(
+            #     on_trace_ready=torch.profiler.tensorboard_trace_handler(f'{profile}'),
+            #     record_shapes=False,
+            #     with_stack=False)
             torch.profiler._utils._init_for_cuda_graphs()
-            prof = torch.profiler.profile()
+            prof = torch.profiler.profile(
+                on_trace_ready=torch.profiler.tensorboard_trace_handler(f'{profile}'),
+                activities=[torch.profiler.ProfilerActivity.CUDA])
+            # prof = torch.profiler.profile(
+            #     activities=[torch.profiler.ProfilerActivity.CUDA])
 
-        with prof:
-            y = generate(
-                model,
-                encoded,
-                max_new_tokens,
-                batch_size=batch_size,
-                callback=callback,
-                temperature=temperature,
-                top_k=top_k,
-            )
+        # with prof:
+        y = generate(
+            model,
+            encoded,
+            max_new_tokens,
+            batch_size=batch_size,
+            callback=callback,
+            temperature=temperature,
+            top_k=top_k,
+        )
 
         if i == -1:
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
@@ -312,6 +338,14 @@ if __name__ == '__main__':
     parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
     parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
     parser.add_argument('--device', type=str, default=default_device, help='Device to use')
+    parser.add_argument('--turbo_mode', type=str, default=None, help='Not use any turbo mode')
+    parser.add_argument('--nonturbo_initial_layers', type=int, default=0, help='Initial layers for non-turbo mode')
+    parser.add_argument('--nonturbo_final_layers', type=int, default=0, help='Final layers for non-turbo mode')
+    parser.add_argument('--additional_non_turbo_modules', type=str, nargs='+', default=[], help='List of non-turbo modules')
+    parser.add_argument('--hidden_size', type=int, default=-1, help='New hidden size for the model')
+    parser.add_argument('--vocab_size', type=int, default=-1, help='New vocab size for the model')
+    parser.add_argument('--intermediate_size', type=int, default=-1, help='New intermediate size for the model')
+    parser.add_argument('--two_stream', action='store_true', help='Use two streams for all-reduce')
 
     args = parser.parse_args()
     main(
