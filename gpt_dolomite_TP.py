@@ -14,6 +14,7 @@ from torch.nn import functional as F
 
 import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
+from tp import maybe_init_dist
 
 
 def find_multiple(n: int, k: int) -> int:
@@ -21,7 +22,7 @@ def find_multiple(n: int, k: int) -> int:
         return n
     return n + k - (n % k)
 
-
+maybe_init_dist()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
 
@@ -137,7 +138,7 @@ class Transformer(nn.Module):
         elif hasattr(self.output, "scales_and_zeros"):
             dtype = self.output.scales_and_zeros.dtype
         for b in self.layers:
-            b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads, head_dim, dtype)
+            b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype)
 
         self.freqs_cis = precompute_freqs_cis(self.config.block_size, self.config.dim // self.config.n_head, self.config.rope_base, dtype, self.config.rope_scaling)
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
@@ -181,7 +182,7 @@ class Attention(nn.Module):
         total_head_dim = (config.n_head + 2 * config.n_local_heads) * config.head_dim
 
         assert total_head_dim % tp_world_size == 0
-        assert self.dim % tp_world_size == 0
+        assert config.dim % tp_world_size == 0
 
         # key, query, value projections for all heads, but in a batch
         self.wqkv = nn.Linear(config.dim, total_head_dim // tp_world_size, bias=False)
@@ -192,6 +193,11 @@ class Attention(nn.Module):
         self.head_dim = config.head_dim
         self.n_local_heads = config.n_local_heads
         self.dim = config.dim
+
+        self.n_head = self.n_head // tp_world_size
+        self.dim = self.dim // tp_world_size
+        self.n_local_heads = self.n_local_heads // tp_world_size
+
         self._register_load_state_dict_pre_hook(self.load_hook)
 
     def load_hook(self, state_dict, prefix, *args):

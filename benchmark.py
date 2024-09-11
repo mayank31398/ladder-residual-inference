@@ -27,8 +27,7 @@ default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
-from model import Transformer
-from tokenizer import get_tokenizer
+from gpt_dolomite_TP import Transformer
 
 
 def device_sync(device):
@@ -95,57 +94,6 @@ def model_forward(model, x, input_pos):
     return model(x, input_pos)
 
 
-def speculative_decode(
-    model: Transformer,
-    draft_model: Transformer,
-    cur_token: torch.Tensor,
-    input_pos: int,
-    speculate_k: int,
-    **sampling_kwargs
-) -> torch.Tensor:
-    # draft model inference sequentially
-    device = cur_token.device
-    orig_input_pos = torch.tensor([input_pos], dtype=torch.int64, device=cur_token.device)
-    draft_tokens, draft_probs = decode_n_tokens(draft_model, cur_token.view(1, -1), orig_input_pos.clone(), speculate_k, **sampling_kwargs)
-
-    draft_tokens = torch.cat(draft_tokens)
-    # parallel inference on target model using draft tokens
-    target_logits = model_forward(
-        model,
-        torch.cat([cur_token.view(1), draft_tokens]).view(1, -1),
-        torch.arange(input_pos, input_pos + speculate_k + 1, device=cur_token.device)
-    )
-    target_probs = logits_to_probs(target_logits[0], **sampling_kwargs)
-    draft_probs = torch.stack(draft_probs)
-    # q: target prob, p: draft prob
-    # q >= p: always accept draft token
-    # q < p: q/p prob to accept draft token
-    p = draft_probs[torch.arange(0, speculate_k, device=device), draft_tokens]
-    q = target_probs[torch.arange(0, speculate_k, device=device), draft_tokens]
-    accept_draft_prob = torch.minimum(torch.ones(()), q[:speculate_k]/ p)
-    rejected_locations = (torch.rand_like(accept_draft_prob) > accept_draft_prob).nonzero()
-
-    if rejected_locations.shape[0] == 0: # All draft tokens have been accepted
-        accept_length = speculate_k + 1
-        last_token = multinomial_sample_one_no_sync(target_probs[-1])
-        # fill last token into draft model
-        model_forward(
-            draft_model,
-            draft_tokens[-1].view(1, -1),
-            orig_input_pos + speculate_k,
-        )
-        return torch.cat([draft_tokens, last_token])
-    else:
-        accept_length = rejected_locations[0].item()
-        p = draft_probs[accept_length]
-        q = target_probs[accept_length]
-        new = q - p
-        new = torch.where(new > 0, new, 0.0)
-        new = new / new.sum()
-        next_token = multinomial_sample_one_no_sync(new)
-        return torch.cat([draft_tokens[:accept_length], next_token])
-
-
 @torch.no_grad()
 def generate(
     model: Transformer,
@@ -195,11 +143,18 @@ def encode_tokens(tokenizer, string, bos=True, device=default_device):
     return torch.tensor(tokens, dtype=torch.int, device=device)
 
 
-def _load_model(device, precision, use_tp):
+def _load_model(model_name, device, precision):
     with torch.device('meta'):
-        model = Transformer.from_name(checkpoint_path.parent.name)
+        model = Transformer.from_name(model_name)
 
-    model = model.to(device=device, dtype=precision)
+    model = model.to(dtype=precision)
+    model = model.to_empty(device=device)
+
+    for p in model.parameters():
+        torch.nn.init.normal_(p, mean=0, std=0.02)
+
+    print(model)
+
     return model.eval()
 
 
@@ -225,6 +180,7 @@ def _get_model_size(model):
 B_INST, E_INST = "[INST]", "[/INST]"
 
 def main(
+    model_name: str,
     prompt_length: int = 1,
     num_samples: int = 5,
     max_new_tokens: int = 100,
@@ -253,7 +209,7 @@ def main(
 
     print("Loading model ...")
     t0 = time.time()
-    model = _load_model(device, precision, use_tp)
+    model = _load_model(model_name, device, precision)
 
     device_sync(device=device) # MKG
     print(f"Time to load model: {time.time() - t0:.02f} seconds")
@@ -272,11 +228,8 @@ def main(
             prefill = torch.compile(prefill, fullgraph=True, dynamic=True)
 
 
-    aggregate_metrics = {
-        'tokens_per_sec': [],
-        'accept_counts': [],
-    }
-    start = -1 if compile else 0
+    aggregate_metrics = {'tokens_per_sec': []}
+    start = -5
 
     for i in range(start, num_samples):
         device_sync(device=device) # MKG
@@ -293,7 +246,7 @@ def main(
             prof = torch.profiler.profile()
 
         with prof:
-            y, metrics = generate(
+            y = generate(
                 model,
                 encoded,
                 max_new_tokens,
@@ -302,8 +255,6 @@ def main(
                 temperature=temperature,
                 top_k=top_k,
             )
-
-            aggregate_metrics['accept_counts'].append(metrics['accept_counts'])
 
         if i == -1:
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
@@ -339,6 +290,7 @@ def main(
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Your CLI description.')
 
+    parser.add_argument('--model_name', type=str, required=True, help="model name")
     parser.add_argument('--prompt_length', type=int, required=True, help="Input prompt length")
     parser.add_argument('--num_samples', type=int, default=5, help='Number of samples.')
     parser.add_argument('--max_new_tokens', type=int, default=200, help='Maximum number of new tokens.')
@@ -352,6 +304,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     main(
-        args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
+        args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
         args.temperature, args.compile, args.compile_prefill, args.profile, args.device
     )

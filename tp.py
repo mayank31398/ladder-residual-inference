@@ -46,8 +46,10 @@ def maybe_init_dist() -> Optional[int]:
         # not run via torchrun, no-op
         return None
 
-    torch.cuda.set_device(rank)
-    dist.init_process_group(backend="nccl", rank=rank, world_size=world_size)
+    if not dist.is_initialized():
+        torch.cuda.set_device(rank)
+        dist.init_process_group(backend="nccl", rank=rank, world_size=world_size)
+
     return rank
 
 
