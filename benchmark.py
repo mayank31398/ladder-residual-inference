@@ -30,12 +30,14 @@ sys.path.append(str(wd))
 from gpt_dense_TP import GPTDense
 from gpt_ensemble_TP import GPTEnsemble
 from gpt_parallel_TP import GPTParallel
+from gpt_ladder_TP import GPTLadder
 
 
 _MODELS = {
     "gpt_dense": GPTDense,
     "gpt_ensemble": GPTEnsemble,
-    "gpt_parallel": GPTParallel
+    "gpt_parallel": GPTParallel,
+    "gpt_ladder": GPTLadder,
 }
 
 
