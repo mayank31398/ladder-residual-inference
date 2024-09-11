@@ -169,7 +169,10 @@ class TransformerBlock(nn.Module):
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
-        return x + self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
+        # 1 / tp_world_size because we need residual stream only once
+        x = x / tp_world_size + self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
+        x = all_reduce_func(x)
+        return x
 
 
 class Attention(nn.Module):
@@ -230,8 +233,6 @@ class Attention(nn.Module):
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
 
-        y = all_reduce_func(y)
-
         return y
 
 
@@ -249,7 +250,6 @@ class FeedForward(nn.Module):
         x = self.w1(x)
         u, g = x.chunk(2, dim=-1)
         y = self.w2(F.silu(g) * u)
-        y = all_reduce_func(y)
         return y
 
 
