@@ -27,7 +27,14 @@ default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
-from gpt_dolomite_TP import Transformer
+from gpt_dense_TP import GPTDense
+from gpt_ensemble_TP import GPTEnsemble
+
+
+_MODELS = {
+    "gpt_dolomite": GPTDense,
+    "gpt_ensemble": GPTEnsemble,
+}
 
 
 def device_sync(device):
@@ -61,20 +68,20 @@ def sample(logits, temperature: float = 1.0, top_k: Optional[int] = None):
     return idx_next, probs
 
 
-def prefill(model: Transformer, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> torch.Tensor:
+def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> torch.Tensor:
     # input_pos: [B, S]
     logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)[0]
 
 
-def decode_one_token(model: Transformer, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
     # input_pos: [B, 1]
     assert input_pos.shape[-1] == 1
     logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)
 
 
-def decode_n_tokens(model: Transformer, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, callback=lambda _: _, **sampling_kwargs):
+def decode_n_tokens(model: torch.nn.Module, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, callback=lambda _: _, **sampling_kwargs):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True): # Actually better for Inductor to codegen attention here
@@ -96,7 +103,7 @@ def model_forward(model, x, input_pos):
 
 @torch.no_grad()
 def generate(
-    model: Transformer,
+    model: torch.nn.Module,
     prompt: torch.Tensor,
     max_new_tokens: int,
     batch_size: int,
@@ -145,7 +152,7 @@ def encode_tokens(tokenizer, string, bos=True, device=default_device):
 
 def _load_model(model_name, device, precision):
     with torch.device('meta'):
-        model = Transformer.from_name(model_name)
+        model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
 
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)

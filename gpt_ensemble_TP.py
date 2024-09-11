@@ -84,6 +84,7 @@ transformer_configs = {
     "30B": dict(n_layer=60, n_head=52, dim=6656),
     "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
+    "70B-infinite": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, reduce_pattern=[{"attention": False, "mlp": False} for _ in range(80)]),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
@@ -113,7 +114,7 @@ class KVCache(nn.Module):
 
         return k_out, v_out
 
-class Transformer(nn.Module):
+class GPTEnsemble(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
         super().__init__()
         self.config = config
@@ -246,6 +247,9 @@ class Attention(nn.Module):
 
         return y
 
+    def extra_repr(self) -> str:
+        return f"all_reduce = {self.do_all_reduce}"
+
 
 class FeedForward(nn.Module):
     def __init__(self, config: ModelArgs, layer_idx: int) -> None:
@@ -271,6 +275,9 @@ class FeedForward(nn.Module):
             y = y + residual
 
         return y
+
+    def extra_repr(self) -> str:
+        return f"all_reduce = {self.do_all_reduce}"
 
 
 class RMSNorm(nn.Module):

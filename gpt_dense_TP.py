@@ -109,7 +109,7 @@ class KVCache(nn.Module):
 
         return k_out, v_out
 
-class Transformer(nn.Module):
+class GPTDense(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
         super().__init__()
         self.config = config
