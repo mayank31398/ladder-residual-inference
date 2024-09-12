@@ -136,12 +136,20 @@ def generate(
     seq = empty
     input_pos = torch.arange(0, T, device=device)
 
+    prefill_start = time.perf_counter()
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs).clone()
+    prefill_latency = time.perf_counter() - prefill_start
+    print(f"Prefill latency: {prefill_latency:.02f} sec")
+
     seq[:, T] = next_token.squeeze()
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
+    decode_start = time.perf_counter()
     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
+    decode_latency = time.perf_counter() - decode_start
+    print(f"Prefill latency: {decode_latency:.02f} sec")
+
     seq[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
 
     return seq
@@ -250,11 +258,15 @@ def main(
 
         import contextlib
 
-        if (i != num_samples - 1 or not profile) or (use_tp and rank != 0):
+        if not profile or (use_tp and rank != 0) or i != num_samples - 1:
             prof = contextlib.nullcontext()
         else:
             torch.profiler._utils._init_for_cuda_graphs()
-            prof = torch.profiler.profile()
+            prof = torch.profiler.profile(
+                activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA],
+                on_trace_ready=torch.profiler.tensorboard_trace_handler(profile),
+                record_shapes=True,
+            )
 
         with prof:
             y = generate(
@@ -272,10 +284,7 @@ def main(
             continue
 
         if hasattr(prof, "export_chrome_trace"):
-            if use_tp:
-                prof.export_chrome_trace(f"{profile}_rank_{rank}.json")
-            else:
-                prof.export_chrome_trace(f"{profile}.json")
+            prof.export_chrome_trace(f"{profile}.json")
 
         device_sync(device=device) # MKG
         t = time.perf_counter() - t0
