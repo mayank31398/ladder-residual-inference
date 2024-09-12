@@ -140,7 +140,7 @@ def generate(
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs).clone()
     torch.cuda.synchronize()
     prefill_latency = time.perf_counter() - prefill_start
-    print(f"Prefill latency: {prefill_latency:.02f} sec")
+    print(f"Prefill latency: {prefill_latency} sec")
 
     seq[:, T] = next_token.squeeze()
 
@@ -150,7 +150,7 @@ def generate(
     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
     torch.cuda.synchronize()
     decode_latency = time.perf_counter() - decode_start
-    print(f"Prefill latency: {decode_latency:.02f} sec")
+    print(f"Prefill latency: {decode_latency} sec")
 
     seq[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
 
