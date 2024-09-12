@@ -138,6 +138,7 @@ def generate(
 
     prefill_start = time.perf_counter()
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs).clone()
+    torch.cuda.synchronize()
     prefill_latency = time.perf_counter() - prefill_start
     print(f"Prefill latency: {prefill_latency:.02f} sec")
 
@@ -147,6 +148,7 @@ def generate(
 
     decode_start = time.perf_counter()
     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
+    torch.cuda.synchronize()
     decode_latency = time.perf_counter() - decode_start
     print(f"Prefill latency: {decode_latency:.02f} sec")
 
