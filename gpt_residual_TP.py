@@ -45,6 +45,7 @@ class ModelArgs:
     head_dim: int = 64
     rope_base: float = 10000
     norm_eps: float = 1e-5
+    rope_scaling: Optional[dict] = None
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -61,13 +62,12 @@ class ModelArgs:
             return cls(**transformer_configs[name])
         # fuzzy search
         config = [config for config in transformer_configs if config.lower() in str(name).lower()]
-
         # We may have two or more configs matched (e.g. "7B" and "Mistral-7B"). Find the best config match,
         # take longer name (as it have more symbols matched)
         if len(config) > 1:
             config.sort(key=len, reverse=True)
             assert len(config[0]) != len(config[1]), name # make sure only one 'best' match
-            
+        
         return cls(**transformer_configs[config[0]])
 
 
@@ -140,7 +140,7 @@ class GPTResidual(nn.Module):
         elif hasattr(self.output, "scales_and_zeros"):
             dtype = self.output.scales_and_zeros.dtype
         for b in self.layers:
-            b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype)
+            b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads, head_dim, dtype)
 
         self.freqs_cis = precompute_freqs_cis(self.config.block_size, self.config.dim // self.config.n_head, self.config.rope_base, dtype, self.config.rope_scaling)
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
@@ -165,8 +165,8 @@ class GPTResidual(nn.Module):
                 world_size=self.world_size,
                 all_reduce_stream=self.all_reduce_stream)
         # wait for last MLP's all-reduce to finish
-        if self.all_reduce_stream is not None:
-            self.all_reduce_stream.synchronize()
+        # if self.all_reduce_stream is not None:
+        #     self.all_reduce_stream.synchronize()
         x = residual_hidden_states[-1] # last attention + mlp(last mlp's output) as final output as v0
         x = self.norm(x)
         logits = self.output(x)
@@ -317,25 +317,24 @@ class TurboTransformerBlock(nn.Module):
             attn_input = torch.stack(attn_inputs, dim=0).sum(dim=0)
         else:
             attn_input = attn_inputs[0]
-        
         # last layer mlp'communication happens here (last module) ==> overlap calculation and communication
         attn_out = self.attention(self.attention_norm(attn_input), freqs_cis, mask, input_pos) 
         # attn_out = self.attention(attn_input, freqs_cis, mask, input_pos) # w/o norm
         # attn_out = attn_input # w/o attention
+        
+        
         if all_reduce_stream is not None:
             all_reduce_stream.synchronize() # before calculation of residual we need mlp's all-reduce to finish
             #dist.barrier()
             
-        if use_tp:
-            if all_reduce_stream is not None:
-                print('we have all reduce stream')    
-                with torch.cuda.stream(all_reduce_stream):
-                    attn_out[0] = all_reduce_func(attn_out[0])
-            else:
-                print('we dont have all reduce stream')
-                attn_out[0] = all_reduce_func(attn_out[0])
-                # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
-                # handle.wait()
+        # if use_tp:
+        #     if all_reduce_stream is not None:
+        #         with torch.cuda.stream(all_reduce_stream):
+        #             attn_out[0] = all_reduce_func(attn_out[0])
+        #     else:
+        #         attn_out[0] = all_reduce_func(attn_out[0])
+        #         # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
+        #         # handle.wait()
         
         # ========== residual connection ==========
         attn_residuals = []
@@ -381,10 +380,18 @@ class TurboTransformerBlock(nn.Module):
         # mlp_out = self.feed_forward(mlp_input) # w/o norm
         # mlp_out = mlp_input # w/o mlp
         
-        
         if all_reduce_stream is not None:
             all_reduce_stream.synchronize() # before calculation of residual we need attention's all-reduce to finish
             #dist.barrier()
+        
+        # if use_tp:
+        #     if all_reduce_stream is not None:
+        #         with torch.cuda.stream(all_reduce_stream):
+        #             mlp_out = all_reduce_func(mlp_out)
+        #     else:
+        #         mlp_out = all_reduce_func(mlp_out)
+        #         # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
+        #         # handle.wait()
         
         # ========== residual connection ==========
         mlp_residuals = []
@@ -400,15 +407,7 @@ class TurboTransformerBlock(nn.Module):
             residual = torch.stack(mlp_residuals, dim=0).sum(dim=0)
         else:
             residual = mlp_residuals[0]
-            
-        if use_tp:
-            if all_reduce_stream is not None:
-                with torch.cuda.stream(all_reduce_stream):
-                    mlp_out = all_reduce_func(mlp_out)
-            else:
-                mlp_out = all_reduce_func(mlp_out)
-                # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
-                # handle.wait()
+        
         
         if all_reduce_stream is not None:
             with torch.cuda.stream(all_reduce_stream):
@@ -466,21 +465,27 @@ class Attention(nn.Module):
         y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
-
         y = self.wo(y)
+
         return y
+
 
 
 class FeedForward(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
         super().__init__()
-        self.w1 = nn.Linear(config.dim, config.intermediate_size, bias=False)
-        self.w3 = nn.Linear(config.dim, config.intermediate_size, bias=False)
-        self.w2 = nn.Linear(config.intermediate_size, config.dim, bias=False)
-        breakpoint = 1
+
+        assert config.intermediate_size % tp_world_size == 0
+        assert config.dim % tp_world_size == 0
+
+        self.w1 = nn.Linear(config.dim, 2 * config.intermediate_size // tp_world_size, bias=False)
+        self.w2 = nn.Linear(config.intermediate_size // tp_world_size, config.dim, bias=False)
+
     def forward(self, x: Tensor) -> Tensor:
-        # if we do not increase input prompt length, is x.shape[0] will change?
-        return self.w2(F.silu(self.w1(x)) * self.w3(x))
+        x = self.w1(x)
+        u, g = x.chunk(2, dim=-1)
+        y = self.w2(F.silu(g) * u)
+        return y
 
 
 class RMSNorm(nn.Module):
@@ -497,11 +502,35 @@ class RMSNorm(nn.Module):
         return output * self.weight
 
 
+def apply_rope_scaling(freqs: torch.Tensor, rope_scaling: Optional[dict] = None):
+    factor = rope_scaling["factor"]
+    low_freq_factor = rope_scaling["low_freq_factor"]
+    high_freq_factor = rope_scaling["high_freq_factor"]
+    old_context_len = rope_scaling["original_max_position_embeddings"]
+
+    low_freq_wavelen = old_context_len / low_freq_factor
+    high_freq_wavelen = old_context_len / high_freq_factor
+    new_freqs = []
+    for freq in freqs:
+        wavelen = 2 * math.pi / freq
+        if wavelen < high_freq_wavelen:
+            new_freqs.append(freq)
+        elif wavelen > low_freq_wavelen:
+            new_freqs.append(freq / factor)
+        else:
+            assert low_freq_wavelen != high_freq_wavelen
+            smooth = (old_context_len / wavelen - low_freq_factor) / (high_freq_factor - low_freq_factor)
+            new_freqs.append((1 - smooth) * freq / factor + smooth * freq)
+    return torch.tensor(new_freqs, dtype=freqs.dtype, device=freqs.device)
+
 def precompute_freqs_cis(
     seq_len: int, n_elem: int, base: int = 10000,
-    dtype: torch.dtype = torch.bfloat16
+    dtype: torch.dtype = torch.bfloat16,
+    rope_scaling: Optional[dict] = None,
 ) -> Tensor:
     freqs = 1.0 / (base ** (torch.arange(0, n_elem, 2)[: (n_elem // 2)].float() / n_elem))
+    if rope_scaling is not None:
+        freqs = apply_rope_scaling(freqs, rope_scaling)
     t = torch.arange(seq_len, device=freqs.device)
     freqs = torch.outer(t, freqs)
     freqs_cis = torch.polar(torch.ones_like(freqs), freqs)
@@ -522,24 +551,3 @@ def apply_rotary_emb(x: Tensor, freqs_cis: Tensor) -> Tensor:
 
     x_out2 = x_out2.flatten(3)
     return x_out2.type_as(x)
-    
-    # # Ensure freqs_cis matches the batch size and other dimensions
-    # batch_size = xshaped.size(0)  # Get the batch size from x
-    # seq_length = xshaped.size(1)  # Get the sequence length from x
-    # dim_half = xshaped.size(3)    # Get dim/2 from xshaped (the 2nd to last dimension is dim//2)
-    
-    # # Expand freqs_cis to match [batch_size, seq_length, 1, dim//2, 2]
-    # freqs_cis = freqs_cis.view(batch_size, seq_length, 1, dim_half, 2)
-
-    # # Apply rotary embedding with batch size support
-    # x_out2 = torch.stack(
-    #     [
-    #         xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
-    #         xshaped[..., 1] * freqs_cis[..., 0] + xshaped[..., 0] * freqs_cis[..., 1],
-    #     ],
-    #     -1,
-    # )
-
-    # # Flatten the last two dimensions and return the result
-    # x_out2 = x_out2.flatten(3)
-    # return x_out2.type_as(x)

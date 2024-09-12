@@ -18,7 +18,6 @@ else:
 from model import Attention, FeedForward, Transformer
 from quantize import WeightOnlyInt4Linear
 
-
 def _get_rank() -> int:
     return int(os.environ.get("LOCAL_RANK", "0"))
 
@@ -119,8 +118,8 @@ def _apply_tp_ffn(mlp: FeedForward) -> None:
     _apply_tp_linear(mlp.w2, "rowwise")
 
     world_size = _get_world_size()
-    mlp.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
-        output, "sum", list(range(world_size))))
+    # mlp.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
+    #     output, "sum", list(range(world_size))))
 
 
 def _apply_tp_attn(attn: Attention) -> None:
@@ -138,11 +137,10 @@ def _apply_tp_attn(attn: Attention) -> None:
     attn.head_dim = attn.dim // attn.n_head
     attn.n_local_heads = attn.n_local_heads // world_size
 
-    attn.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
-        output[0], "sum", list(range(world_size))))
+    # attn.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
+    #     output[0], "sum", list(range(world_size))))
 
-
-def _apply_tp_Transformer(Transformer: Transformer) -> None:
+def _apply_tp_Transformer(Transformer) -> None:
     # overwrite config before Transformer.setup_cache is called
     world_size = _get_world_size()
     Transformer.config.n_head = Transformer.config.n_head // world_size
@@ -154,5 +152,6 @@ def apply_tp(model: Transformer) -> None:
     _apply_tp_Transformer(model)
     for block in model.layers:
         # Apply to MLP
-        _apply_tp_ffn(block.feed_forward)
+        #_apply_tp_ffn(block.feed_forward)
         _apply_tp_attn(block.attention)
+    print('we finish operating the TP!')

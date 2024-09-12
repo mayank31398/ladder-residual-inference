@@ -169,20 +169,21 @@ def _load_model(model_name, device, precision, use_tp):
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)
 
-    if not args.two_stream:
-        model.all_reduce_stream = None
     model._inital_turbo_module(turbo_mode=args.turbo_mode, nonturbo_initial_layers=args.nonturbo_initial_layers, nonturbo_final_layers=args.nonturbo_final_layers, additional_non_turbo_modules=args.additional_non_turbo_modules)
     
     for p in model.parameters():
         torch.nn.init.normal_(p, mean=0, std=0.02)
-
+        
     if use_tp:
         from tp import apply_tp
         print("Applying tensor parallel to model ...")
         apply_tp(model)
+    
+    if not args.two_stream:
+        model.all_reduce_stream = None
         
     print(model)
-
+    print(f'model s all reduce stream is {model.all_reduce_stream}')
     return model.eval()
 
 
@@ -297,11 +298,11 @@ def main(
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
             continue
 
-        if hasattr(prof, "export_chrome_trace"):
-            if use_tp:
-                prof.export_chrome_trace(f"{profile}_rank_{rank}.json")
-            else:
-                prof.export_chrome_trace(f"{profile}.json")
+        # if hasattr(prof, "export_chrome_trace"):
+        #     if use_tp:
+        #         prof.export_chrome_trace(f"{profile}_rank_{rank}.json")
+        #     else:
+        #         prof.export_chrome_trace(f"{profile}.json")
 
         device_sync(device=device) # MKG
         t = time.perf_counter() - t0
