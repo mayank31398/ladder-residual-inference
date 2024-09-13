@@ -33,6 +33,8 @@ from gpt_parallel_TP import GPTParallel
 from gpt_ladder_TP import GPTLadder
 from gpt_residual_TP import GPTResidual
 
+from tp import _get_world_size
+
 _MODELS = {
     "gpt_dense": GPTDense,
     "gpt_ensemble": GPTEnsemble,
@@ -111,6 +113,7 @@ def generate(
     model: torch.nn.Module,
     prompt: torch.Tensor,
     max_new_tokens: int,
+    device,
     batch_size: int,
     *,
     callback = lambda x: x,
@@ -119,7 +122,7 @@ def generate(
     """
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
     """
-
+    root_device = device
     # create an empty tensor of the expected final shape and fill in the current tokens
     T = prompt.size(-1)
     T_new = T + max_new_tokens
@@ -137,10 +140,12 @@ def generate(
     seq = empty
     input_pos = torch.arange(0, T, device=device)
 
+
+    device_sync(device=root_device) # MKG
     prefill_start = time.perf_counter()
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs).clone()
+    device_sync(device=root_device) # MKG
     prefill_latency = time.perf_counter() - prefill_start
-    print(f"Prefill latency: {prefill_latency:.02f} sec")
     
     seq[:, T] = next_token.squeeze()
 
@@ -149,7 +154,7 @@ def generate(
     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
     seq[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
 
-    return seq
+    return seq, prefill_latency
 
 
 def encode_tokens(tokenizer, string, bos=True, device=default_device):
@@ -166,6 +171,11 @@ def _load_model(model_name, device, precision, use_tp):
         else:
             model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
 
+    if use_tp:
+        from tp import apply_tp
+        print("Applying tensor parallel to model ...")
+        apply_tp(model)
+        
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)
 
@@ -173,17 +183,25 @@ def _load_model(model_name, device, precision, use_tp):
     
     for p in model.parameters():
         torch.nn.init.normal_(p, mean=0, std=0.02)
-        
-    if use_tp:
-        from tp import apply_tp
-        print("Applying tensor parallel to model ...")
-        apply_tp(model)
     
-    if not args.two_stream:
-        model.all_reduce_stream = None
-        
+    
+    if args.comment_attention:
+        model.comment_attention = True
+    
+    if args.comment_MLP:
+        model.comment_MLP = True
+    
+    if args.comment_norm:
+        model.comment_norm = True
+    
+    if args.comment_comm:
+        model.comment_comm = True
+    
+    if args.two_stream:
+        model.all_reduce_stream = torch.cuda.Stream()
+    
     print(model)
-    print(f'model s all reduce stream is {model.all_reduce_stream}')
+    print(f'models all reduce stream is {model.all_reduce_stream}')
     return model.eval()
 
 
@@ -227,7 +245,7 @@ def main(
     global print
     from tp import maybe_init_dist
     rank = maybe_init_dist()
-    use_tp = rank is not None
+    use_tp = _get_world_size() > 1
     if use_tp:
         if rank != 0:
             # only print on rank 0
@@ -257,7 +275,7 @@ def main(
             prefill = torch.compile(prefill, fullgraph=True, dynamic=True)
 
 
-    aggregate_metrics = {'tokens_per_sec': []}
+    aggregate_metrics = {'tokens_per_sec': [], 'prefill_latency': []}
     start = -5
 
     for i in range(start, num_samples):
@@ -284,10 +302,11 @@ def main(
             #     activities=[torch.profiler.ProfilerActivity.CUDA])
 
         # with prof:
-        y = generate(
+        y, prefill_latency = generate(
             model,
             encoded,
             max_new_tokens,
+            device,
             batch_size=batch_size,
             callback=callback,
             temperature=temperature,
@@ -310,6 +329,9 @@ def main(
         tokens_generated = y.size(-1) - prompt_length
         generated_tokens_sec = tokens_generated / t
         aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
+        aggregate_metrics['prefill_latency'].append(prefill_latency)
+        print(f"tokens we generated: {tokens_generated}")
+        print(f"Time for prefill: {prefill_latency:.02f} sec")
         print(f"Time for inference {i + 1}: {t:.02f} sec total, {generated_tokens_sec:.02f} tokens/sec")
         print(f"Bandwidth achieved: {model_size * generated_tokens_sec / 1e9:.02f} GB/s")
         total_tokens_sec = y.numel() / t
@@ -321,7 +343,8 @@ def main(
     print(f"Batch Size: {batch_size}")
     print(f"Prompt Length: {prompt_length}")
     print(f"Generated tokens: {max_new_tokens}")
-    print(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'])).item():.2f}")
+    print(f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'][1:])).item():.02f} sec")
+    print(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'][1:])).item():.2f}")
     print(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
 
@@ -346,6 +369,10 @@ if __name__ == '__main__':
     parser.add_argument('--hidden_size', type=int, default=-1, help='New hidden size for the model')
     parser.add_argument('--vocab_size', type=int, default=-1, help='New vocab size for the model')
     parser.add_argument('--intermediate_size', type=int, default=-1, help='New intermediate size for the model')
+    parser.add_argument('--comment_comm', action='store_true', help='comment all-reduce')
+    parser.add_argument('--comment_attention', action='store_true', help='comment attention')
+    parser.add_argument('--comment_MLP', action='store_true', help='comment mlp')
+    parser.add_argument('--comment_norm', action='store_true', help='comment normalization')
     parser.add_argument('--two_stream', action='store_true', help='Use two streams for all-reduce')
 
     args = parser.parse_args()

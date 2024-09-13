@@ -37,10 +37,6 @@ def maybe_init_dist() -> Optional[int]:
         # provided by torchrun
         rank = _get_rank()
         world_size = _get_world_size()
-
-        if world_size < 2:
-            # too few gpus to parallelize, tp is no-op
-            return None
     except KeyError:
         # not run via torchrun, no-op
         return None
@@ -78,11 +74,9 @@ def _apply_tp_linear(linear: nn.Linear, style: str, weight_splits: List[int] = [
         v = shard(v, dim)
         return torch.cat((q,k,v), dim=dim)
 
-    # shard
     if weight_splits:
         # attention
         assert len(weight_splits) == 3
-
         if isinstance(linear, WeightOnlyInt4Linear):
             sharded_weight = shard_qkv(linear.weight, shard_dim, [i//8 for i in weight_splits])
             linear.scales_and_zeros = shard_qkv(linear.scales_and_zeros, 1 - shard_dim, weight_splits)

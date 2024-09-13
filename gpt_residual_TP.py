@@ -124,7 +124,12 @@ class GPTResidual(nn.Module):
         self.tp = False
         self.world_size = 1
         
-        self.all_reduce_stream = torch.cuda.Stream()
+
+        self.comment_attention = False
+        self.comment_mlp = False
+        self.comment_norm = False
+        self.comment_comm = False
+        self.all_reduce_stream = None
         
     def setup_caches(self, max_batch_size, max_seq_length):
         if self.max_seq_length >= max_seq_length and self.max_batch_size >= max_batch_size:
@@ -163,12 +168,17 @@ class GPTResidual(nn.Module):
                 mlp_compute_flow=self.compute_flow[i*2+1],
                 use_tp=self.tp,
                 world_size=self.world_size,
+                comment_attention=self.comment_attention,
+                comment_mlp=self.comment_mlp,
+                comment_norm=self.comment_norm,
+                comment_comm=self.comment_comm,
                 all_reduce_stream=self.all_reduce_stream)
         # wait for last MLP's all-reduce to finish
-        # if self.all_reduce_stream is not None:
-        #     self.all_reduce_stream.synchronize()
+        if self.all_reduce_stream is not None:
+            self.all_reduce_stream.synchronize()
         x = residual_hidden_states[-1] # last attention + mlp(last mlp's output) as final output as v0
-        x = self.norm(x)
+        if self.comment_norm == False:
+            x = self.norm(x)
         logits = self.output(x)
         return logits
 
@@ -300,15 +310,20 @@ class TurboTransformerBlock(nn.Module):
         mlp_compute_flow = None,
         use_tp = False,
         world_size = 1,
+        comment_attention = False,
+        comment_mlp = False,
+        comment_norm = False,
+        comment_comm = False,
         all_reduce_stream=None) -> Tensor:
         
         # ====================== Attention ======================
         # ========== compute connection ==========
+        
         attn_inputs = []
         for weight, hid in zip(attn_compute_flow, past_hidden_states):
             if hid is None:
-                if weight > 0:
-                    print("=== warnings: Weight > 0 but hidden state is not stored")
+                # if weight > 0:
+                #     print("=== warnings: Weight > 0 but hidden state is not stored")
                 continue
             else:
                 if weight > 0:
@@ -318,30 +333,36 @@ class TurboTransformerBlock(nn.Module):
         else:
             attn_input = attn_inputs[0]
         # last layer mlp'communication happens here (last module) ==> overlap calculation and communication
-        attn_out = self.attention(self.attention_norm(attn_input), freqs_cis, mask, input_pos) 
-        # attn_out = self.attention(attn_input, freqs_cis, mask, input_pos) # w/o norm
-        # attn_out = attn_input # w/o attention
+        if comment_attention == True:
+            # print("we do w/o attention")
+            attn_out = attn_input
+        elif comment_norm == True:
+            # print("we do attention w/o norm")
+            attn_out = self.attention(attn_input, freqs_cis, mask, input_pos)
+        else:
+            # print("we do full attention")
+            attn_out = self.attention(self.attention_norm(attn_input), freqs_cis, mask, input_pos) 
         
         
         if all_reduce_stream is not None:
             all_reduce_stream.synchronize() # before calculation of residual we need mlp's all-reduce to finish
             #dist.barrier()
             
-        # if use_tp:
-        #     if all_reduce_stream is not None:
-        #         with torch.cuda.stream(all_reduce_stream):
-        #             attn_out[0] = all_reduce_func(attn_out[0])
-        #     else:
-        #         attn_out[0] = all_reduce_func(attn_out[0])
-        #         # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
-        #         # handle.wait()
+        if use_tp and comment_comm == False:
+            if all_reduce_stream is not None:
+                with torch.cuda.stream(all_reduce_stream):
+                    attn_out[0] = all_reduce_func(attn_out[0])
+            else:
+                attn_out[0] = all_reduce_func(attn_out[0])
+                # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
+                # handle.wait()
         
         # ========== residual connection ==========
         attn_residuals = []
         for weight, hid in zip(attn_residual_flow, past_hidden_states):
             if hid is None:
-                if weight > 0:
-                    print("=== warnings: Weight > 0 but hidden state is not stored===")
+                # if weight > 0:
+                #     print("=== warnings: Weight > 0 but hidden state is not stored===")
                 continue
             else:
                 if weight > 0:
@@ -366,8 +387,8 @@ class TurboTransformerBlock(nn.Module):
         mlp_inputs = []
         for weight, hid in zip(mlp_compute_flow, past_hidden_states):
             if hid is None:
-                if weight > 0:
-                    print("=== warnings: Weight > 0 but hidden state is not stored")
+                # if weight > 0:
+                #     print("=== warnings: Weight > 0 but hidden state is not stored")
                 continue
             else:
                 if weight > 0:
@@ -376,22 +397,28 @@ class TurboTransformerBlock(nn.Module):
             mlp_input = torch.stack(mlp_inputs, dim=0).sum(dim=0)
         else:
             mlp_input = mlp_inputs[0]
-        mlp_out = self.feed_forward(self.ffn_norm(mlp_input)) 
-        # mlp_out = self.feed_forward(mlp_input) # w/o norm
-        # mlp_out = mlp_input # w/o mlp
+        if comment_mlp == True:
+            # print("we do w/o mlp")
+            mlp_out = mlp_input
+        elif comment_norm == True:
+            # print("we do mlp w/o norm")
+            mlp_out = self.feed_forward(mlp_input)
+        else:
+            # print("we do full mlp")
+            mlp_out = self.feed_forward(self.ffn_norm(mlp_input)) 
         
         if all_reduce_stream is not None:
             all_reduce_stream.synchronize() # before calculation of residual we need attention's all-reduce to finish
             #dist.barrier()
         
-        # if use_tp:
-        #     if all_reduce_stream is not None:
-        #         with torch.cuda.stream(all_reduce_stream):
-        #             mlp_out = all_reduce_func(mlp_out)
-        #     else:
-        #         mlp_out = all_reduce_func(mlp_out)
-        #         # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
-        #         # handle.wait()
+        if use_tp and comment_comm == False:
+            if all_reduce_stream is not None:
+                with torch.cuda.stream(all_reduce_stream):
+                    mlp_out = all_reduce_func(mlp_out)
+            else:
+                mlp_out = all_reduce_func(mlp_out)
+                # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
+                # handle.wait()
         
         # ========== residual connection ==========
         mlp_residuals = []
@@ -474,7 +501,7 @@ class Attention(nn.Module):
 class FeedForward(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
         super().__init__()
-
+        print('our tp world size is', tp_world_size)
         assert config.intermediate_size % tp_world_size == 0
         assert config.dim % tp_world_size == 0
 
