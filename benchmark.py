@@ -282,13 +282,6 @@ def main(
                 top_k=top_k,
             )
 
-        if i == -1:
-            print_rank_0(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
-            continue
-
-        if hasattr(prof, "export_chrome_trace"):
-            prof.export_chrome_trace(f"{profile}.json")
-
         device_sync(device=device) # MKG
         t = time.perf_counter() - t0
 
