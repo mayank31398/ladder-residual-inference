@@ -16,6 +16,8 @@ import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 from tp import maybe_init_dist
 
+from flash_attn import flash_attn_func
+
 
 def find_multiple(n: int, k: int) -> int:
     if n % k == 0:
@@ -234,14 +236,28 @@ class Attention(nn.Module):
 
         k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
         v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-        y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+
+        is_compiling = torch.compiler.is_compiling()
+
+        if is_compiling:
+            y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+        else:
+            q_len = q.size(-2)
+            k = k[..., :q_len, :]
+            v = v[..., :q_len, :]
+
+            y = flash_attn_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
 
         if self.do_all_reduce:
             y = y + residual / tp_world_size
-            y = all_reduce_func(y)
+
+            if is_compiling:
+                y = all_reduce_func(y)
+            else:
+                dist.all_reduce(y)
         else:
             y = y + residual
 
@@ -270,7 +286,11 @@ class FeedForward(nn.Module):
 
         if self.do_all_reduce:
             y = y + residual / tp_world_size
-            y = all_reduce_func(y)
+
+            if torch.compiler.is_compiling():
+                y = all_reduce_func(y)
+            else:
+                dist.all_reduce(y)
         else:
             y = y + residual
 

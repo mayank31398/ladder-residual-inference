@@ -247,6 +247,7 @@ def _get_model_size(model):
 
 B_INST, E_INST = "[INST]", "[/INST]"
 
+@torch.no_grad()
 def get_cuda_graphs(
     model: torch.nn.Module,
     prompt: torch.Tensor,

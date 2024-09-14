@@ -16,6 +16,8 @@ import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 from tp import maybe_init_dist
 
+from flash_attn import flash_attn_func
+
 
 def find_multiple(n: int, k: int) -> int:
     if n % k == 0:
@@ -171,7 +173,12 @@ class TransformerBlock(nn.Module):
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
         # 1 / tp_world_size because we need residual stream only once
         x = x / tp_world_size + self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
-        x = all_reduce_func(x)
+
+        if torch.compiler.is_compiling():
+            x = all_reduce_func(x)
+        else:
+            dist.all_reduce(x)
+
         return x
 
 
@@ -228,7 +235,15 @@ class Attention(nn.Module):
 
         k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
         v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-        y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+
+        if torch.compiler.is_compiling():
+            y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+        else:
+            q_len = q.size(-2)
+            k = k[..., :q_len, :]
+            v = v[..., :q_len, :]
+
+            y = flash_attn_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)

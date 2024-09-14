@@ -16,6 +16,8 @@ import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 from tp import maybe_init_dist
 
+from flash_attn import flash_attn_func
+
 
 def find_multiple(n: int, k: int) -> int:
     if n % k == 0:
@@ -44,7 +46,6 @@ class ModelArgs:
     rope_base: float = 10000
     norm_eps: float = 1e-5
     rope_scaling: Optional[dict] = None
-    functional: bool = True
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -81,7 +82,6 @@ transformer_configs = {
     "30B": dict(n_layer=60, n_head=52, dim=6656),
     "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
-    "70B-nccl": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, functional=False),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
@@ -174,18 +174,18 @@ class TransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
-        self.functional = config.functional
-
     def forward(self, x: Tensor, previous_mlp_out: Tensor, mlp_handle, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
         current_attention_out, attention_handle = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
 
-        if not self.functional and mlp_handle is not None:
+        is_compiling = torch.compiler.is_compiling()
+
+        if not is_compiling and mlp_handle is not None:
             mlp_handle.wait()
 
         current_mlp_in = previous_mlp_out + x
         current_mlp_out, mlp_handle = self.feed_forward(self.ffn_norm(current_mlp_in))
 
-        if not self.functional:
+        if not is_compiling:
             attention_handle.wait()
 
         x = current_attention_out + current_mlp_in
@@ -216,8 +216,6 @@ class Attention(nn.Module):
         self.dim = self.dim // tp_world_size
         self.n_local_heads = self.n_local_heads // tp_world_size
 
-        self.functional = config.functional
-
         self._register_load_state_dict_pre_hook(self.load_hook)
 
     def load_hook(self, state_dict, prefix, *args):
@@ -247,12 +245,22 @@ class Attention(nn.Module):
 
         k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
         v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-        y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+
+        is_compiling = torch.compiler.is_compiling()
+
+        if is_compiling:
+            y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+        else:
+            q_len = q.size(-2)
+            k = k[..., :q_len, :]
+            v = v[..., :q_len, :]
+
+            y = flash_attn_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
 
-        if self.functional:
+        if is_compiling:
             y = all_reduce_func(y)
             handle = None
         else:
@@ -271,14 +279,12 @@ class FeedForward(nn.Module):
         self.w1 = nn.Linear(config.dim, 2 * config.intermediate_size // tp_world_size, bias=False)
         self.w2 = nn.Linear(config.intermediate_size // tp_world_size, config.dim, bias=False)
 
-        self.functional = config.functional
-
     def forward(self, x: Tensor) -> Tensor:
         x = self.w1(x)
         u, g = x.chunk(2, dim=-1)
         y = self.w2(F.silu(g) * u)
 
-        if self.functional:
+        if torch.compiler.is_compiling():
             y = all_reduce_func(y)
             handle = None
         else:

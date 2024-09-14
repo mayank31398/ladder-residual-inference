@@ -16,6 +16,9 @@ import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 from tp import maybe_init_dist
 
+from liger_kernel.ops.rms_norm import LigerRMSNormFunction
+from flash_attn import flash_attn_func
+
 
 def find_multiple(n: int, k: int) -> int:
     if n % k == 0:
@@ -227,12 +230,25 @@ class Attention(nn.Module):
 
         k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
         v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-        y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+
+        is_compiling = torch.compiler.is_compiling()
+
+        if is_compiling:
+            y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+        else:
+            q_len = q.size(-2)
+            k = k[..., :q_len, :]
+            v = v[..., :q_len, :]
+
+            y = flash_attn_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
 
-        y = all_reduce_func(y)
+        if is_compiling:
+            y = all_reduce_func(y)
+        else:
+            dist.all_reduce(y)
 
         return y
 
@@ -251,7 +267,12 @@ class FeedForward(nn.Module):
         x = self.w1(x)
         u, g = x.chunk(2, dim=-1)
         y = self.w2(F.silu(g) * u)
-        y = all_reduce_func(y)
+
+        if torch.compiler.is_compiling():
+            y = all_reduce_func(y)
+        else:
+            dist.all_reduce(y)
+
         return y
 
 
@@ -265,9 +286,13 @@ class RMSNorm(nn.Module):
         return x * torch.rsqrt(torch.mean(x * x, dim=-1, keepdim=True) + self.eps)
 
     def forward(self, x: Tensor) -> Tensor:
-        output = self._norm(x.float()).type_as(x)
-        return output * self.weight
+        if torch.compiler.is_compiling():
+            output = self._norm(x.float()).type_as(x)
+            output = output * self.weight
+        else:
+            output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
 
+        return output
 
 def apply_rope_scaling(freqs: torch.Tensor, rope_scaling: Optional[dict] = None):
     factor = rope_scaling["factor"]
