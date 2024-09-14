@@ -77,6 +77,7 @@ def sample(logits, temperature: float = 1.0, top_k: Optional[int] = None):
     return idx_next, probs
 
 
+@torch.no_grad()
 def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> torch.Tensor:
     # input_pos: [B, S]
     logits = model(x, input_pos)
@@ -90,6 +91,7 @@ def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.T
     return sample(logits, **sampling_kwargs)
 
 
+@torch.no_grad()
 def decode_n_tokens(model: torch.nn.Module, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, callback=lambda _: _, **sampling_kwargs):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
@@ -134,12 +136,12 @@ def generate(
     input_pos = torch.arange(0, T, device=device)
 
     prefill_start = time.perf_counter()
-    next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs).clone()
+    next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
     torch.cuda.synchronize()
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
 
-    empty[:, T] = next_token.squeeze()
+    empty[:, T] = next_token.clone().squeeze()
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
@@ -160,14 +162,13 @@ def generate_using_cuda_graphs(
     static_x: torch.Tensor,
     static_input_pos: torch.Tensor,
     static_next_token: torch.Tensor,
-    model: torch.nn.Module,
+    decode_graph,
+    static_cur_token: torch.Tensor,
+    static_decode_input_pos: torch.Tensor,
+    static_generated_tokens: torch.Tensor,
     prompt: torch.Tensor,
-    max_new_tokens: int,
     batch_size: int,
     empty: torch.Tensor,
-    *,
-    callback = lambda x: x,
-    **sampling_kwargs
 ) -> torch.Tensor:
     """
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
@@ -191,15 +192,16 @@ def generate_using_cuda_graphs(
 
     empty[:, T] = static_next_token.squeeze()
 
-    input_pos = torch.tensor([T], device=device, dtype=torch.int)
+    static_cur_token.copy_(static_next_token)
+    static_decode_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
 
     decode_start = time.perf_counter()
-    generated_tokens, _ = decode_n_tokens(model, static_next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
+    decode_graph.replay()
     torch.cuda.synchronize()
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
-    empty[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
+    empty[:, T + 1:] = torch.cat(static_generated_tokens, dim=-1)
 
     return empty
 
@@ -248,7 +250,7 @@ def _get_model_size(model):
 B_INST, E_INST = "[INST]", "[/INST]"
 
 @torch.no_grad()
-def get_cuda_graphs(
+def get_cuda_graphs_for_prefill(
     model: torch.nn.Module,
     prompt: torch.Tensor,
     batch_size: int,
@@ -266,17 +268,55 @@ def get_cuda_graphs(
 
     with torch.cuda.stream(s):
         for _ in range(3):
-            static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs).clone()
-            static_next_token = static_next_token.squeeze()
+            static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
 
     torch.cuda.current_stream().wait_stream(s)
 
     g = torch.cuda.CUDAGraph()
     with torch.cuda.graph(g):
-        static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs).clone()
-        static_next_token = static_next_token.squeeze()
+        static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
 
     return g, static_x, static_input_pos, static_next_token
+
+
+@torch.no_grad()
+def get_cuda_graphs_for_decode(
+    model: torch.nn.Module,
+    prompt: torch.Tensor,
+    batch_size: int,
+    max_new_tokens: int,
+    cur_token: torch.Tensor,
+    **sampling_kwargs
+):
+    T = prompt.size(-1)
+    device = prompt.device
+
+    static_cur_token = cur_token.clone()
+    static_input_pos = torch.tensor([T], device=device, dtype=torch.int)
+
+    # Warm up
+    for _ in range(3):
+        decode_n_tokens(
+            model,
+            static_cur_token.view(batch_size, -1),
+            static_input_pos,
+            max_new_tokens - 1,
+            **sampling_kwargs
+        )
+
+    # Capture CUDA graph
+    g_decode = torch.cuda.CUDAGraph()
+    with torch.cuda.graph(g_decode):
+        static_generated_tokens, _ = decode_n_tokens(
+            model,
+            static_cur_token.view(batch_size, -1),
+            static_input_pos,
+            max_new_tokens - 1,
+            **sampling_kwargs
+        )
+
+    return g_decode, static_cur_token, static_input_pos, static_generated_tokens
+
 
 def main(
     model_name: str,
@@ -330,10 +370,20 @@ def main(
         if compile_prefill:
             prefill = torch.compile(prefill, fullgraph=True, dynamic=True)
     elif use_cuda_graphs:
-        prefill_graph, static_x, static_input_pos, static_next_token = get_cuda_graphs(
+        prefill_graph, static_x, static_input_pos, static_next_token = get_cuda_graphs_for_prefill(
             model,
             prompt=encoded,
             batch_size=batch_size,
+            temperature=temperature,
+            top_k=top_k,
+        )
+
+        decode_graph, static_cur_token, static_decode_input_pos, static_generated_tokens = get_cuda_graphs_for_decode(
+            model,
+            prompt=encoded,
+            batch_size=batch_size,
+            max_new_tokens=max_new_tokens,
+            cur_token=static_next_token,
             temperature=temperature,
             top_k=top_k,
         )
@@ -370,14 +420,13 @@ def main(
                     static_x,
                     static_input_pos,
                     static_next_token,
-                    model,
+                    decode_graph,
+                    static_cur_token,
+                    static_decode_input_pos,
+                    static_generated_tokens,
                     encoded,
-                    max_new_tokens,
                     batch_size=batch_size,
                     empty=empty,
-                    callback=callback,
-                    temperature=temperature,
-                    top_k=top_k,
                 )
             else:
                 y = generate(
