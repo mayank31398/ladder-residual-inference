@@ -143,8 +143,12 @@ def _apply_tp_Transformer(Transformer) -> None:
 
 
 def apply_tp(model: Transformer) -> None:
+    model.tp = True
+    model.world_size = _get_world_size()
     _apply_tp_Transformer(model)
+    index = 0
     for block in model.layers:
+        print(f'applying tp to block {index}')
         # Apply to MLP
         #_apply_tp_ffn(block.feed_forward)
         _apply_tp_attn(block.attention)

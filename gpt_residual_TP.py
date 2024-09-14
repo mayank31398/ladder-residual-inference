@@ -130,6 +130,7 @@ class GPTResidual(nn.Module):
         self.comment_norm = False
         self.comment_comm = False
         self.all_reduce_stream = None
+        self.dist_all_reduce = False
         
     def setup_caches(self, max_batch_size, max_seq_length):
         if self.max_seq_length >= max_seq_length and self.max_batch_size >= max_batch_size:
@@ -171,6 +172,7 @@ class GPTResidual(nn.Module):
                 comment_attention=self.comment_attention,
                 comment_mlp=self.comment_mlp,
                 comment_norm=self.comment_norm,
+                dist_all_reduce=self.dist_all_reduce,
                 comment_comm=self.comment_comm,
                 all_reduce_stream=self.all_reduce_stream)
         # wait for last MLP's all-reduce to finish
@@ -313,6 +315,7 @@ class TurboTransformerBlock(nn.Module):
         comment_attention = False,
         comment_mlp = False,
         comment_norm = False,
+        dist_all_reduce = False,
         comment_comm = False,
         all_reduce_stream=None) -> Tensor:
         
@@ -350,12 +353,19 @@ class TurboTransformerBlock(nn.Module):
             
         if use_tp and comment_comm == False:
             if all_reduce_stream is not None:
-                with torch.cuda.stream(all_reduce_stream):
-                    attn_out[0] = all_reduce_func(attn_out[0])
+                if dist_all_reduce:
+                    with torch.cuda.stream(all_reduce_stream):
+                        attn_out[0] = dist.all_reduce(attn_out[0], op=dist.ReduceOp.SUM)
+                else:
+                    with torch.cuda.stream(all_reduce_stream):
+                        attn_out[0] = all_reduce_func(attn_out[0])
             else:
-                attn_out[0] = all_reduce_func(attn_out[0])
-                # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
-                # handle.wait()
+                if dist_all_reduce:
+                    attn_out[0] = dist.all_reduce(attn_out[0], op=dist.ReduceOp.SUM)
+                else:
+                    attn_out[0] = all_reduce_func(attn_out[0])
+                # attn_out[0] = all_reduce_func(attn_out[0])
+
         
         # ========== residual connection ==========
         attn_residuals = []
@@ -416,7 +426,8 @@ class TurboTransformerBlock(nn.Module):
                 with torch.cuda.stream(all_reduce_stream):
                     mlp_out = all_reduce_func(mlp_out)
             else:
-                mlp_out = all_reduce_func(mlp_out)
+                dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM)
+                # mlp_out = all_reduce_func(mlp_out)
                 # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
                 # handle.wait()
         

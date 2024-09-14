@@ -88,10 +88,10 @@ def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.T
     return sample(logits, **sampling_kwargs)
 
 
-def decode_n_tokens(model: torch.nn.Module, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, callback=lambda _: _, **sampling_kwargs):
+def decode_n_tokens(model: torch.nn.Module, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, enable_flash: bool, callback=lambda _: _, **sampling_kwargs):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
-        with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True): # Actually better for Inductor to codegen attention here
+        with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=False, enable_math=True): # Actually better for Inductor to codegen attention here
             next_token, next_prob = decode_one_token(
                 model, cur_token, input_pos, **sampling_kwargs
             )
@@ -115,6 +115,7 @@ def generate(
     max_new_tokens: int,
     device,
     batch_size: int,
+    empty: torch.Tensor,
     *,
     callback = lambda x: x,
     **sampling_kwargs
@@ -125,15 +126,8 @@ def generate(
     root_device = device
     # create an empty tensor of the expected final shape and fill in the current tokens
     T = prompt.size(-1)
-    T_new = T + max_new_tokens
-    max_seq_length = min(T_new, model.config.block_size)
-
-    device, dtype = prompt.device, prompt.dtype
-    with torch.device(device):
-        model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
-
-    # create an empty tensor of the expected final shape and fill in the current tokens
-    empty = torch.empty(batch_size, T_new, dtype=dtype, device=device)
+    device = prompt.device
+    
     # We are just making the same prompt for every batch
     prompt = prompt.view(1, -1).repeat(batch_size, 1)
     empty[:, :T] = prompt
@@ -143,6 +137,7 @@ def generate(
 
     device_sync(device=root_device) # MKG
     prefill_start = time.perf_counter()
+    print(f'the shape of input is {prompt.shape}')
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs).clone()
     device_sync(device=root_device) # MKG
     prefill_latency = time.perf_counter() - prefill_start
@@ -151,11 +146,140 @@ def generate(
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
-    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
+    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, False, callback=callback, **sampling_kwargs)
     seq[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
 
     return seq, prefill_latency
 
+def generate_using_cuda_graphs(
+    prefill_graph,
+    static_x: torch.Tensor,
+    static_input_pos: torch.Tensor,
+    static_next_token: torch.Tensor,
+    decode_graph,
+    static_cur_token: torch.Tensor,
+    static_decode_input_pos: torch.Tensor,
+    model: torch.nn.Module,
+    prompt: torch.Tensor,
+    max_new_tokens: int,
+    batch_size: int,
+    empty: torch.Tensor,
+    *,
+    callback = lambda x: x,
+    **sampling_kwargs
+) -> torch.Tensor:
+    """
+    Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
+    Uses CUDA Graphs for both prefill and decoding phases.
+    """
+
+    T = prompt.size(-1)
+    device = prompt.device
+
+    # We are just making the same prompt for every batch
+    prompt = prompt.view(1, -1).repeat(batch_size, 1)
+    empty[:, :T] = prompt
+
+    static_x.copy_(prompt)
+    static_input_pos.copy_(torch.arange(0, T, device=device))
+
+    prefill_start = time.perf_counter()
+    prefill_graph.replay()
+    torch.cuda.synchronize()
+    prefill_latency = time.perf_counter() - prefill_start
+    print(f"Prefill latency: {prefill_latency} sec")
+
+    empty[:, T] = static_next_token.squeeze()
+
+    # Initialize static tensors for decoding
+    static_cur_token.copy_(static_next_token.view(batch_size, -1))
+    static_decode_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
+
+    decode_start = time.perf_counter()
+    # Replay the decode CUDA graph
+    decode_graph.replay()
+    torch.cuda.synchronize()
+    decode_latency = time.perf_counter() - decode_start
+    print(f"Decode latency: {decode_latency} sec")
+
+    # Retrieve generated tokens from static tensors
+    generated_tokens = []
+    for i in range(max_new_tokens - 1):
+        generated_tokens.append(static_cur_token.clone())
+        callback(static_cur_token)
+
+    empty[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
+
+    return empty
+
+def get_cuda_graphs_for_prefill(
+    model: torch.nn.Module,
+    prompt: torch.Tensor,
+    batch_size: int,
+    **sampling_kwargs
+):
+    T = prompt.size(-1)
+    device = prompt.device
+
+    # We are just making the same prompt for every batch
+    static_x = prompt.view(1, -1).repeat(batch_size, 1)
+    static_input_pos = torch.arange(0, T, device=device)
+
+    s = torch.cuda.Stream()
+    s.wait_stream(torch.cuda.current_stream())
+
+    with torch.cuda.stream(s):
+        for _ in range(3):
+            static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs).clone()
+            static_next_token = static_next_token.squeeze()
+
+    torch.cuda.current_stream().wait_stream(s)
+
+    g = torch.cuda.CUDAGraph()
+    with torch.cuda.graph(g):
+        static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs).clone()
+        static_next_token = static_next_token.squeeze()
+
+    return g, static_x, static_input_pos, static_next_token
+
+def get_cuda_graphs_for_decode(
+    model: torch.nn.Module,
+    cur_token: torch.Tensor,
+    input_pos: torch.Tensor,
+    num_new_tokens: int,
+    batch_size: int,
+    **sampling_kwargs
+):
+    device = cur_token.device
+
+    # Static tensors for CUDA graph capture
+    static_cur_token = cur_token.clone()
+    static_input_pos = input_pos.clone()
+
+    # Warm up
+    for _ in range(3):
+        decode_n_tokens(
+            model,
+            static_cur_token,
+            static_input_pos.clone(),
+            num_new_tokens,
+            True
+            **sampling_kwargs
+        )
+
+    # Capture CUDA graph
+    g_decode = torch.cuda.CUDAGraph()
+    with torch.cuda.graph(g_decode):
+        static_generated_tokens, static_generated_probs = decode_n_tokens(
+            model,
+            static_cur_token,
+            static_input_pos,
+            num_new_tokens,
+            True
+            **sampling_kwargs
+        )
+
+    return g_decode, static_cur_token, static_input_pos
 
 def encode_tokens(tokenizer, string, bos=True, device=default_device):
     tokens = tokenizer.encode(string)
@@ -188,11 +312,14 @@ def _load_model(model_name, device, precision, use_tp):
     if args.comment_attention:
         model.comment_attention = True
     
-    if args.comment_MLP:
-        model.comment_MLP = True
+    if args.comment_mlp:
+        model.comment_mlp = True
     
     if args.comment_norm:
         model.comment_norm = True
+    
+    if args.dist_all_reduce:
+        model.dist_all_reduce = True
     
     if args.comment_comm:
         model.comment_comm = True
@@ -200,7 +327,9 @@ def _load_model(model_name, device, precision, use_tp):
     if args.two_stream:
         model.all_reduce_stream = torch.cuda.Stream()
     
+    
     print(model)
+    print(f'we comment comm is {model.comment_comm}')
     print(f'models all reduce stream is {model.all_reduce_stream}')
     return model.eval()
 
@@ -238,6 +367,7 @@ def main(
     compile_prefill: bool = False,
     profile: Optional[Path] = None,
     device=default_device,
+    use_cuda_graphs: bool = False,
 ) -> None:
     """Generates text samples based on a pre-trained Transformer model and tokenizer.
     """
@@ -266,6 +396,13 @@ def main(
 
     torch.manual_seed(1234)
     model_size, params = _get_model_size(model)
+    
+    T_new = encoded.size(-1) + max_new_tokens
+    max_seq_length = min(T_new, model.config.block_size)
+
+    with torch.device(device):
+        model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
+        
     if compile:
         global decode_one_token, prefill
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
@@ -273,7 +410,23 @@ def main(
         # Uncomment to squeeze more perf out of prefill
         if compile_prefill:
             prefill = torch.compile(prefill, fullgraph=True, dynamic=True)
-
+    elif use_cuda_graphs:
+        prefill_graph, static_x, static_input_pos, static_next_token = get_cuda_graphs_for_prefill(
+            model,
+            prompt=encoded,
+            batch_size=batch_size,
+            temperature=temperature,
+            top_k=top_k,
+        )
+        decode_graph, static_cur_token, static_decode_input_pos = get_cuda_graphs_for_decode(
+            model,
+            cur_token=static_next_token,
+            input_pos=static_input_pos,
+            num_new_tokens=max_new_tokens,
+            batch_size=batch_size,
+            temperature=temperature,
+            top_k=top_k,
+        )
 
     aggregate_metrics = {'tokens_per_sec': [], 'prefill_latency': []}
     start = -5
@@ -301,21 +454,41 @@ def main(
             # prof = torch.profiler.profile(
             #     activities=[torch.profiler.ProfilerActivity.CUDA])
 
-        # with prof:
-        y, prefill_latency = generate(
-            model,
-            encoded,
-            max_new_tokens,
-            device,
-            batch_size=batch_size,
-            callback=callback,
-            temperature=temperature,
-            top_k=top_k,
-        )
+        with prof:
+            if use_cuda_graphs:
+                empty = torch.empty((batch_size, T_new), dtype=torch.int, device=device)
+                seq = generate_using_cuda_graphs(
+                    prefill_graph,
+                    static_x,
+                    static_input_pos,
+                    static_next_token,
+                    decode_graph,
+                    static_cur_token,
+                    static_decode_input_pos,
+                    model,
+                    encoded,
+                    max_new_tokens,
+                    batch_size,
+                    empty,
+                    callback=callback,
+                    temperature=temperature,
+                    top_k=top_k,
+                )
+            else:
+                y, prefill_latency = generate(
+                    model,
+                    encoded,
+                    max_new_tokens,
+                    device,
+                    batch_size=batch_size,
+                    callback=callback,
+                    temperature=temperature,
+                    top_k=top_k,
+                )
 
-        if i == -1:
-            print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
-            continue
+            if i == -5:
+                print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
+                continue
 
         # if hasattr(prof, "export_chrome_trace"):
         #     if use_tp:
@@ -369,14 +542,15 @@ if __name__ == '__main__':
     parser.add_argument('--hidden_size', type=int, default=-1, help='New hidden size for the model')
     parser.add_argument('--vocab_size', type=int, default=-1, help='New vocab size for the model')
     parser.add_argument('--intermediate_size', type=int, default=-1, help='New intermediate size for the model')
-    parser.add_argument('--comment_comm', action='store_true', help='comment all-reduce')
     parser.add_argument('--comment_attention', action='store_true', help='comment attention')
-    parser.add_argument('--comment_MLP', action='store_true', help='comment mlp')
+    parser.add_argument('--comment_mlp', action='store_true', help='comment mlp')
     parser.add_argument('--comment_norm', action='store_true', help='comment normalization')
+    parser.add_argument('--comment_comm', action='store_true', help='comment all-reduce')
+    parser.add_argument('--dist_all_reduce', action='store_true', help='Use dist all reduce')
     parser.add_argument('--two_stream', action='store_true', help='Use two streams for all-reduce')
-
+    parser.add_argument('--cuda_graph', action='store_true', help='Use two streams for cuda graph')
     args = parser.parse_args()
     main(
         args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
-        args.temperature, args.compile, args.compile_prefill, args.profile, args.device
+        args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph
     )

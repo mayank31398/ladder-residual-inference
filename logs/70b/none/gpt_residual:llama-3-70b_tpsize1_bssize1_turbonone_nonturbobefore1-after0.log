@@ -1,0 +1,137 @@
+Using device=cuda
+Loading model ...
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+our tp world size is 1
+Traceback (most recent call last):
+  File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 381, in <module>
+    main(
+  File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 261, in main
+    model = _load_model(model_name, device, precision, use_tp)
+  File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 181, in _load_model
+    model = model.to_empty(device=device)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1032, in to_empty
+    return self._apply(lambda t: torch.empty_like(t, device=device), recurse=recurse)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 802, in _apply
+    module._apply(fn)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 802, in _apply
+    module._apply(fn)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 802, in _apply
+    module._apply(fn)
+  [Previous line repeated 1 more time]
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 825, in _apply
+    param_applied = fn(param)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1032, in <lambda>
+    return self._apply(lambda t: torch.empty_like(t, device=device), recurse=recurse)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_prims_common/wrappers.py", line 250, in _fn
+    result = fn(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_refs/__init__.py", line 4755, in empty_like
+    return torch.empty_permuted(
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 896.00 MiB. GPU 0 has a total capacity of 79.33 GiB of which 73.44 MiB is free. Including non-PyTorch memory, this process has 79.25 GiB memory in use. Of the allocated memory 78.74 GiB is allocated by PyTorch, and 512.00 KiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[2024-09-13 11:48:24,247] torch.distributed.elastic.multiprocessing.api: [ERROR] failed (exitcode: 1) local_rank: 0 (pid: 1350439) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 33, in <module>
+    sys.exit(load_entry_point('torch==2.2.2', 'console_scripts', 'torchrun')())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 347, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 812, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 803, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 135, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-13_11:48:24
+  host      : mk-xii-11.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 1350439)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
