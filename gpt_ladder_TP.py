@@ -44,6 +44,7 @@ class ModelArgs:
     rope_base: float = 10000
     norm_eps: float = 1e-5
     rope_scaling: Optional[dict] = None
+    functional: bool = True
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -80,6 +81,7 @@ transformer_configs = {
     "30B": dict(n_layer=60, n_head=52, dim=6656),
     "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
+    "70B-nccl": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, functional=False),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
@@ -150,8 +152,9 @@ class GPTLadder(nn.Module):
         x = self.tok_embeddings(idx)
 
         previous_mlp_out = torch.zeros_like(x)
+        mlp_handle = None
         for i, layer in enumerate(self.layers):
-            x, previous_mlp_out = layer(x, previous_mlp_out, input_pos, freqs_cis, mask)
+            x, previous_mlp_out, mlp_handle = layer(x, previous_mlp_out, mlp_handle, input_pos, freqs_cis, mask)
         x = x + previous_mlp_out
 
         x = self.norm(x)
@@ -171,12 +174,22 @@ class TransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
-    def forward(self, x: Tensor, previous_mlp_out: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
-        current_attention_out = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+        self.functional = config.functional
+
+    def forward(self, x: Tensor, previous_mlp_out: Tensor, mlp_handle, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
+        current_attention_out, attention_handle = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+
+        if not self.functional and mlp_handle is not None:
+            mlp_handle.wait()
+
         current_mlp_in = previous_mlp_out + x
-        current_mlp_out = self.feed_forward(self.ffn_norm(current_mlp_in))
+        current_mlp_out, mlp_handle = self.feed_forward(self.ffn_norm(current_mlp_in))
+
+        if not self.functional:
+            attention_handle.wait()
+
         x = current_attention_out + current_mlp_in
-        return x, current_mlp_out
+        return x, current_mlp_out, mlp_handle
 
 
 class Attention(nn.Module):
@@ -202,6 +215,8 @@ class Attention(nn.Module):
         self.n_head = self.n_head // tp_world_size
         self.dim = self.dim // tp_world_size
         self.n_local_heads = self.n_local_heads // tp_world_size
+
+        self.functional = config.functional
 
         self._register_load_state_dict_pre_hook(self.load_hook)
 
@@ -237,9 +252,13 @@ class Attention(nn.Module):
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
 
-        y = all_reduce_func(y)
+        if self.functional:
+            y = all_reduce_func(y)
+            handle = None
+        else:
+            handle = dist.all_reduce(y, async_op=True)
 
-        return y
+        return y, handle
 
 
 class FeedForward(nn.Module):
@@ -252,12 +271,20 @@ class FeedForward(nn.Module):
         self.w1 = nn.Linear(config.dim, 2 * config.intermediate_size // tp_world_size, bias=False)
         self.w2 = nn.Linear(config.intermediate_size // tp_world_size, config.dim, bias=False)
 
+        self.functional = config.functional
+
     def forward(self, x: Tensor) -> Tensor:
         x = self.w1(x)
         u, g = x.chunk(2, dim=-1)
         y = self.w2(F.silu(g) * u)
-        y = all_reduce_func(y)
-        return y
+
+        if self.functional:
+            y = all_reduce_func(y)
+            handle = None
+        else:
+            handle = dist.all_reduce(y, async_op=True)
+
+        return y, handle
 
 
 class RMSNorm(nn.Module):
