@@ -241,7 +241,7 @@ def _load_model(checkpoint_path, device, precision, use_tp):
     model.load_state_dict(checkpoint, assign=True)
 
     if use_tp:
-        from tp import apply_tp
+        from gpt_fast import apply_tp
         print("Applying tensor parallel to model ...")
         apply_tp(model)
 
@@ -293,7 +293,7 @@ def main(
     assert tokenizer_path.is_file(), str(tokenizer_path)
 
     global print
-    from tp import maybe_init_dist
+    from gpt_fast import maybe_init_dist
     rank = maybe_init_dist()
     use_tp = rank is not None
     if use_tp:

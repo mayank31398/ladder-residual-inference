@@ -34,7 +34,7 @@ sys.path.append(str(wd))
 from sentencepiece import SentencePieceProcessor
 
 from model import Transformer
-from tp import maybe_init_dist
+from gpt_fast.tp import maybe_init_dist
 
 
 def multinomial_sample_one_no_sync(probs_sort): # Does multinomial sampling without a cuda synchronization
@@ -148,7 +148,7 @@ def _load_model(checkpoint_path, device, precision, use_tp):
     model.load_state_dict(checkpoint, assign=True)
 
     if use_tp:
-        from tp import apply_tp
+        from gpt_fast.tp import apply_tp
         print("Applying tensor parallel to model ...")
         apply_tp(model)
 

@@ -337,7 +337,7 @@ def main(
     """
 
     global print
-    from tp import maybe_init_dist
+    from gpt_fast import maybe_init_dist
     rank = maybe_init_dist()
     use_tp = rank is not None
 
