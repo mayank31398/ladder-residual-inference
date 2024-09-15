@@ -152,11 +152,29 @@ class GPTLadder(nn.Module):
         freqs_cis = self.freqs_cis[input_pos]
         x = self.tok_embeddings(idx)
 
+        previous_attention_out = torch.zeros_like(x)
         previous_mlp_out = torch.zeros_like(x)
+        attention_handle = None
         mlp_handle = None
         for i, layer in enumerate(self.layers):
-            x, previous_mlp_out, mlp_handle = layer(x, previous_mlp_out, mlp_handle, input_pos, freqs_cis, mask)
-        x = x + previous_mlp_out
+            previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+                previous_attention_out,
+                previous_mlp_out,
+                x,
+                attention_handle,
+                mlp_handle,
+                input_pos,
+                freqs_cis,
+                mask,
+            )
+
+        if attention_handle is not None:
+            attention_handle.wait()
+
+        if mlp_handle is not None:
+            mlp_handle.wait()
+
+        x = x + previous_attention_out + previous_mlp_out
 
         x = self.norm(x)
         logits = self.output(x)
@@ -190,15 +208,30 @@ class TransformerBlock(nn.Module):
 
         self.semi_compiled_model = config.semi_compiled_model
 
-    def forward(self, x: Tensor, previous_mlp_out: Tensor, mlp_handle, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
+    def forward(
+        self,
+        previous_attention_out: Tensor,
+        previous_mlp_out: Tensor,
+        residual: Tensor,
+        attention_handle,
+        mlp_handle,
+        input_pos: Tensor,
+        freqs_cis: Tensor,
+        mask: Tensor,
+    ) -> Tensor:
         is_compiling = torch.compiler.is_compiling()
 
+        if attention_handle is not None:
+            attention_handle.wait()
+
+        residual = residual + previous_attention_out
+
         if self.semi_compiled_model:
-            current_attention_out = self._attn(x, freqs_cis, mask, input_pos)
+            current_attention_out = self._attn(residual, freqs_cis, mask, input_pos)
             current_attention_out = current_attention_out.clone()
             attention_handle = dist.all_reduce(current_attention_out, async_op=True)
         else:
-            current_attention_out = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+            current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
 
             if is_compiling:
                 current_attention_out = all_reduce_func(current_attention_out, clone=False)
@@ -209,14 +242,14 @@ class TransformerBlock(nn.Module):
         if mlp_handle is not None:
             mlp_handle.wait()
 
-        current_mlp_in = previous_mlp_out + x
+        residual = residual + previous_mlp_out
 
         if self.semi_compiled_model:
-            current_mlp_out = self._ffn(current_mlp_in)
+            current_mlp_out = self._ffn(residual)
             current_mlp_out = current_mlp_out.clone()
             mlp_handle = dist.all_reduce(current_mlp_out, async_op=True)
         else:
-            current_mlp_out = self.feed_forward(self.ffn_norm(current_mlp_in))
+            current_mlp_out = self.feed_forward(self.ffn_norm(residual))
 
             if is_compiling:
                 current_mlp_out = all_reduce_func(current_mlp_out, clone=False)
@@ -224,11 +257,7 @@ class TransformerBlock(nn.Module):
             else:
                 mlp_handle = dist.all_reduce(current_mlp_out, async_op=True)
 
-        if attention_handle is not None:
-            attention_handle.wait()
-
-        x = current_attention_out + current_mlp_in
-        return x, current_mlp_out, mlp_handle
+        return current_attention_out, current_mlp_out, residual, attention_handle, mlp_handle
 
 
 class Attention(nn.Module):
