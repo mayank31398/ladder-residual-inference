@@ -16,6 +16,7 @@ import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 from tp import maybe_init_dist
 
+from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 from flash_attn import flash_attn_func
 
 
@@ -356,9 +357,13 @@ class RMSNorm(nn.Module):
         return x * torch.rsqrt(torch.mean(x * x, dim=-1, keepdim=True) + self.eps)
 
     def forward(self, x: Tensor) -> Tensor:
-        output = self._norm(x.float()).type_as(x)
-        return output * self.weight
+        if torch.compiler.is_compiling():
+            output = self._norm(x.float()).type_as(x)
+            output = output * self.weight
+        else:
+            output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
 
+        return output
 
 def apply_rope_scaling(freqs: torch.Tensor, rope_scaling: Optional[dict] = None):
     factor = rope_scaling["factor"]
