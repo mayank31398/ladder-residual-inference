@@ -12,7 +12,7 @@ from torch import Tensor
 
 import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
-from gpt_fast.tp import maybe_init_dist
+from .tp import maybe_init_dist
 
 from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward
 
@@ -160,25 +160,25 @@ class EnsembleTransformerBlock(nn.Module):
         self.do_attention_all_reduce = config.reduce_pattern[layer_idx]["attention"]
         self.do_mlp_all_reduce = layer_idx == config.n_layer - 1 or config.reduce_pattern[layer_idx]["mlp"]
 
-        def _attn(x, residual, freqs_cis, mask, input_pos):
-            x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+        def _attn(x, freqs_cis, mask, input_pos):
+            y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
 
             if self.do_attention_all_reduce:
-                x = x + residual / tp_world_size
+                y = y + x / tp_world_size
             else:
-                x = x + residual
+                y = y + x
 
-            return x
+            return y
 
-        def _ffn(x, residual):
-            x = self.feed_forward(self.ffn_norm(x))
+        def _ffn(x):
+            y = self.feed_forward(self.ffn_norm(x))
 
             if self.do_mlp_all_reduce:
-                x = x + residual / tp_world_size
+                y = y + x / tp_world_size
             else:
-                x = x + residual
+                y = y + x
 
-            return x
+            return y
 
         self._attn = torch.compile(_attn)
         self._ffn = torch.compile(_ffn)
@@ -186,20 +186,22 @@ class EnsembleTransformerBlock(nn.Module):
         self.semi_compiled_model = config.semi_compiled_model
 
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
-        residual = x
-
         if self.semi_compiled_model:
-            x = self._attn(x, residual, freqs_cis, mask, input_pos)
+            x = self._attn(x, freqs_cis, mask, input_pos)
 
             if self.do_attention_all_reduce:
                 x = all_reduce_func(x, clone=True)
+            else:
+                x = x.clone()
 
-            residual = x
-            x = self._ffn(x, residual)
+            x = self._ffn(x)
 
             if self.do_mlp_all_reduce:
                 x = all_reduce_func(x, clone=True)
+            else:
+                x = x.clone()
         else:
+            residual = x
             x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
 
             if self.do_attention_all_reduce:
