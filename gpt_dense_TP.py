@@ -217,6 +217,9 @@ class TransformerBlock(nn.Module):
 
         return x
 
+    def extra_repr(self) -> str:
+        return f"compiled = {self.compiled_model}"
+
 
 class Attention(nn.Module):
     def __init__(self, config: ModelArgs):
