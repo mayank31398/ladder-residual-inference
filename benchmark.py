@@ -32,10 +32,7 @@ default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
-from gpt_dense_TP import GPTDense
-from gpt_ensemble_TP import GPTEnsemble
-from gpt_parallel_TP import GPTParallel
-from gpt_ladder_TP import GPTLadder
+from gpt_fast import GPTDense, GPTEnsemble, GPTParallel, GPTLadder
 
 
 _MODELS = {
