@@ -56,7 +56,7 @@ class ModelArgs:
     rope_base: float = 10000
     norm_eps: float = 1e-5
     rope_scaling: Optional[dict] = None
-    compiled_model: bool = False
+    semi_compiled_model: bool = False
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -83,7 +83,7 @@ transformer_configs = {
     "30B": dict(n_layer=60, n_head=52, dim=6656),
     "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
-    "70B-semi-compiled": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, compiled_model=True),
+    "70B-semi-compiled": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, semi_compiled_model=True),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
@@ -193,10 +193,10 @@ class TransformerBlock(nn.Module):
         self._attn = torch.compile(_attn)
         self._ffn = torch.compile(_ffn)
 
-        self.compiled_model = config.compiled_model
+        self.semi_compiled_model = config.semi_compiled_model
 
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
-        if self.compiled_model:
+        if self.semi_compiled_model:
             x = self._attn(x, x, freqs_cis, mask, input_pos)
             x = all_reduce_func(x, clone=True)
             x = self._ffn(x, x)
@@ -208,7 +208,7 @@ class TransformerBlock(nn.Module):
         return x
 
     def extra_repr(self) -> str:
-        return f"compiled = {self.compiled_model}"
+        return f"semi_compiled = {self.semi_compiled_model}"
 
 
 class Attention(nn.Module):
