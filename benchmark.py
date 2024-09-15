@@ -33,6 +33,7 @@ wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
 from gpt_dense_TP import GPTDense
+from gpt_dense_compiled_TP import GPTDenseSemiCompiled
 from gpt_ensemble_TP import GPTEnsemble
 from gpt_parallel_TP import GPTParallel
 from gpt_ladder_TP import GPTLadder
@@ -40,6 +41,7 @@ from gpt_ladder_TP import GPTLadder
 
 _MODELS = {
     "gpt_dense": GPTDense,
+    "gpt_dense_demi_compiled": GPTDenseSemiCompiled,
     "gpt_ensemble": GPTEnsemble,
     "gpt_parallel": GPTParallel,
     "gpt_ladder": GPTLadder,
@@ -141,7 +143,8 @@ def generate(
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
 
-    empty[:, T] = next_token.clone().squeeze()
+    next_token = next_token.clone()
+    empty[:, T] = next_token.squeeze()
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
