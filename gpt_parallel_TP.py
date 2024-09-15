@@ -16,6 +16,7 @@ import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 from tp import maybe_init_dist
 
+from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 from flash_attn import flash_attn_func
 
 
@@ -25,12 +26,21 @@ def find_multiple(n: int, k: int) -> int:
     return n + k - (n % k)
 
 maybe_init_dist()
+tp_rank = dist.get_rank()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
 
 
-def all_reduce_func(x: torch.Tensor) -> torch.Tensor:
-    return funcol.all_reduce(x, reduceOp="sum", group=tp_group)
+def all_reduce_func(x: torch.Tensor, clone: bool) -> torch.Tensor:
+    if torch.compiler.is_compiling():
+        x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
+    else:
+        if clone:
+            x = x.clone()
+
+        dist.all_reduce(x)
+
+    return x
 
 
 @dataclass
@@ -46,6 +56,7 @@ class ModelArgs:
     rope_base: float = 10000
     norm_eps: float = 1e-5
     rope_scaling: Optional[dict] = None
+    semi_compiled_model: bool = False
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -72,6 +83,7 @@ transformer_configs = {
     "30B": dict(n_layer=60, n_head=52, dim=6656),
     "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
+    "70B-semi-compiled": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, semi_compiled_model=True),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
@@ -160,16 +172,32 @@ class TransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
+        def _attn_ffn(x, freqs_cis, mask, input_pos):
+            y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
+
+            if tp_rank == 0:
+                y = y + x
+
+            return y
+
+        self._attn_ffn = torch.compile(_attn_ffn)
+
+        self.semi_compiled_model = config.semi_compiled_model
+
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
-        # 1 / tp_world_size because we need residual stream only once
-        x = x / tp_world_size + self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
-
-        if torch.compiler.is_compiling():
-            x = all_reduce_func(x)
+        if self.semi_compiled_model:
+            x = self._attn_ffn(x, freqs_cis, mask, input_pos)
+            x = all_reduce_func(x, clone=True)
+            y = x
         else:
-            dist.all_reduce(x)
+            y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
+            y = all_reduce_func(y, clone=False)
+            y = y + x
 
-        return x
+        return y
+
+    def extra_repr(self) -> str:
+        return f"semi_compiled = {self.semi_compiled_model}"
 
 
 class Attention(nn.Module):
@@ -268,8 +296,13 @@ class RMSNorm(nn.Module):
         return x * torch.rsqrt(torch.mean(x * x, dim=-1, keepdim=True) + self.eps)
 
     def forward(self, x: Tensor) -> Tensor:
-        output = self._norm(x.float()).type_as(x)
-        return output * self.weight
+        if torch.compiler.is_compiling():
+            output = self._norm(x.float()).type_as(x)
+            output = output * self.weight
+        else:
+            output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+
+        return output
 
 
 def apply_rope_scaling(freqs: torch.Tensor, rope_scaling: Optional[dict] = None):

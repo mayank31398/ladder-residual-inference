@@ -260,6 +260,9 @@ class TransformerBlock(nn.Module):
 
         return current_attention_out, current_mlp_out, residual, attention_handle, mlp_handle
 
+    def extra_repr(self) -> str:
+        return f"semi_compiled = {self.semi_compiled_model}"
+
 
 class Attention(nn.Module):
     def __init__(self, config: ModelArgs):
