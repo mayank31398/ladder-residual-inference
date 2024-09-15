@@ -74,16 +74,6 @@ class ModelArgs:
     def from_name(cls, name: str):
         if name in transformer_configs:
             return cls(**transformer_configs[name])
-        # fuzzy search
-        config = [config for config in transformer_configs if config.lower() in str(name).lower()]
-
-        # We may have two or more configs matched (e.g. "7B" and "Mistral-7B"). Find the best config match,
-        # take longer name (as it have more symbols matched)
-        if len(config) > 1:
-            config.sort(key=len, reverse=True)
-            assert len(config[0]) != len(config[1]), name # make sure only one 'best' match
-            
-        return cls(**transformer_configs[config[0]])
 
 
 transformer_configs = {
