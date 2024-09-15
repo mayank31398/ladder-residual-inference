@@ -26,12 +26,21 @@ def find_multiple(n: int, k: int) -> int:
     return n + k - (n % k)
 
 maybe_init_dist()
+tp_rank = dist.get_rank()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
 
 
-def all_reduce_func(x: torch.Tensor) -> torch.Tensor:
-    return funcol.all_reduce(x, reduceOp="sum", group=tp_group)
+def all_reduce_func(x: torch.Tensor, clone: bool) -> torch.Tensor:
+    if torch.compiler.is_compiling():
+        x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
+    else:
+        if clone:
+            x = x.clone()
+
+        dist.all_reduce(x)
+
+    return x
 
 
 @dataclass
@@ -47,6 +56,7 @@ class ModelArgs:
     rope_base: float = 10000
     norm_eps: float = 1e-5
     rope_scaling: Optional[dict] = None
+    compiled_model: bool = False
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -83,6 +93,7 @@ transformer_configs = {
     "30B": dict(n_layer=60, n_head=52, dim=6656),
     "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
+    "70B-compiled": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, compiled_model=True),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
@@ -171,10 +182,40 @@ class TransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
+        def _attn(x, residual, freqs_cis, mask, input_pos):
+            x = self.attention_norm(x)
+            x = self.attention(x, freqs_cis, mask, input_pos)
+
+            if tp_rank == 0:
+                x = x + residual
+
+            return x
+
+        def _ffn(x, residual):
+            x = self.ffn_norm(x)
+            x = self.feed_forward(x)
+
+            if tp_rank == 0:
+                x = x + residual
+
+            return x
+
+        self._attn = torch.compile(_attn)
+        self._ffn = torch.compile(_ffn)
+
+        self.compiled_model = config.compiled_model
+
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
-        h = x + self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
-        out = h + self.feed_forward(self.ffn_norm(h))
-        return out
+        if self.compiled_model:
+            x = self._attn(x, x, freqs_cis, mask, input_pos)
+            x = all_reduce_func(x, clone=True)
+            x = self._ffn(x, x)
+            x = all_reduce_func(x, clone=True)
+        else:
+            x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)
+            x = x + all_reduce_func(self.feed_forward(self.ffn_norm(x)), clone=False)
+
+        return x
 
 
 class Attention(nn.Module):
@@ -231,9 +272,7 @@ class Attention(nn.Module):
         k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
         v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
 
-        is_compiling = torch.compiler.is_compiling()
-
-        if is_compiling:
+        if torch.compiler.is_compiling():
             y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
         else:
             q_len = q.size(-2)
@@ -244,11 +283,6 @@ class Attention(nn.Module):
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
-
-        if is_compiling:
-            y = all_reduce_func(y)
-        else:
-            dist.all_reduce(y)
 
         return y
 
@@ -267,12 +301,6 @@ class FeedForward(nn.Module):
         x = self.w1(x)
         u, g = x.chunk(2, dim=-1)
         y = self.w2(F.silu(g) * u)
-
-        if torch.compiler.is_compiling():
-            y = all_reduce_func(y)
-        else:
-            dist.all_reduce(y)
-
         return y
 
 
