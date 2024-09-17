@@ -17,7 +17,6 @@ import argparse
 
 torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
-# Experimental features to reduce compilation times, will be on by default in future
 torch._inductor.config.fx_graph_cache = True 
 # torch._functorch.config.enable_autograd_cache = True
 
@@ -44,6 +43,7 @@ _MODELS = {
 }
 
 
+        
 def device_sync(device):
     if "cuda" in device:
         torch.cuda.synchronize(device)
@@ -84,7 +84,8 @@ def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **
 def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
     # input_pos: [B, 1]
     assert input_pos.shape[-1] == 1
-    logits = model(x, input_pos)
+    with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=False, enable_math=True): # Actually better for Inductor to codegen attention here
+        logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)
 
 
