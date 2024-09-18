@@ -167,12 +167,14 @@ class LadderTransformerBlock(nn.Module):
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
         def _attn(residual, previous_attention_out, freqs_cis, mask, input_pos):
+            # with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=enable_mem_efficient, enable_math=enable_math): # Actually better for Inductor to codegen attention here
             residual = residual + previous_attention_out
             x = self.attention_norm(x)
             x = self.attention(x, freqs_cis, mask, input_pos)
             return x
 
         def _ffn(residual, previous_mlp_out):
+            # with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=enable_mem_efficient, enable_math=enable_math): # Actually better for Inductor to codegen attention here
             residual = residual + previous_mlp_out
             x = self.ffn_norm(x)
             x = self.feed_forward(x)
