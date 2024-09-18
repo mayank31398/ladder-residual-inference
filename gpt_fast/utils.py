@@ -151,7 +151,7 @@ class Attention(nn.Module):
             wv = state_dict.pop(prefix + "wv.weight")
             state_dict[prefix + "wqkv.weight"] = torch.cat([wq, wk, wv])
 
-    def forward(self, x: Tensor, freqs_cis: Tensor, mask: Tensor, input_pos: Optional[Tensor] = None) -> Tensor:
+    def forward(self, x: Tensor, freqs_cis: Tensor, mask: Tensor, input_pos: Optional[Tensor] = None, compile=False) -> Tensor:
         bsz, seqlen, _ = x.shape
 
         kv_size = self.n_local_heads * self.head_dim
@@ -163,27 +163,26 @@ class Attention(nn.Module):
 
         q = apply_rotary_emb(q, freqs_cis)
         k = apply_rotary_emb(k, freqs_cis)
-    
-        if torch.compiler.is_compiling():
-            q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
 
+        q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
+
+        if compile:
             if self.kv_cache is not None:
                 k, v = self.kv_cache.update(input_pos, k, v)
-
             k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
             v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
             y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
         else:
             q = q.transpose(1, 2)
-            if self.kv_cache is not None:
-                k_cache = self.kv_cache.k_cache 
+            q_len = q.size(-2)
+            k = k[..., :q_len, :]
+            v = v[..., :q_len, :]
+            
+            if q_len <= 10:
+                k_cache = self.kv_cache.k_cache
                 v_cache = self.kv_cache.v_cache
+                cache_seqlens = k_cache.size(-2)
 
-                if not hasattr(self.kv_cache, 'cache_seqlens'):
-                    self.kv_cache.cache_seqlens = torch.zeros(bsz, dtype=torch.int32, device=x.device)
-                cache_seqlens = self.kv_cache.cache_seqlens  # (batch_size,)
-
-                seqlen_new = seqlen  
                 y = flash_attn_with_kvcache(
                     q,                      # (batch_size, n_heads, seqlen_q, head_dim)
                     k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
@@ -199,16 +198,13 @@ class Attention(nn.Module):
                     softmax_scale=None,     
                     causal=True,
                 )
-
-                self.kv_cache.cache_seqlens += seqlen_new 
-                
+                self.kv_cache.k_cache = k_cache
+                self.kv_cache.v_cache = v_cache
             else:
-                q_len = q.size(-2)
-                k = k[..., :q_len, :]
-                v = v[..., :q_len, :]
-
+                if self.kv_cache is not None:
+                    k, v = self.kv_cache.update(input_pos, k, v)
                 y = flash_attn_func(q, k, v, causal=True)
-
+                
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
 

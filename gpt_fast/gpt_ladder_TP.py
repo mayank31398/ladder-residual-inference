@@ -94,6 +94,8 @@ class GPTLadder(nn.Module):
         self.max_batch_size = -1
         self.max_seq_length = -1
         
+        self.compile = False
+        
         self.two_stream = None
         self.semi_compiled_model = False
         self.funcol = False
@@ -139,6 +141,10 @@ class GPTLadder(nn.Module):
                 input_pos,
                 freqs_cis,
                 mask,
+                self.funcol,
+                self.clone,
+                self.async_op,
+                self.compile,
             )
 
         if attention_handle is not None:
@@ -165,12 +171,11 @@ class LadderTransformerBlock(nn.Module):
         self.feed_forward = FeedForward(config)
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
-
-        def _attn(residual, previous_attention_out, freqs_cis, mask, input_pos):
+        def _attn(residual, previous_attention_out, freqs_cis, mask, input_pos, compile):
             # with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=enable_mem_efficient, enable_math=enable_math): # Actually better for Inductor to codegen attention here
             residual = residual + previous_attention_out
             x = self.attention_norm(x)
-            x = self.attention(x, freqs_cis, mask, input_pos)
+            x = self.attention(x, freqs_cis, mask, input_pos, compile)
             return x
 
         def _ffn(residual, previous_mlp_out):
@@ -179,9 +184,10 @@ class LadderTransformerBlock(nn.Module):
             x = self.ffn_norm(x)
             x = self.feed_forward(x)
             return x
-
-        self._attn = torch.compile(_attn)
-        self._ffn = torch.compile(_ffn)
+        
+        if config.semi_compiled_model:
+            self._attn = torch.compile(_attn)
+            self._ffn = torch.compile(_ffn)
 
     def forward(
         self,
@@ -193,19 +199,19 @@ class LadderTransformerBlock(nn.Module):
         input_pos: Tensor,
         freqs_cis: Tensor,
         mask: Tensor,
-        semi_compiled_model: bool = False,
         funcol: bool = False,
         clone: bool = False,
         async_op: bool = False,
+        compile: bool = False,
     ) -> Tensor:
         # last attention's sum + attention
         if attention_handle is not None:
             attention_handle.wait()
         if self.semi_compiled_model:
-            current_attention_out = self._attn(residual, previous_attention_out, freqs_cis, mask, input_pos)
+            current_attention_out = self._attn(residual, previous_attention_out, freqs_cis, mask, input_pos, compile)
         else:
             residual = residual + previous_attention_out
-            current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
+            current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos, compile)
         current_attention_out, attention_handle = all_reduce_func(current_attention_out, funcol, clone, async_op)
         
         if mlp_handle is not None:

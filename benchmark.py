@@ -239,6 +239,8 @@ def _load_model(model_name, device, precision, use_tp):
             if args.two_stream:
                 model.all_reduce_stream = torch.cuda.Stream()
             
+            if args.compile or args.compile_prefill:
+                model.compile = True
             if args.semi_compiled_model:
                 model.semi_compiled_model = True
             if args.funcol:
@@ -456,38 +458,38 @@ def main(
 
         empty = torch.empty(batch_size, T_new, dtype=encoded.dtype, device=device)
 
-        with prof:
-            if use_cuda_graphs:
-                # NOTE we need to reset the static variable pointers for CUDA graph on each geenration here
-                # however, for benchmarking throughput, it doesn't matter
-                y = generate_using_cuda_graphs(
-                    prefill_graph,
-                    static_x,
-                    static_input_pos,
-                    static_next_token,
-                    decode_graph,
-                    static_cur_token,
-                    static_decode_input_pos,
-                    static_generated_tokens,
-                    encoded,
-                    batch_size=batch_size,
-                    empty=empty,
-                )
-            else:
-                y, decode_latency, prefill_latency = generate(
-                    model,
-                    encoded,
-                    max_new_tokens,
-                    batch_size=batch_size,
-                    empty=empty,
-                    callback=callback,
-                    temperature=temperature,
-                    top_k=top_k,
-                )
+        # with prof:
+        if use_cuda_graphs:
+            # NOTE we need to reset the static variable pointers for CUDA graph on each geenration here
+            # however, for benchmarking throughput, it doesn't matter
+            y = generate_using_cuda_graphs(
+                prefill_graph,
+                static_x,
+                static_input_pos,
+                static_next_token,
+                decode_graph,
+                static_cur_token,
+                static_decode_input_pos,
+                static_generated_tokens,
+                encoded,
+                batch_size=batch_size,
+                empty=empty,
+            )
+        else:
+            y, decode_latency, prefill_latency = generate(
+                model,
+                encoded,
+                max_new_tokens,
+                batch_size=batch_size,
+                empty=empty,
+                callback=callback,
+                temperature=temperature,
+                top_k=top_k,
+            )
 
-            if i == -5:
-                print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
-                continue
+        if i == -5:
+            print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
+            continue
 
         # if hasattr(prof, "export_chrome_trace"):
         #     if use_tp:

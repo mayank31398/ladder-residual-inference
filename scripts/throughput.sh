@@ -19,7 +19,7 @@ do
     for tpsize in 2
     do
         echo "Running with bs=${bssize} tp=${tpsize}"
-        TORCHDYNAMO_VERBOSE=1 CUDA_LAUNCH_BLOCKING=1 ENABLE_INTRA_NODE_COMM=1 torchrun --standalone --nproc_per_node=${tpsize} benchmark.py \
+        TORCHDYNAMO_VERBOSE=1 ENABLE_INTRA_NODE_COMM=1 torchrun --standalone --nproc_per_node=${tpsize} benchmark.py \
                                         --model_name ${model_name} \
                                         --num_samples 10 \
                                         --batch_size ${bssize} \
