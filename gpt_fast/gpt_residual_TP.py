@@ -18,8 +18,8 @@ import os
 
 import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
-from tp import maybe_init_dist
-from utils import RMSNorm, apply_rotary_emb, precompute_freqs_cis, apply_rope_scaling, Attention, FeedForward
+from tp import maybe_init_dist, all_reduce_func
+from utils import RMSNorm, apply_rotary_emb, precompute_freqs_cis, apply_rope_scaling, Attention, FeedForward, KVCache
 
 def find_multiple(n: int, k: int) -> int:
     if n % k == 0:
@@ -27,12 +27,9 @@ def find_multiple(n: int, k: int) -> int:
     return n + k - (n % k)
 
 maybe_init_dist()
+tp_rank = dist.get_rank()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
-
-
-def all_reduce_func(x: torch.Tensor) -> torch.Tensor:
-    return funcol.all_reduce(x, reduceOp="sum", group=tp_group)
 
 @dataclass
 class ModelArgs:
@@ -85,29 +82,13 @@ transformer_configs = {
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
     "llama-3-8b": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000),
+    "llama-3-8b-semi-compiled": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000, semi_compiled_model=True),
     "llama-3-70b": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000),
+    "llama-3-70b-semi-compiled": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000, semi_compiled_model=True),
     "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=8, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
         rope_scaling=dict(factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192),
     ),
 }
-
-class KVCache(nn.Module):
-    def __init__(self, max_batch_size, max_seq_length, n_heads, head_dim, dtype=torch.bfloat16):
-        super().__init__()
-        cache_shape = (max_batch_size, n_heads, max_seq_length, head_dim)
-        self.register_buffer('k_cache', torch.zeros(cache_shape, dtype=dtype))
-        self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
-
-    def update(self, input_pos, k_val, v_val):
-        # input_pos: [S], k_val: [B, H, S, D]
-        assert input_pos.shape[0] == k_val.shape[2]
-
-        k_out = self.k_cache
-        v_out = self.v_cache
-        k_out[:, :, input_pos] = k_val
-        v_out[:, :, input_pos] = v_val
-
-        return k_out, v_out
 
 
 class GPTResidual(nn.Module):
@@ -125,9 +106,7 @@ class GPTResidual(nn.Module):
         self.max_batch_size = -1
         self.max_seq_length = -1
         self.tp = False
-        self.world_size = 1
         
-
         self.comment_attention = False
         self.comment_mlp = False
         self.comment_norm = False
@@ -171,7 +150,6 @@ class GPTResidual(nn.Module):
                 mlp_residual_flow=self.residual_flow[i*2+1],
                 mlp_compute_flow=self.compute_flow[i*2+1],
                 use_tp=self.tp,
-                world_size=self.world_size,
                 comment_attention=self.comment_attention,
                 comment_mlp=self.comment_mlp,
                 comment_norm=self.comment_norm,
@@ -284,20 +262,6 @@ class GPTResidual(nn.Module):
         if intermediate_size != -1:
             config.intermediate_size = intermediate_size
         return cls(config)
-
-
-class TransformerBlock(nn.Module):
-    def __init__(self, config: ModelArgs) -> None:
-        super().__init__()
-        self.attention = Attention(config)
-        self.feed_forward = FeedForward(config)
-        self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
-        self.attention_norm = RMSNorm(config.dim, config.norm_eps)
-
-    def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
-        h = x + self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
-        out = h + self.feed_forward(self.ffn_norm(h))
-        return out
     
 class TurboTransformerBlock(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
@@ -306,7 +270,28 @@ class TurboTransformerBlock(nn.Module):
         self.feed_forward = FeedForward(config)
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
-
+    def _attn(self, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor, past_hidden_states: Optional[Tuple[torch.Tensor]] = (), attn_compute_flow = None, comment_attention = False, comment_norm = False) :
+            attn_inputs = []
+            for weight, hid in zip(attn_compute_flow, past_hidden_states):
+                if hid is None:
+                    #     print("=== warnings: Weight > 0 but hidden state is not stored")
+                    continue
+                else:
+                    if weight > 0:
+                        attn_inputs.append(weight * hid) 
+            if len(attn_inputs) > 1:
+                attn_input = torch.stack(attn_inputs, dim=0).sum(dim=0)
+            else:
+                attn_input = attn_inputs[0]
+            
+            if comment_attention == True:
+                return attn_input
+            elif comment_norm == True:
+                return self.attention(attn_input, freqs_cis, mask, input_pos)
+            else:
+                x = self.attention_norm(attn_input)
+                x = self.attention(attn_input, freqs_cis, mask, input_pos)
+                return x
     def forward(self, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor, 
         past_hidden_states: Optional[Tuple[torch.Tensor]] = (),
         attn_residual_flow = None,
@@ -314,7 +299,6 @@ class TurboTransformerBlock(nn.Module):
         mlp_residual_flow = None,
         mlp_compute_flow = None,
         use_tp = False,
-        world_size = 1,
         comment_attention = False,
         comment_mlp = False,
         comment_norm = False,
@@ -325,30 +309,8 @@ class TurboTransformerBlock(nn.Module):
         # ====================== Attention ======================
         # ========== compute connection ==========
         
-        attn_inputs = []
-        for weight, hid in zip(attn_compute_flow, past_hidden_states):
-            if hid is None:
-                # if weight > 0:
-                #     print("=== warnings: Weight > 0 but hidden state is not stored")
-                continue
-            else:
-                if weight > 0:
-                    attn_inputs.append(weight * hid) 
-        if len(attn_inputs) > 1:
-            attn_input = torch.stack(attn_inputs, dim=0).sum(dim=0)
-        else:
-            attn_input = attn_inputs[0]
+        self._attn(input_pos, freqs_cis, mask, past_hidden_states, attn_compute_flow, comment_attention, comment_norm)
         # last layer mlp'communication happens here (last module) ==> overlap calculation and communication
-        if comment_attention == True:
-            # print("we do w/o attention")
-            attn_out = attn_input
-        elif comment_norm == True:
-            # print("we do attention w/o norm")
-            attn_out = self.attention(attn_input, freqs_cis, mask, input_pos)
-        else:
-            # print("we do full attention")
-            attn_out = self.attention(self.attention_norm(attn_input), freqs_cis, mask, input_pos) 
-        
         
         if all_reduce_stream is not None:
             all_reduce_stream.synchronize() # before calculation of residual we need mlp's all-reduce to finish

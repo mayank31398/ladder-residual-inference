@@ -12,7 +12,7 @@ from torch import Tensor
 
 import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
-from .tp import maybe_init_dist
+from .tp import maybe_init_dist, all_reduce_func
 
 from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward
 
@@ -26,18 +26,6 @@ maybe_init_dist()
 tp_rank = dist.get_rank()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
-
-
-def all_reduce_func(x: torch.Tensor, clone: bool) -> torch.Tensor:
-    if torch.compiler.is_compiling():
-        x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-    else:
-        if clone:
-            x = x.clone()
-
-        dist.all_reduce(x)
-
-    return x
 
 
 @dataclass

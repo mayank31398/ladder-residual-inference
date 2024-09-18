@@ -12,7 +12,7 @@ from torch import Tensor
 
 import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
-from .tp import maybe_init_dist
+from .tp import maybe_init_dist, all_reduce_func
 
 from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward
 

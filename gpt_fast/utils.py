@@ -15,25 +15,6 @@ tp_rank = dist.get_rank()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
 
-class KVCache(nn.Module):
-    def __init__(self, max_batch_size, max_seq_length, n_heads, head_dim, dtype=torch.bfloat16):
-        super().__init__()
-        cache_shape = (max_batch_size, n_heads, max_seq_length, head_dim)
-        self.register_buffer('k_cache', torch.zeros(cache_shape, dtype=dtype))
-        self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
-
-    def update(self, input_pos, k_val, v_val):
-        # input_pos: [S], k_val: [B, H, S, D]
-        assert input_pos.shape[0] == k_val.shape[2]
-
-        k_out = self.k_cache
-        v_out = self.v_cache
-        k_out[:, :, input_pos] = k_val
-        v_out[:, :, input_pos] = v_val
-
-        return k_out, v_out
-
-
 class RMSNorm(nn.Module):
     def __init__(self, dim: int, eps: float = 1e-5):
         super().__init__()
@@ -119,6 +100,23 @@ class FeedForward(nn.Module):
         y = self.w2(F.silu(g) * u)
         return y
 
+class KVCache(nn.Module):
+    def __init__(self, max_batch_size, max_seq_length, n_heads, head_dim, dtype=torch.bfloat16):
+        super().__init__()
+        cache_shape = (max_batch_size, n_heads, max_seq_length, head_dim)
+        self.register_buffer('k_cache', torch.zeros(cache_shape, dtype=dtype))
+        self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+
+    def update(self, input_pos, k_val, v_val):
+        # input_pos: [S], k_val: [B, H, S, D]
+        assert input_pos.shape[0] == k_val.shape[2]
+
+        k_out = self.k_cache
+        v_out = self.v_cache
+        k_out[:, :, input_pos] = k_val
+        v_out[:, :, input_pos] = v_val
+
+        return k_out, v_out
 
 class Attention(nn.Module):
     def __init__(self, config):
