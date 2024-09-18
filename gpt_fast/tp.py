@@ -18,7 +18,6 @@ else:
 from model import Attention, FeedForward, Transformer
 from quantize import WeightOnlyInt4Linear
 
-
 def _get_rank() -> int:
     return int(os.environ.get("LOCAL_RANK", "0"))
 
@@ -38,10 +37,6 @@ def maybe_init_dist() -> Optional[int]:
         # provided by torchrun
         rank = _get_rank()
         world_size = _get_world_size()
-
-        if world_size < 2:
-            # too few gpus to parallelize, tp is no-op
-            return None
     except KeyError:
         # not run via torchrun, no-op
         return None
@@ -79,11 +74,9 @@ def _apply_tp_linear(linear: nn.Linear, style: str, weight_splits: List[int] = [
         v = shard(v, dim)
         return torch.cat((q,k,v), dim=dim)
 
-    # shard
     if weight_splits:
         # attention
         assert len(weight_splits) == 3
-
         if isinstance(linear, WeightOnlyInt4Linear):
             sharded_weight = shard_qkv(linear.weight, shard_dim, [i//8 for i in weight_splits])
             linear.scales_and_zeros = shard_qkv(linear.scales_and_zeros, 1 - shard_dim, weight_splits)
@@ -119,8 +112,8 @@ def _apply_tp_ffn(mlp: FeedForward) -> None:
     _apply_tp_linear(mlp.w2, "rowwise")
 
     world_size = _get_world_size()
-    mlp.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
-        output, "sum", list(range(world_size))))
+    # mlp.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
+    #     output, "sum", list(range(world_size))))
 
 
 def _apply_tp_attn(attn: Attention) -> None:
@@ -138,11 +131,10 @@ def _apply_tp_attn(attn: Attention) -> None:
     attn.head_dim = attn.dim // attn.n_head
     attn.n_local_heads = attn.n_local_heads // world_size
 
-    attn.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
-        output[0], "sum", list(range(world_size))))
+    # attn.register_forward_hook(lambda _module, _input, output: funcol.all_reduce(
+    #     output[0], "sum", list(range(world_size))))
 
-
-def _apply_tp_Transformer(Transformer: Transformer) -> None:
+def _apply_tp_Transformer(Transformer) -> None:
     # overwrite config before Transformer.setup_cache is called
     world_size = _get_world_size()
     Transformer.config.n_head = Transformer.config.n_head // world_size
@@ -151,8 +143,12 @@ def _apply_tp_Transformer(Transformer: Transformer) -> None:
 
 
 def apply_tp(model: Transformer) -> None:
+    model.tp = True
+    model.world_size = _get_world_size()
     _apply_tp_Transformer(model)
+    index = 0
     for block in model.layers:
-        # Apply to MLP
-        _apply_tp_ffn(block.feed_forward)
+        print(f'applying tp to block attention {index}')
+        #_apply_tp_ffn(block.feed_forward) # MLP has been split in the gpt-residual
         _apply_tp_attn(block.attention)
+    print('we finish operating the TP!')

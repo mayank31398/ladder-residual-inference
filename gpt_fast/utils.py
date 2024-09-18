@@ -6,7 +6,7 @@ from torch import Tensor
 import math
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 import torch.distributed as dist
-from flash_attn import flash_attn_func
+from flash_attn import flash_attn_func, flash_attn_with_kvcache
 from .tp import maybe_init_dist
 
 
@@ -165,23 +165,51 @@ class Attention(nn.Module):
 
         q = apply_rotary_emb(q, freqs_cis)
         k = apply_rotary_emb(k, freqs_cis)
-
-        q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
-
-        if self.kv_cache is not None:
-            k, v = self.kv_cache.update(input_pos, k, v)
-
-        k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-        v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-
+    
         if torch.compiler.is_compiling():
+            q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
+
+            if self.kv_cache is not None:
+                k, v = self.kv_cache.update(input_pos, k, v)
+
+            k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
+            v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
             y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
         else:
-            q_len = q.size(-2)
-            k = k[..., :q_len, :]
-            v = v[..., :q_len, :]
+            q = q.transpose(1, 2)
+            if self.kv_cache is not None:
+                k_cache = self.kv_cache.k_cache 
+                v_cache = self.kv_cache.v_cache
 
-            y = flash_attn_func(q, k, v, causal=True)
+                if not hasattr(self.kv_cache, 'cache_seqlens'):
+                    self.kv_cache.cache_seqlens = torch.zeros(bsz, dtype=torch.int32, device=x.device)
+                cache_seqlens = self.kv_cache.cache_seqlens  # (batch_size,)
+
+                seqlen_new = seqlen  
+                y = flash_attn_with_kvcache(
+                    q,                      # (batch_size, n_heads, seqlen_q, head_dim)
+                    k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
+                    v_cache,
+                    k=k,                    # (batch_size, seqlen_new, n_local_heads, head_dim)
+                    v=v,
+                    cache_seqlens=cache_seqlens,
+                    cache_batch_idx=None,   
+                    cache_leftpad=None,
+                    block_table=None,
+                    rotary_cos=None,        
+                    rotary_sin=None,
+                    softmax_scale=None,     
+                    causal=True,
+                )
+
+                self.kv_cache.cache_seqlens += seqlen_new 
+                
+            else:
+                q_len = q.size(-2)
+                k = k[..., :q_len, :]
+                v = v[..., :q_len, :]
+
+                y = flash_attn_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)

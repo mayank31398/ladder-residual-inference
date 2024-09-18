@@ -22,9 +22,8 @@ import argparse
 
 torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
-# Experimental features to reduce compilation times, will be on by default in future
 torch._inductor.config.fx_graph_cache = True 
-torch._functorch.config.enable_autograd_cache = True
+# torch._functorch.config.enable_autograd_cache = True
 
 default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -32,14 +31,16 @@ default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
-from gpt_fast import GPTDense, GPTEnsemble, GPTParallel, GPTLadder
-
+from gpt_fast import GPTDense, GPTEnsemble, GPTParallel, GPTLadder, GPTResidual
+from gpt_fast.tp import _get_world_size, apply_tp
+        
 
 _MODELS = {
     "gpt_dense": GPTDense,
     "gpt_ensemble": GPTEnsemble,
     "gpt_parallel": GPTParallel,
     "gpt_ladder": GPTLadder,
+    "gpt_residual":GPTResidual,
 }
 
 
@@ -81,18 +82,19 @@ def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **
     return sample(logits, **sampling_kwargs)[0]
 
 
-def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, enable_flash: bool = False, enable_mem_efficient: bool = False, enable_math: bool = True, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
     # input_pos: [B, 1]
     assert input_pos.shape[-1] == 1
-    logits = model(x, input_pos)
+    with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=enable_mem_efficient, enable_math=enable_math): # Actually better for Inductor to codegen attention here
+        logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)
 
 
 @torch.no_grad()
-def decode_n_tokens(model: torch.nn.Module, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, callback=lambda _: _, **sampling_kwargs):
+def decode_n_tokens(model: torch.nn.Module, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, enable_flash: bool = False, enable_mem_efficient: bool = False, enable_math: bool = True, callback=lambda _: _, **sampling_kwargs):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
-        with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True): # Actually better for Inductor to codegen attention here
+        with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=enable_mem_efficient, enable_math=enable_math): # Actually better for Inductor to codegen attention here
             next_token, next_prob = decode_one_token(
                 model, cur_token, input_pos, **sampling_kwargs
             )
@@ -114,6 +116,7 @@ def generate(
     model: torch.nn.Module,
     prompt: torch.Tensor,
     max_new_tokens: int,
+    device,
     batch_size: int,
     empty: torch.Tensor,
     *,
@@ -123,15 +126,17 @@ def generate(
     """
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
     """
-
+    root_device = device
+    # create an empty tensor of the expected final shape and fill in the current tokens
     T = prompt.size(-1)
     device = prompt.device
-
+    
     # We are just making the same prompt for every batch
     prompt = prompt.view(1, -1).repeat(batch_size, 1)
     empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
+    torch.cuda.synchronize()
     prefill_start = time.perf_counter()
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
     torch.cuda.synchronize()
@@ -151,7 +156,7 @@ def generate(
 
     empty[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
 
-    return empty
+    return empty, decode_latency, prefill_latency
 
 
 @torch.no_grad()
@@ -182,6 +187,7 @@ def generate_using_cuda_graphs(
     static_x.copy_(prompt)
     static_input_pos.copy_(torch.arange(0, T, device=device))
 
+    torch.cuda.synchronize()
     prefill_start = time.perf_counter()
     prefill_graph.replay()
     torch.cuda.synchronize()
@@ -193,6 +199,7 @@ def generate_using_cuda_graphs(
     static_cur_token.copy_(static_next_token)
     static_decode_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
 
+    torch.cuda.synchronize()
     decode_start = time.perf_counter()
     decode_graph.replay()
     torch.cuda.synchronize()
@@ -203,7 +210,6 @@ def generate_using_cuda_graphs(
 
     return empty
 
-
 def encode_tokens(tokenizer, string, bos=True, device=default_device):
     tokens = tokenizer.encode(string)
     if bos:
@@ -211,18 +217,45 @@ def encode_tokens(tokenizer, string, bos=True, device=default_device):
     return torch.tensor(tokens, dtype=torch.int, device=device)
 
 
-def _load_model(model_name, device, precision):
+def _load_model(model_name, device, precision, use_tp):
     with torch.device('meta'):
-        model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-
+        if model_name == 'gpt_residual':
+            model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1], args.hidden_size, args.vocab_size, args.intermediate_size)
+            
+            if args.comment_attention:
+                model.comment_attention = True
+            
+            if args.comment_mlp:
+                model.comment_mlp = True
+            
+            if args.comment_norm:
+                model.comment_norm = True
+            
+            if args.dist_all_reduce:
+                model.dist_all_reduce = True
+            
+            if args.comment_comm:
+                model.comment_comm = True
+            
+            if args.two_stream:
+                model.all_reduce_stream = torch.cuda.Stream()
+            
+            print_rank_0(f'we comment comm is {model.comment_comm}')
+            print_rank_0(f'models all reduce stream is {model.all_reduce_stream}')
+            
+        else:
+            model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+        
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)
 
+    model._inital_turbo_module(turbo_mode=args.turbo_mode, nonturbo_initial_layers=args.nonturbo_initial_layers, nonturbo_final_layers=args.nonturbo_final_layers, additional_non_turbo_modules=args.additional_non_turbo_modules)
+    
     for p in model.parameters():
         torch.nn.init.normal_(p, mean=0, std=0.02)
 
     print_rank_0(model)
-
+    
     return model.eval()
 
 
@@ -336,14 +369,18 @@ def main(
     global print
     from gpt_fast import maybe_init_dist
     rank = maybe_init_dist()
-    use_tp = rank is not None
+    use_tp = _get_world_size() > 1
+    if use_tp:
+        if rank != 0:
+            # only print on rank 0
+            print = lambda *args, **kwargs: None
 
     print_rank_0(f"Using device={device}")
     precision = torch.bfloat16
 
     print_rank_0("Loading model ...")
     t0 = time.time()
-    model = _load_model(model_name, device, precision)
+    model = _load_model(model_name, device, precision, use_tp)
 
     device_sync(device=device) # MKG
     print_rank_0(f"Time to load model: {time.time() - t0:.02f} seconds")
@@ -353,13 +390,13 @@ def main(
 
     torch.manual_seed(1234)
     model_size, params = _get_model_size(model)
-
+    
     T_new = encoded.size(-1) + max_new_tokens
     max_seq_length = min(T_new, model.config.block_size)
 
     with torch.device(device):
         model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
-
+        
     if compile:
         global decode_one_token, prefill
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
@@ -386,7 +423,7 @@ def main(
             top_k=top_k,
         )
 
-    aggregate_metrics = {'tokens_per_sec': []}
+    aggregate_metrics = {'tokens_per_sec': [], 'decode_latency': [], 'prefill_latency': []}
     start = -5
 
     for i in range(start, num_samples):
@@ -400,6 +437,11 @@ def main(
         if not profile or (use_tp and rank != 0) or i != num_samples - 1:
             prof = contextlib.nullcontext()
         else:
+            # torch.profiler._utils._init_for_cuda_graphs()
+            # prof = torch.profiler.profile(
+            #     on_trace_ready=torch.profiler.tensorboard_trace_handler(f'{profile}'),
+            #     record_shapes=False,
+            #     with_stack=False)
             torch.profiler._utils._init_for_cuda_graphs()
             prof = torch.profiler.profile(
                 activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA],
@@ -427,7 +469,7 @@ def main(
                     empty=empty,
                 )
             else:
-                y = generate(
+                y, decode_latency, prefill_latency = generate(
                     model,
                     encoded,
                     max_new_tokens,
@@ -438,13 +480,27 @@ def main(
                     top_k=top_k,
                 )
 
+            if i == -5:
+                print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
+                continue
+
+        # if hasattr(prof, "export_chrome_trace"):
+        #     if use_tp:
+        #         prof.export_chrome_trace(f"{profile}_rank_{rank}.json")
+        #     else:
+        #         prof.export_chrome_trace(f"{profile}.json")
+
         device_sync(device=device) # MKG
         t = time.perf_counter() - t0
 
         tokens_generated = y.size(-1) - prompt_length
         generated_tokens_sec = tokens_generated / t
         aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
+        aggregate_metrics['decode_latency'].append(decode_latency)
+        aggregate_metrics['prefill_latency'].append(prefill_latency)
         print_rank_0(f"Time for inference {i + 1}: {t:.02f} sec total, {generated_tokens_sec:.02f} tokens/sec")
+        print_rank_0(f"Decode latency: {decode_latency:.02f} sec")
+        print_rank_0(f"Prefill latency: {prefill_latency:.02f} sec")
         print_rank_0(f"Bandwidth achieved: {model_size * generated_tokens_sec / 1e9:.02f} GB/s")
         total_tokens_sec = y.numel() / t
         print_rank_0(f"FLOPS achieved: {params * total_tokens_sec * 2 / 1e12:.02f} TF/s")
@@ -455,7 +511,9 @@ def main(
     print_rank_0(f"Batch Size: {batch_size}")
     print_rank_0(f"Prompt Length: {prompt_length}")
     print_rank_0(f"Generated tokens: {max_new_tokens}")
-    print_rank_0(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'])).item():.2f}")
+    print_rank_0(f"Average decode latency: {torch.mean(torch.tensor(aggregate_metrics['decode_latency'][1:])).item():.02f} sec")
+    print_rank_0(f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'][1:])).item():.02f} sec")
+    print_rank_0(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'][1:])).item():.2f}")
     print_rank_0(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
     dist.destroy_process_group()
@@ -477,7 +535,19 @@ if __name__ == '__main__':
     parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
     parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
     parser.add_argument('--device', type=str, default=default_device, help='Device to use')
-
+    parser.add_argument('--turbo_mode', type=str, default=None, help='Not use any turbo mode')
+    parser.add_argument('--nonturbo_initial_layers', type=int, default=0, help='Initial layers for non-turbo mode')
+    parser.add_argument('--nonturbo_final_layers', type=int, default=0, help='Final layers for non-turbo mode')
+    parser.add_argument('--additional_non_turbo_modules', type=str, nargs='+', default=[], help='List of non-turbo modules')
+    parser.add_argument('--hidden_size', type=int, default=-1, help='New hidden size for the model')
+    parser.add_argument('--vocab_size', type=int, default=-1, help='New vocab size for the model')
+    parser.add_argument('--intermediate_size', type=int, default=-1, help='New intermediate size for the model')
+    parser.add_argument('--comment_attention', action='store_true', help='comment attention')
+    parser.add_argument('--comment_mlp', action='store_true', help='comment mlp')
+    parser.add_argument('--comment_norm', action='store_true', help='comment normalization')
+    parser.add_argument('--comment_comm', action='store_true', help='comment all-reduce')
+    parser.add_argument('--dist_all_reduce', action='store_true', help='Use dist all reduce')
+    parser.add_argument('--two_stream', action='store_true', help='Use two streams for all-reduce')
     args = parser.parse_args()
 
     if args.cuda_graph:
