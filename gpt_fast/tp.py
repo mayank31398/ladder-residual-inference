@@ -153,19 +153,20 @@ def apply_tp(model: Transformer) -> None:
         _apply_tp_attn(block.attention)
     print('we finish operating the TP!')
 
-def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False, tp_group=None) -> torch.Tensor:
+def all_reduce_func(x: torch.Tensor, funcol: bool, clone: bool, async_op=False, tp_group=None) -> torch.Tensor:
     if tp_group is None:
         tp_world_size = dist.get_world_size()
         tp_group = list(range(tp_world_size))
         
-    if compile:
+    if funcol:
         x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-        return x
+        return x, None
     else:
         if clone:
             x = x.clone()
-            if async_op:
-                return dist.all_reduce(x, async_op=async_op)
-            else:
-                dist.all_reduce(x, async_op=op)
-                return x
+        if async_op:
+            handler = dist.all_reduce(x, async_op=async_op)
+            return x, handler
+        else:
+            dist.all_reduce(x)
+            return x, None

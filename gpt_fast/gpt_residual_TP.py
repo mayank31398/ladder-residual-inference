@@ -111,10 +111,12 @@ class GPTResidual(nn.Module):
         self.comment_mlp = False
         self.comment_norm = False
         self.comment_comm = False
-        self.all_reduce_stream = None
         
+        self.all_reduce_stream = None
+        self.clone = True
         self.compile = False
         self.semi_compiled_model=False
+        self.async_op = False
         self.dist_all_reduce = False
         
         
@@ -296,6 +298,29 @@ class TurboTransformerBlock(nn.Module):
                 x = self.attention_norm(attn_input)
                 x = self.attention(attn_input, freqs_cis, mask, input_pos)
                 return x
+    
+    def _ffn(self, input_pos: Tensor, past_hidden_states: Optional[Tuple[torch.Tensor]] = (), mlp_compute_flow = None, comment_mlp = False, comment_norm = False):
+        mlp_inputs = []
+        for weight, hid in zip(mlp_compute_flow, past_hidden_states):
+            if hid is None:
+                # if weight > 0:
+                #     print("=== warnings: Weight > 0 but hidden state is not stored")
+                continue
+            else:
+                if weight > 0:
+                    mlp_inputs.append(weight * hid) 
+        if len(mlp_inputs) > 1:
+            mlp_input = torch.stack(mlp_inputs, dim=0).sum(dim=0)
+        else:
+            mlp_input = mlp_inputs[0]
+        if comment_mlp == True:
+            mlp_out = mlp_input
+        elif comment_norm == True:
+            mlp_out = self.feed_forward(mlp_input)
+        else:
+            mlp_out = self.feed_forward(self.ffn_norm(mlp_input)) 
+        return mlp_out
+    
     def forward(self, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor, 
         past_hidden_states: Optional[Tuple[torch.Tensor]] = (),
         attn_residual_flow = None,
@@ -306,38 +331,39 @@ class TurboTransformerBlock(nn.Module):
         comment_attention = False,
         comment_mlp = False,
         comment_norm = False,
-        dist_all_reduce = False,
         comment_comm = False,
         all_reduce_stream=None,
-        handler=None) -> Tensor:
-        
+        clone=True,
+        compile=False,
+        semi_compiled_model=False,
+        async_op=False,
+        dist_all_reduce=False,
+        attn_handler=None,
+        mlp_handler=None) -> Tensor:
+
         # ====================== Attention ======================
         # ========== compute connection ==========
-        
-        self._attn(input_pos, freqs_cis, mask, past_hidden_states, attn_compute_flow, comment_attention, comment_norm)
-        # last layer mlp'communication happens here (last module) ==> overlap calculation and communication
-        
+        # last time output + residual finished
         if all_reduce_stream is not None:
-            all_reduce_stream.synchronize() # before calculation of residual we need mlp's all-reduce to finish
-            # dist.barrier()
+            all_reduce_stream.synchronize()
+            # dist.barrier() ?
+        
+        if attn_handler is not None:
+            attn_handler.wait()
+            
+        attn_out = self._attn(input_pos, freqs_cis, mask, past_hidden_states, attn_compute_flow, comment_attention, comment_norm)
+        # last layer mlp'communication happens here (last module) ==> overlap calculation and communication
             
         if use_tp and comment_comm == False:
             if all_reduce_stream is not None:
-                if dist_all_reduce:
-                    with torch.cuda.stream(all_reduce_stream):
-                        attn_out[0] = dist.all_reduce(attn_out[0], op=dist.ReduceOp.SUM)
-                else:
-                    with torch.cuda.stream(all_reduce_stream):
-                        attn_out[0] = all_reduce_func(attn_out[0])
+                with torch.cuda.stream(all_reduce_stream):
+                    attn_out[0], attn_handler = all_reduce_func(attn_out[0], clone, compile, async_op)
             else:
-                if dist_all_reduce:
-                    attn_out[0] = dist.all_reduce(attn_out[0], op=dist.ReduceOp.SUM)
-                else:
-                    attn_out[0] = all_reduce_func(attn_out[0])
-                # attn_out[0] = all_reduce_func(attn_out[0])
-
+                attn_out[0], attn_handler = all_reduce_func(attn_out[0], clone, compile, async_op)
         
+        # ====================== Attention ======================
         # ========== residual connection ==========
+        # last time attn output fisnihed
         attn_residuals = []
         for weight, hid in zip(attn_residual_flow, past_hidden_states):
             if hid is None:
@@ -364,44 +390,22 @@ class TurboTransformerBlock(nn.Module):
         
         # ===================== MLP =====================
         # ========== compute connection ==========
-        mlp_inputs = []
-        for weight, hid in zip(mlp_compute_flow, past_hidden_states):
-            if hid is None:
-                # if weight > 0:
-                #     print("=== warnings: Weight > 0 but hidden state is not stored")
-                continue
-            else:
-                if weight > 0:
-                    mlp_inputs.append(weight * hid) 
-        if len(mlp_inputs) > 1:
-            mlp_input = torch.stack(mlp_inputs, dim=0).sum(dim=0)
-        else:
-            mlp_input = mlp_inputs[0]
-        if comment_mlp == True:
-            # print("we do w/o mlp")
-            mlp_out = mlp_input
-        elif comment_norm == True:
-            # print("we do mlp w/o norm")
-            mlp_out = self.feed_forward(mlp_input)
-        else:
-            # print("we do full mlp")
-            mlp_out = self.feed_forward(self.ffn_norm(mlp_input)) 
-        
         if all_reduce_stream is not None:
-            all_reduce_stream.synchronize() # before calculation of residual we need attention's all-reduce to finish
+            all_reduce_stream.synchronize()
             #dist.barrier()
-        
+        if mlp_handler is not None:
+            mlp_handler.wait()
+        mlp_out = self._ffn(input_pos, past_hidden_states, mlp_compute_flow, comment_mlp, comment_norm)
         if use_tp and comment_comm == False:
             if all_reduce_stream is not None:
                 with torch.cuda.stream(all_reduce_stream):
-                    mlp_out = all_reduce_func(mlp_out)
+                    mlp_out, mlp_handler = all_reduce_func(mlp_out, clone, compile, async_op)
             else:
-                dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM)
-                # mlp_out = all_reduce_func(mlp_out)
-                # handle = dist.all_reduce(mlp_out, op=dist.ReduceOp.SUM, async_op=True)
-                # handle.wait()
+                mlp_out, mlp_handler = all_reduce_func(mlp_out, clone, compile, async_op)
         
+        # ===================== MLP =====================
         # ========== residual connection ==========
+        # last time mlp's output finished
         mlp_residuals = []
         for weight, hid in zip(mlp_residual_flow, past_hidden_states):
             if hid is None:

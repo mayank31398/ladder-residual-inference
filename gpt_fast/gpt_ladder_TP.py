@@ -72,7 +72,6 @@ transformer_configs = {
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
-
     "llama-3-8b": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000),
     "llama-3-70b": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000),
     "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=8, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
@@ -94,6 +93,12 @@ class GPTLadder(nn.Module):
         self.mask_cache: Optional[Tensor] = None
         self.max_batch_size = -1
         self.max_seq_length = -1
+        
+        self.two_stream = None
+        self.semi_compiled_model = False
+        self.funcol = False
+        self.clone = False
+        self.async_op = False
 
     def setup_caches(self, max_batch_size, max_seq_length):
         if self.max_seq_length >= max_seq_length and self.max_batch_size >= max_batch_size:
@@ -161,12 +166,14 @@ class LadderTransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
-        def _attn(x, freqs_cis, mask, input_pos):
+        def _attn(residual, previous_attention_out, freqs_cis, mask, input_pos):
+            residual = residual + previous_attention_out
             x = self.attention_norm(x)
             x = self.attention(x, freqs_cis, mask, input_pos)
             return x
 
-        def _ffn(x):
+        def _ffn(residual, previous_mlp_out):
+            residual = residual + previous_mlp_out
             x = self.ffn_norm(x)
             x = self.feed_forward(x)
             return x
@@ -174,56 +181,39 @@ class LadderTransformerBlock(nn.Module):
         self._attn = torch.compile(_attn)
         self._ffn = torch.compile(_ffn)
 
-        self.semi_compiled_model = config.semi_compiled_model
-
     def forward(
         self,
+        attention_handle,
         previous_attention_out: Tensor,
+        mlp_handle,
         previous_mlp_out: Tensor,
         residual: Tensor,
-        attention_handle,
-        mlp_handle,
         input_pos: Tensor,
         freqs_cis: Tensor,
         mask: Tensor,
+        semi_compiled_model: bool = False,
+        funcol: bool = False,
+        clone: bool = False,
+        async_op: bool = False,
     ) -> Tensor:
-        is_compiling = torch.compiler.is_compiling()
-
+        # last attention's sum + attention
         if attention_handle is not None:
             attention_handle.wait()
-
-        residual = residual + previous_attention_out
-
         if self.semi_compiled_model:
-            current_attention_out = self._attn(residual, freqs_cis, mask, input_pos)
-            current_attention_out = current_attention_out.clone()
-            attention_handle = dist.all_reduce(current_attention_out, async_op=True)
+            current_attention_out = self._attn(residual, previous_attention_out, freqs_cis, mask, input_pos)
         else:
+            residual = residual + previous_attention_out
             current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
-
-            if is_compiling:
-                current_attention_out = all_reduce_func(current_attention_out, clone=False)
-                attention_handle = None
-            else:
-                attention_handle = dist.all_reduce(current_attention_out, async_op=True)
-
+        current_attention_out, attention_handle = all_reduce_func(current_attention_out, funcol, clone, async_op)
+        
         if mlp_handle is not None:
             mlp_handle.wait()
-
-        residual = residual + previous_mlp_out
-
         if self.semi_compiled_model:
-            current_mlp_out = self._ffn(residual)
-            current_mlp_out = current_mlp_out.clone()
-            mlp_handle = dist.all_reduce(current_mlp_out, async_op=True)
+            current_mlp_out = self._ffn(residual, previous_mlp_out)
         else:
+            residual = residual + previous_mlp_out  
             current_mlp_out = self.feed_forward(self.ffn_norm(residual))
-
-            if is_compiling:
-                current_mlp_out = all_reduce_func(current_mlp_out, clone=False)
-                mlp_handle = None
-            else:
-                mlp_handle = dist.all_reduce(current_mlp_out, async_op=True)
+        current_mlp_out, mlp_handle = all_reduce_func(current_mlp_out, funcol, clone, async_op)
 
         return current_attention_out, current_mlp_out, residual, attention_handle, mlp_handle
 

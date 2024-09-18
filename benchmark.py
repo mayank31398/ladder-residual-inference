@@ -224,32 +224,37 @@ def _load_model(model_name, device, precision, use_tp):
             
             if args.comment_attention:
                 model.comment_attention = True
-            
             if args.comment_mlp:
                 model.comment_mlp = True
-            
             if args.comment_norm:
                 model.comment_norm = True
-            
-            if args.dist_all_reduce:
-                model.dist_all_reduce = True
-            
             if args.comment_comm:
                 model.comment_comm = True
+            if args.two_stream:
+                model.all_reduce_stream = torch.cuda.Stream()
+                
+        elif model_name == 'gpt_ladder':
+            model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
             
             if args.two_stream:
                 model.all_reduce_stream = torch.cuda.Stream()
             
-            print_rank_0(f'we comment comm is {model.comment_comm}')
-            print_rank_0(f'models all reduce stream is {model.all_reduce_stream}')
-            
+            if args.semi_compiled_model:
+                model.semi_compiled_model = True
+            if args.funcol:
+                model.funcol = True
+            if args.clone:
+                model.clone = True
+            if args.async_op:
+                model.async_op = True
         else:
             model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
         
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)
 
-    model._inital_turbo_module(turbo_mode=args.turbo_mode, nonturbo_initial_layers=args.nonturbo_initial_layers, nonturbo_final_layers=args.nonturbo_final_layers, additional_non_turbo_modules=args.additional_non_turbo_modules)
+    if model_name == 'gpt_residual':
+        model._inital_turbo_module(turbo_mode=args.turbo_mode, nonturbo_initial_layers=args.nonturbo_initial_layers, nonturbo_final_layers=args.nonturbo_final_layers, additional_non_turbo_modules=args.additional_non_turbo_modules)
     
     for p in model.parameters():
         torch.nn.init.normal_(p, mean=0, std=0.02)
@@ -530,9 +535,10 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size to benchmark with')
     parser.add_argument('--top_k', type=int, default=200, help='Top-k for sampling.')
     parser.add_argument('--temperature', type=float, default=0.8, help='Temperature for sampling.')
+    parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
     parser.add_argument('--compile', action='store_true', help='Whether to compile the model.')
     parser.add_argument('--cuda_graph', action='store_true', help='Whether to use cuda graphs the model.')
-    parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
+    parser.add_argument('--semi_compiled_model', action='store_true', help='Whether to use semi-compiled model.')
     parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
     parser.add_argument('--device', type=str, default=default_device, help='Device to use')
     parser.add_argument('--turbo_mode', type=str, default=None, help='Not use any turbo mode')
@@ -546,8 +552,11 @@ if __name__ == '__main__':
     parser.add_argument('--comment_mlp', action='store_true', help='comment mlp')
     parser.add_argument('--comment_norm', action='store_true', help='comment normalization')
     parser.add_argument('--comment_comm', action='store_true', help='comment all-reduce')
-    parser.add_argument('--dist_all_reduce', action='store_true', help='Use dist all reduce')
     parser.add_argument('--two_stream', action='store_true', help='Use two streams for all-reduce')
+    parser.add_argument('--funcol', action='store_true', help='Use funcol')
+    parser.add_argument('--clone', action='store_true', help='Use clone')
+    parser.add_argument('--async_op', action='store_true', help='Use async op')
+    
     args = parser.parse_args()
 
     if args.cuda_graph:
