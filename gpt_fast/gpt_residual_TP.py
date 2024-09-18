@@ -112,7 +112,11 @@ class GPTResidual(nn.Module):
         self.comment_norm = False
         self.comment_comm = False
         self.all_reduce_stream = None
+        
+        self.compile = False
+        self.semi_compiled_model=False
         self.dist_all_reduce = False
+        
         
     def setup_caches(self, max_batch_size, max_seq_length):
         if self.max_seq_length >= max_seq_length and self.max_batch_size >= max_batch_size:
@@ -304,7 +308,8 @@ class TurboTransformerBlock(nn.Module):
         comment_norm = False,
         dist_all_reduce = False,
         comment_comm = False,
-        all_reduce_stream=None) -> Tensor:
+        all_reduce_stream=None,
+        handler=None) -> Tensor:
         
         # ====================== Attention ======================
         # ========== compute connection ==========
@@ -314,7 +319,7 @@ class TurboTransformerBlock(nn.Module):
         
         if all_reduce_stream is not None:
             all_reduce_stream.synchronize() # before calculation of residual we need mlp's all-reduce to finish
-            #dist.barrier()
+            # dist.barrier()
             
         if use_tp and comment_comm == False:
             if all_reduce_stream is not None:

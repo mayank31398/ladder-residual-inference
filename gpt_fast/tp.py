@@ -153,7 +153,7 @@ def apply_tp(model: Transformer) -> None:
         _apply_tp_attn(block.attention)
     print('we finish operating the TP!')
 
-def all_reduce_func(x: torch.Tensor, clone: bool, op=False, async_op=False, tp_group=None) -> torch.Tensor:
+def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False, tp_group=None) -> torch.Tensor:
     if tp_group is None:
         tp_world_size = dist.get_world_size()
         tp_group = list(range(tp_world_size))
