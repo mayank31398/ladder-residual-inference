@@ -28,18 +28,6 @@ tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
 
 
-def all_reduce_func(x: torch.Tensor, clone: bool) -> torch.Tensor:
-    if torch.compiler.is_compiling():
-        x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-    else:
-        if clone:
-            x = x.clone()
-
-        dist.all_reduce(x)
-
-    return x
-
-
 @dataclass
 class ModelArgs:
     block_size: int = 2048
