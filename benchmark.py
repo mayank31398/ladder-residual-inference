@@ -140,7 +140,7 @@ def generate(
     prefill_start = time.perf_counter()
     with (
             torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
-            set_flash_attention(False),
+            set_flash_attention(use_flash_attention),
         ):
         next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
     device_sync(device)

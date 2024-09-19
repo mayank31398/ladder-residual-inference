@@ -194,7 +194,6 @@ class Attention(nn.Module):
                 v_cache = self.kv_cache.v_cache
                 v_cache = v_cache.transpose(1, 2)
                 cache_seqlens = k_cache.size(1)
-
                 y = flash_attn_with_kvcache(
                     q,                      # (batch_size, seqlen_q, n_heads, head_dim)
                     k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
@@ -225,8 +224,9 @@ class Attention(nn.Module):
                 v_var = v.reshape(-1, v.shape[-2], v.shape[-1])
                 lens = torch.full([q.shape[0]], seqlen, dtype=torch.int32)
                 cu_seqlens = torch.cat([torch.tensor([0], dtype=torch.int32), torch.cumsum(lens, dim=0, dtype=torch.int32)]).cuda()
+                # force cu_seqlens as int32
                 seq_len = q_var.size(1)
-                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens, cu_seqlens, seq_len, seq_len, causal=True)
+                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens.int(), cu_seqlens, seq_len, seq_len, causal=True)
         else:
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:

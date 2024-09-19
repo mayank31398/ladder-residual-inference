@@ -161,19 +161,18 @@ class LadderTransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
-        def _attn(residual, previous_attention_out, freqs_cis, mask, input_pos):
-            residual = residual + previous_attention_out
-            current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
-            return residual, current_attention_out
+        def _attn(x, freqs_cis, mask, input_pos):
+            current_attention_out = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+            return current_attention_out
 
         def _ffn(x):
             current_mlp_out = self.feed_forward(self.ffn_norm(x))
             return current_mlp_out
-
-        self._attn = torch.compile(_attn)
-        self._ffn = torch.compile(_ffn)
-
+        
         self.semi_compiled_model = config.semi_compiled_model
+        if self.semi_compiled_model:
+            self._attn = torch.compile(_attn)
+            self._ffn = torch.compile(_ffn)
 
     def forward(
         self,
@@ -188,11 +187,11 @@ class LadderTransformerBlock(nn.Module):
     ) -> Tensor:
         if attention_handle is not None:
             attention_handle.wait()
-
+        
+        residual = residual + previous_attention_out
         if self.semi_compiled_model:
-            residual, current_attention_out = self._attn(residual, previous_attention_out, freqs_cis, mask, input_pos)
+            current_attention_out = self._attn(residual, freqs_cis, mask, input_pos)
         else:
-            residual = residual + previous_attention_out
             current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
 
         current_attention_out, attention_handle = all_reduce_func(current_attention_out, clone=self.semi_compiled_model, async_op=True)
@@ -200,11 +199,10 @@ class LadderTransformerBlock(nn.Module):
         if mlp_handle is not None:
             mlp_handle.wait()
 
+        residual = residual + previous_mlp_out
         if self.semi_compiled_model:
-            residual = residual + previous_mlp_out
             current_mlp_out = self._ffn(residual)
         else:
-            residual = residual + previous_mlp_out  
             current_mlp_out = self.feed_forward(self.ffn_norm(residual))
 
         current_mlp_out, mlp_handle = all_reduce_func(current_mlp_out, clone=self.semi_compiled_model, async_op=True)
