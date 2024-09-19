@@ -12,23 +12,23 @@ from .tp import maybe_init_dist
 import torch.distributed._functional_collectives as funcol
 import itertools
 
-_USE_FLASH_KV_DECODE: bool = False
+_USE_FLASH_ATTENTION: bool = False
 
 @contextmanager
-def set_flash_kv_decode(enable: bool):
-    global _USE_FLASH_KV_DECODE
+def set_flash_attention(enable: bool):
+    global _USE_FLASH_ATTENTION
 
-    original_value = _USE_FLASH_KV_DECODE
-    _USE_FLASH_KV_DECODE = enable
+    original_value = _USE_FLASH_ATTENTION
+    _USE_FLASH_ATTENTION = enable
 
     yield
 
-    _USE_FLASH_KV_DECODE = original_value
+    _USE_FLASH_ATTENTION = original_value
 
 
-def is_flash_kv_decode_enabled() -> bool:
-    global _USE_FLASH_KV_DECODE
-    return _USE_FLASH_KV_DECODE
+def is_flash_attention_enabled() -> bool:
+    global _USE_FLASH_ATTENTION
+    return _USE_FLASH_ATTENTION
 
 
 maybe_init_dist()
@@ -187,34 +187,47 @@ class Attention(nn.Module):
         q = apply_rotary_emb(q, freqs_cis)
         k = apply_rotary_emb(k, freqs_cis)
         
-        if is_flash_kv_decode_enabled():
-            k_cache = self.kv_cache.k_cache # (batch_size, n_local_heads, seqlen_cache, head_dim)
-            k_cache = k_cache.transpose(1, 2)
-            v_cache = self.kv_cache.v_cache
-            v_cache = v_cache.transpose(1, 2)
-            cache_seqlens = k_cache.size(1)
+        if is_flash_attention_enabled():
+            if seqlen <= 1: # decode time 
+                k_cache = self.kv_cache.k_cache # (batch_size, n_local_heads, seqlen_cache, head_dim)
+                k_cache = k_cache.transpose(1, 2)
+                v_cache = self.kv_cache.v_cache
+                v_cache = v_cache.transpose(1, 2)
+                cache_seqlens = k_cache.size(1)
 
-            y = flash_attn_with_kvcache(
-                q,                      # (batch_size, n_heads, seqlen_q, head_dim)
-                k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
-                v_cache,
-                k=k,                    # (batch_size, seqlen_new, n_local_heads, head_dim)
-                v=v,
-                cache_seqlens=cache_seqlens,
-                cache_batch_idx=None,   
-                cache_leftpad=None,
-                block_table=None,
-                rotary_cos=None,        
-                rotary_sin=None,
-                softmax_scale=None,     
-                causal=True,
-            )
-            k_cache = k_cache.transpose(1, 2)
-            v_cache = v_cache.transpose(1, 2)
-            self.kv_cache.k_cache = k_cache
-            self.kv_cache.v_cache = v_cache
-            
-        elif torch.compiler.is_compiling():
+                y = flash_attn_with_kvcache(
+                    q,                      # (batch_size, seqlen_q, n_heads, head_dim)
+                    k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
+                    v_cache,
+                    k=k,                    # (batch_size, seqlen_new, n_local_heads, head_dim)
+                    v=v,
+                    cache_seqlens=cache_seqlens,
+                    cache_batch_idx=None,   
+                    cache_leftpad=None,
+                    block_table=None,
+                    rotary_cos=None,        
+                    rotary_sin=None,
+                    softmax_scale=None,     
+                    causal=True,
+                )
+                k_cache = k_cache.transpose(1, 2)
+                v_cache = v_cache.transpose(1, 2)
+                self.kv_cache.k_cache = k_cache
+                self.kv_cache.v_cache = v_cache
+            else:
+                if self.kv_cache is not None:
+                    k, v = map(lambda x: x.transpose(1, 2), (k, v))
+                    k, v = self.kv_cache.update(input_pos, k, v)
+                    k, v = map(lambda x: x.transpose(1, 2), (k, v))
+                # y = flash_attn_func(q, k, v, causal=True)
+                q_var = q.reshape(-1, q.shape[-2], q.shape[-1])
+                k_var = k.reshape(-1, k.shape[-2], k.shape[-1])
+                v_var = v.reshape(-1, v.shape[-2], v.shape[-1])
+                lens = torch.full([q.shape[0]], seqlen, dtype=torch.int32)
+                cu_seqlens = torch.cat([torch.tensor([0], dtype=torch.int32), torch.cumsum(lens, dim=0, dtype=torch.int32)]).cuda()
+                seq_len = q_var.size(1)
+                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens, cu_seqlens, seq_len, seq_len, causal=True)
+        else:
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:
                 k, v = self.kv_cache.update(input_pos, k, v)
@@ -223,13 +236,6 @@ class Attention(nn.Module):
             v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
 
             y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
-        else:
-            if self.kv_cache is not None:
-                k, v = map(lambda x: x.transpose(1, 2), (k, v))
-                k, v = self.kv_cache.update(input_pos, k, v)
-                k, v = map(lambda x: x.transpose(1, 2), (k, v))
-            # y = flash_attn_func(q, k, v, causal=True)
-            y = flash_attn_varlen_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
