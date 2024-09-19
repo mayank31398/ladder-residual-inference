@@ -11,10 +11,9 @@ import torch.nn as nn
 from torch import Tensor
 
 import torch.distributed as dist
-import torch.distributed._functional_collectives as funcol
 from .tp import maybe_init_dist
 
-from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward
+from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward, all_reduce_func
 
 
 def find_multiple(n: int, k: int) -> int:
@@ -26,18 +25,6 @@ maybe_init_dist()
 tp_rank = dist.get_rank()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
-
-
-def all_reduce_func(x: torch.Tensor, clone: bool) -> torch.Tensor:
-    if torch.compiler.is_compiling():
-        x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-    else:
-        if clone:
-            x = x.clone()
-
-        dist.all_reduce(x)
-
-    return x
 
 
 @dataclass
@@ -173,15 +160,15 @@ class LadderTransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
-        def _attn(x, freqs_cis, mask, input_pos):
-            x = self.attention_norm(x)
-            x = self.attention(x, freqs_cis, mask, input_pos)
-            return x
+        def _attn(residual, previous_attention_out, freqs_cis, mask, input_pos):
+            residual = residual + previous_attention_out
+            current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
+            return residual, current_attention_out
 
-        def _ffn(x):
-            x = self.ffn_norm(x)
-            x = self.feed_forward(x)
-            return x
+        def _ffn(residual, previous_mlp_out):
+            residual = residual + previous_mlp_out
+            current_mlp_out = self.feed_forward(self.ffn_norm(residual))
+            return residual, current_mlp_out
 
         self._attn = torch.compile(_attn)
         self._ffn = torch.compile(_ffn)
@@ -199,43 +186,27 @@ class LadderTransformerBlock(nn.Module):
         freqs_cis: Tensor,
         mask: Tensor,
     ) -> Tensor:
-        is_compiling = torch.compiler.is_compiling()
-
         if attention_handle is not None:
             attention_handle.wait()
 
-        residual = residual + previous_attention_out
-
         if self.semi_compiled_model:
-            current_attention_out = self._attn(residual, freqs_cis, mask, input_pos)
-            current_attention_out = current_attention_out.clone()
-            attention_handle = dist.all_reduce(current_attention_out, async_op=True)
+            residual, current_attention_out = self._attn(residual, previous_attention_out, freqs_cis, mask, input_pos)
         else:
+            residual = residual + previous_attention_out
             current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
 
-            if is_compiling:
-                current_attention_out = all_reduce_func(current_attention_out, clone=False)
-                attention_handle = None
-            else:
-                attention_handle = dist.all_reduce(current_attention_out, async_op=True)
+        current_attention_out, attention_handle = all_reduce_func(current_attention_out, clone=self.semi_compiled_model, async_op=True)
 
         if mlp_handle is not None:
             mlp_handle.wait()
 
-        residual = residual + previous_mlp_out
-
         if self.semi_compiled_model:
-            current_mlp_out = self._ffn(residual)
-            current_mlp_out = current_mlp_out.clone()
-            mlp_handle = dist.all_reduce(current_mlp_out, async_op=True)
+            residual, current_mlp_out = self._ffn(residual, previous_mlp_out)
         else:
+            residual = residual + previous_mlp_out  
             current_mlp_out = self.feed_forward(self.ffn_norm(residual))
 
-            if is_compiling:
-                current_mlp_out = all_reduce_func(current_mlp_out, clone=False)
-                mlp_handle = None
-            else:
-                mlp_handle = dist.all_reduce(current_mlp_out, async_op=True)
+        current_mlp_out, mlp_handle = all_reduce_func(current_mlp_out, clone=self.semi_compiled_model, async_op=True)
 
         return current_attention_out, current_mlp_out, residual, attention_handle, mlp_handle
 

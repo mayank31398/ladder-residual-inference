@@ -1,4 +1,5 @@
 import torch
+from contextlib import contextmanager
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import Optional
@@ -6,8 +7,28 @@ from torch import Tensor
 import math
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 import torch.distributed as dist
-from flash_attn import flash_attn_func
+from flash_attn import flash_attn_func, flash_attn_with_kvcache
 from .tp import maybe_init_dist
+import torch.distributed._functional_collectives as funcol
+
+
+_USE_FLASH_DECODE: bool = False
+
+@contextmanager
+def set_flash_decode(enable: bool):
+    global _USE_FLASH_DECODE
+
+    original_value = _USE_FLASH_DECODE
+    _USE_FLASH_DECODE = enable
+
+    yield
+
+    _USE_FLASH_DECODE = original_value
+
+
+def is_flash_decode_enabled() -> bool:
+    global _USE_FLASH_DECODE
+    return _USE_FLASH_DECODE
 
 
 maybe_init_dist()
@@ -168,18 +189,44 @@ class Attention(nn.Module):
 
         q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
 
-        if self.kv_cache is not None:
-            k, v = self.kv_cache.update(input_pos, k, v)
-
-        k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-        v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
-
-        if torch.compiler.is_compiling():
-            y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
-        else:
+        if is_flash_decode_enabled():
+            q = q.transpose(1, 2)
             q_len = q.size(-2)
             k = k[..., :q_len, :]
             v = v[..., :q_len, :]
+
+            k_cache = self.kv_cache.k_cache
+            v_cache = self.kv_cache.v_cache
+            cache_seqlens = k_cache.size(-2)
+
+            y = flash_attn_with_kvcache(
+                q,                      # (batch_size, n_heads, seqlen_q, head_dim)
+                k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
+                v_cache,
+                k=k,                    # (batch_size, seqlen_new, n_local_heads, head_dim)
+                v=v,
+                cache_seqlens=cache_seqlens,
+                cache_batch_idx=None,   
+                cache_leftpad=None,
+                block_table=None,
+                rotary_cos=None,        
+                rotary_sin=None,
+                softmax_scale=None,     
+                causal=True,
+            )
+            self.kv_cache.k_cache = k_cache
+            self.kv_cache.v_cache = v_cache
+        elif torch.compiler.is_compiling():
+            if self.kv_cache is not None:
+                k, v = self.kv_cache.update(input_pos, k, v)
+
+            k = k.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
+            v = v.repeat_interleave(self.n_head // self.n_local_heads, dim=1)
+
+            y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
+        else:
+            if self.kv_cache is not None:
+                k, v = self.kv_cache.update(input_pos, k, v)
 
             y = flash_attn_func(q, k, v, causal=True)
 
@@ -187,3 +234,13 @@ class Attention(nn.Module):
         y = self.wo(y)
 
         return y
+
+
+def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False) -> torch.Tensor:
+    if torch.compiler.is_compiling() or clone:
+        x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
+        handle = None
+    else:
+        handle = dist.all_reduce(x, async_op=async_op)
+
+    return x, handle

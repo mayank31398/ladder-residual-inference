@@ -13,6 +13,7 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 import torch.distributed as dist
+from gpt_fast.utils import set_flash_decode
 
 def print_rank_0(*args, **kwargs):
     if dist.get_rank() == 0:
@@ -89,10 +90,22 @@ def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.T
 
 
 @torch.no_grad()
-def decode_n_tokens(model: torch.nn.Module, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, callback=lambda _: _, **sampling_kwargs):
+def decode_n_tokens(
+    model: torch.nn.Module,
+    cur_token: torch.Tensor,
+    input_pos: torch.Tensor,
+    num_new_tokens: int,
+    use_flash_decode: bool,
+    callback=lambda _: _,
+    **sampling_kwargs
+):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
-        with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True): # Actually better for Inductor to codegen attention here
+        # Actually better for Inductor to codegen attention here
+        with (
+            torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
+            set_flash_decode(use_flash_decode),
+        ):
             next_token, next_prob = decode_one_token(
                 model, cur_token, input_pos, **sampling_kwargs
             )
@@ -117,6 +130,7 @@ def generate(
     batch_size: int,
     empty: torch.Tensor,
     *,
+    use_flash_decode,
     callback = lambda x: x,
     **sampling_kwargs
 ) -> torch.Tensor:
@@ -132,6 +146,7 @@ def generate(
     empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
+    device_sync(device)
     prefill_start = time.perf_counter()
     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
     torch.cuda.synchronize()
@@ -144,14 +159,14 @@ def generate(
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
     decode_start = time.perf_counter()
-    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
+    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_decode=use_flash_decode, callback=callback, **sampling_kwargs)
     torch.cuda.synchronize()
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
     empty[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
 
-    return empty
+    return empty, decode_latency, prefill_latency
 
 
 @torch.no_grad()
@@ -182,6 +197,7 @@ def generate_using_cuda_graphs(
     static_x.copy_(prompt)
     static_input_pos.copy_(torch.arange(0, T, device=device))
 
+    device_sync(device)
     prefill_start = time.perf_counter()
     prefill_graph.replay()
     torch.cuda.synchronize()
@@ -193,6 +209,7 @@ def generate_using_cuda_graphs(
     static_cur_token.copy_(static_next_token)
     static_decode_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
 
+    device_sync(device)
     decode_start = time.perf_counter()
     decode_graph.replay()
     torch.cuda.synchronize()
@@ -284,6 +301,7 @@ def get_cuda_graphs_for_decode(
     batch_size: int,
     max_new_tokens: int,
     cur_token: torch.Tensor,
+    use_flash_decode: bool,
     **sampling_kwargs
 ):
     T = prompt.size(-1)
@@ -299,6 +317,7 @@ def get_cuda_graphs_for_decode(
             static_cur_token.view(batch_size, -1),
             static_input_pos,
             max_new_tokens - 1,
+            use_flash_decode=use_flash_decode,
             **sampling_kwargs
         )
 
@@ -310,6 +329,7 @@ def get_cuda_graphs_for_decode(
             static_cur_token.view(batch_size, -1),
             static_input_pos,
             max_new_tokens - 1,
+            use_flash_decode=use_flash_decode,
             **sampling_kwargs
         )
 
@@ -329,11 +349,13 @@ def main(
     profile: Optional[Path] = None,
     device=default_device,
     use_cuda_graphs: bool = False,
+    use_flash_decode: bool = False,
 ) -> None:
     """Generates text samples based on a pre-trained Transformer model and tokenizer.
     """
 
-    global print
+    print_rank_0(f"flash_decode is set to {use_flash_decode}")
+
     from gpt_fast import maybe_init_dist
     rank = maybe_init_dist()
     use_tp = rank is not None
@@ -382,11 +404,12 @@ def main(
             batch_size=batch_size,
             max_new_tokens=max_new_tokens,
             cur_token=static_next_token,
+            use_flash_decode=use_flash_decode,
             temperature=temperature,
             top_k=top_k,
         )
 
-    aggregate_metrics = {'tokens_per_sec': []}
+    aggregate_metrics = {'tokens_per_sec': [], 'decode_latency': [], 'prefill_latency': []}
     start = -5
 
     for i in range(start, num_samples):
@@ -427,16 +450,23 @@ def main(
                     empty=empty,
                 )
             else:
-                y = generate(
+                y, decode_latency, prefill_latency = generate(
                     model,
                     encoded,
                     max_new_tokens,
                     batch_size=batch_size,
                     empty=empty,
+                    use_flash_decode=use_flash_decode,
                     callback=callback,
                     temperature=temperature,
                     top_k=top_k,
                 )
+
+        if i == -5:
+            print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
+
+        if i < 0:
+            continue
 
         device_sync(device=device) # MKG
         t = time.perf_counter() - t0
@@ -444,7 +474,11 @@ def main(
         tokens_generated = y.size(-1) - prompt_length
         generated_tokens_sec = tokens_generated / t
         aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
+        aggregate_metrics['decode_latency'].append(decode_latency)
+        aggregate_metrics['prefill_latency'].append(prefill_latency)
         print_rank_0(f"Time for inference {i + 1}: {t:.02f} sec total, {generated_tokens_sec:.02f} tokens/sec")
+        print_rank_0(f"Decode latency: {decode_latency:.02f} sec")
+        print_rank_0(f"Prefill latency: {prefill_latency:.02f} sec")
         print_rank_0(f"Bandwidth achieved: {model_size * generated_tokens_sec / 1e9:.02f} GB/s")
         total_tokens_sec = y.numel() / t
         print_rank_0(f"FLOPS achieved: {params * total_tokens_sec * 2 / 1e12:.02f} TF/s")
@@ -455,6 +489,8 @@ def main(
     print_rank_0(f"Batch Size: {batch_size}")
     print_rank_0(f"Prompt Length: {prompt_length}")
     print_rank_0(f"Generated tokens: {max_new_tokens}")
+    print_rank_0(f"Average decode latency: {torch.mean(torch.tensor(aggregate_metrics['decode_latency'])).item():.02f} sec")
+    print_rank_0(f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'])).item():.02f} sec")
     print_rank_0(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'])).item():.2f}")
     print_rank_0(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
@@ -477,6 +513,7 @@ if __name__ == '__main__':
     parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
     parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
     parser.add_argument('--device', type=str, default=default_device, help='Device to use')
+    parser.add_argument('--use_flash_decode', type=str, default=default_device, help='Device to use')
 
     args = parser.parse_args()
 
@@ -485,5 +522,5 @@ if __name__ == '__main__':
 
     main(
         args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
-        args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph
+        args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph, args.use_flash_decode
     )
