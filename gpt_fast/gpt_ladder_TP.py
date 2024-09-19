@@ -174,16 +174,16 @@ class LadderTransformerBlock(nn.Module):
         def _attn(residual, previous_attention_out, freqs_cis, mask, input_pos, compile):
             # with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=enable_mem_efficient, enable_math=enable_math): # Actually better for Inductor to codegen attention here
             residual = residual + previous_attention_out
-            x = self.attention_norm(x)
-            x = self.attention(x, freqs_cis, mask, input_pos, compile)
-            return x
+            residual = self.attention_norm(residual)
+            residual = self.attention(residual, freqs_cis, mask, input_pos, compile)
+            return residual
 
         def _ffn(residual, previous_mlp_out):
             # with torch.backends.cuda.sdp_kernel(enable_flash=enable_flash, enable_mem_efficient=enable_mem_efficient, enable_math=enable_math): # Actually better for Inductor to codegen attention here
             residual = residual + previous_mlp_out
-            x = self.ffn_norm(x)
-            x = self.feed_forward(x)
-            return x
+            residual = self.ffn_norm(residual)
+            residual = self.feed_forward(residual)
+            return residual
         
         if config.semi_compiled_model:
             self._attn = torch.compile(_attn)

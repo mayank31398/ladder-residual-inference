@@ -1,7 +1,7 @@
-W0918 11:50:56.686000 22745196246848 torch/distributed/run.py:779] 
-W0918 11:50:56.686000 22745196246848 torch/distributed/run.py:779] *****************************************
-W0918 11:50:56.686000 22745196246848 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0918 11:50:56.686000 22745196246848 torch/distributed/run.py:779] *****************************************
+[2024-09-18 14:58:10,249] torch.distributed.run: [WARNING] 
+[2024-09-18 14:58:10,249] torch.distributed.run: [WARNING] *****************************************
+[2024-09-18 14:58:10,249] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2024-09-18 14:58:10,249] torch.distributed.run: [WARNING] *****************************************
 Traceback (most recent call last):
   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 34, in <module>
 Traceback (most recent call last):
@@ -14,35 +14,35 @@ Traceback (most recent call last):
   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 17, in <module>
 
   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 17, in <module>
-    from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward    from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward
-  File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 9, in <module>
+        from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForwardfrom .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward
 
   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 9, in <module>
-    from flash_attn import flash_attn_func, flash_attn_with_kvcache    from flash_attn import flash_attn_func, flash_attn_with_kvcache
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/__init__.py", line 3, in <module>
+  File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 9, in <module>
+        from flash_attn import flash_attn_func, flash_attn_with_kvcachefrom flash_attn import flash_attn_func, flash_attn_with_kvcache
 
   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/__init__.py", line 3, in <module>
-    from flash_attn.flash_attn_interface import (    from flash_attn.flash_attn_interface import (
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/__init__.py", line 3, in <module>
+        from flash_attn.flash_attn_interface import (from flash_attn.flash_attn_interface import (
+
   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 10, in <module>
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 10, in <module>
+        import flash_attn_2_cuda as flash_attn_cudaimport flash_attn_2_cuda as flash_attn_cuda
 
-    import flash_attn_2_cuda as flash_attn_cuda  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 10, in <module>
+ImportErrorImportError: : libc10_cuda.so: cannot open shared object file: No such file or directorylibc10_cuda.so: cannot open shared object file: No such file or directory
 
-ImportError    import flash_attn_2_cuda as flash_attn_cuda: libc10_cuda.so: cannot open shared object file: No such file or directory
-ImportError
-: libc10_cuda.so: cannot open shared object file: No such file or directory
-E0918 11:50:59.004000 22745196246848 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 1572690) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+[2024-09-18 14:58:15,526] torch.distributed.elastic.multiprocessing.api: [ERROR] failed (exitcode: 1) local_rank: 0 (pid: 1595733) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
 Traceback (most recent call last):
   File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 33, in <module>
-    sys.exit(load_entry_point('torch==2.4.1', 'console_scripts', 'torchrun')())
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    sys.exit(load_entry_point('torch==2.2.2', 'console_scripts', 'torchrun')())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 347, in wrapper
     return f(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 812, in main
     run(args)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 803, in run
     elastic_launch(
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 135, in __call__
     return launch_agent(self._config, self._entrypoint, list(args))
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
     raise ChildFailedError(
 torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
 ============================================================
@@ -50,19 +50,19 @@ benchmark.py FAILED
 ------------------------------------------------------------
 Failures:
 [1]:
-  time      : 2024-09-18_11:50:59
+  time      : 2024-09-18_14:58:15
   host      : mk-xii-27.cloud.together.ai
   rank      : 1 (local_rank: 1)
-  exitcode  : 1 (pid: 1572691)
+  exitcode  : 1 (pid: 1595734)
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ------------------------------------------------------------
 Root Cause (first observed failure):
 [0]:
-  time      : 2024-09-18_11:50:59
+  time      : 2024-09-18_14:58:15
   host      : mk-xii-27.cloud.together.ai
   rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 1572690)
+  exitcode  : 1 (pid: 1595733)
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ============================================================
