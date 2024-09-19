@@ -10,25 +10,25 @@ import torch.distributed as dist
 from flash_attn import flash_attn_func, flash_attn_with_kvcache
 from .tp import maybe_init_dist
 import torch.distributed._functional_collectives as funcol
+import itertools
 
-
-_USE_FLASH_DECODE: bool = False
+_USE_FLASH_KV_DECODE: bool = False
 
 @contextmanager
-def set_flash_decode(enable: bool):
-    global _USE_FLASH_DECODE
+def set_flash_kv_decode(enable: bool):
+    global _USE_FLASH_KV_DECODE
 
-    original_value = _USE_FLASH_DECODE
-    _USE_FLASH_DECODE = enable
+    original_value = _USE_FLASH_KV_DECODE
+    _USE_FLASH_KV_DECODE = enable
 
     yield
 
-    _USE_FLASH_DECODE = original_value
+    _USE_FLASH_KV_DECODE = original_value
 
 
-def is_flash_decode_enabled() -> bool:
-    global _USE_FLASH_DECODE
-    return _USE_FLASH_DECODE
+def is_flash_kv_decode_enabled() -> bool:
+    global _USE_FLASH_KV_DECODE
+    return _USE_FLASH_KV_DECODE
 
 
 maybe_init_dist()
@@ -186,18 +186,14 @@ class Attention(nn.Module):
 
         q = apply_rotary_emb(q, freqs_cis)
         k = apply_rotary_emb(k, freqs_cis)
+        
+        if is_flash_kv_decode_enabled():
 
-        q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
-
-        if is_flash_decode_enabled():
-            q = q.transpose(1, 2)
-            q_len = q.size(-2)
-            k = k[..., :q_len, :]
-            v = v[..., :q_len, :]
-
-            k_cache = self.kv_cache.k_cache
+            k_cache = self.kv_cache.k_cache # (batch_size, n_local_heads, seqlen_cache, head_dim)
+            k_cache = k_cache.transpose(1, 2)
             v_cache = self.kv_cache.v_cache
-            cache_seqlens = k_cache.size(-2)
+            v_cache = v_cache.transpose(1, 2)
+            cache_seqlens = k_cache.size(1)
 
             y = flash_attn_with_kvcache(
                 q,                      # (batch_size, n_heads, seqlen_q, head_dim)
@@ -214,9 +210,13 @@ class Attention(nn.Module):
                 softmax_scale=None,     
                 causal=True,
             )
+            k_cache = k_cache.transpose(1, 2)
+            v_cache = v_cache.transpose(1, 2)
+            
             self.kv_cache.k_cache = k_cache
             self.kv_cache.v_cache = v_cache
         elif torch.compiler.is_compiling():
+            q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:
                 k, v = self.kv_cache.update(input_pos, k, v)
 
@@ -226,8 +226,9 @@ class Attention(nn.Module):
             y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, dropout_p=0.0)
         else:
             if self.kv_cache is not None:
+                k, v = map(lambda x: x.transpose(1, 2), (k, v))
                 k, v = self.kv_cache.update(input_pos, k, v)
-
+                k, v = map(lambda x: x.transpose(1, 2), (k, v))
             y = flash_attn_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
@@ -244,3 +245,23 @@ def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False) -> torch.Tenso
         handle = dist.all_reduce(x, async_op=async_op)
 
     return x, handle
+
+
+def _get_model_size(model):
+    model_size = 0
+    params = 0
+    for name, child in model.named_children():
+        if not isinstance(child, torch.nn.Embedding):
+            model_size += sum(
+                [
+                    p.numel() * p.dtype.itemsize
+                    for p in itertools.chain(child.parameters(), child.buffers())
+                ]
+            )
+            params += sum(
+                [
+                    p.numel()
+                    for p in itertools.chain(child.parameters(), child.buffers())
+                ]
+            )
+    return model_size, params

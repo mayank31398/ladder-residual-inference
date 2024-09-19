@@ -3,7 +3,6 @@
 
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
-import itertools
 import sys
 import time
 from pathlib import Path
@@ -13,7 +12,7 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 import torch.distributed as dist
-from gpt_fast.utils import set_flash_decode
+from gpt_fast.utils import set_flash_kv_decode, _get_model_size
 
 def print_rank_0(*args, **kwargs):
     if dist.get_rank() == 0:
@@ -25,7 +24,7 @@ torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
 # Experimental features to reduce compilation times, will be on by default in future
 torch._inductor.config.fx_graph_cache = True 
-torch._functorch.config.enable_autograd_cache = True
+# torch._functorch.config.enable_autograd_cache = True
 
 default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -45,6 +44,7 @@ _MODELS = {
 
 
 def device_sync(device):
+    device = str(device)
     if "cuda" in device:
         torch.cuda.synchronize(device)
     elif ("cpu" in device) or ("mps" in device):
@@ -74,12 +74,25 @@ def sample(logits, temperature: float = 1.0, top_k: Optional[int] = None):
     idx_next = multinomial_sample_one_no_sync(probs)
     return idx_next, probs
 
+def decode_multi_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+    logits = model(x, input_pos)
+    return sample(logits, **sampling_kwargs)
 
 @torch.no_grad()
-def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> torch.Tensor:
+def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, use_flash_kv_decode: bool, **sampling_kwargs) -> torch.Tensor:
     # input_pos: [B, S]
-    logits = model(x, input_pos)
-    return sample(logits, **sampling_kwargs)[0]
+    with (
+            torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
+            set_flash_kv_decode(use_flash_kv_decode),
+        ):
+        res = decode_multi_token(
+            model, x, input_pos, **sampling_kwargs
+        )
+    
+    return res[0]
+    
+    # logits = model(x, input_pos)
+    # return sample(logits, **sampling_kwargs)[0]
 
 
 def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -95,7 +108,7 @@ def decode_n_tokens(
     cur_token: torch.Tensor,
     input_pos: torch.Tensor,
     num_new_tokens: int,
-    use_flash_decode: bool,
+    use_flash_kv_decode: bool,
     callback=lambda _: _,
     **sampling_kwargs
 ):
@@ -104,7 +117,7 @@ def decode_n_tokens(
         # Actually better for Inductor to codegen attention here
         with (
             torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
-            set_flash_decode(use_flash_decode),
+            set_flash_kv_decode(use_flash_kv_decode),
         ):
             next_token, next_prob = decode_one_token(
                 model, cur_token, input_pos, **sampling_kwargs
@@ -117,11 +130,6 @@ def decode_n_tokens(
 
     return new_tokens, new_probs
 
-
-def model_forward(model, x, input_pos):
-    return model(x, input_pos)
-
-
 @torch.no_grad()
 def generate(
     model: torch.nn.Module,
@@ -130,7 +138,7 @@ def generate(
     batch_size: int,
     empty: torch.Tensor,
     *,
-    use_flash_decode,
+    use_flash_kv_decode,
     callback = lambda x: x,
     **sampling_kwargs
 ) -> torch.Tensor:
@@ -140,7 +148,6 @@ def generate(
 
     T = prompt.size(-1)
     device = prompt.device
-
     # We are just making the same prompt for every batch
     prompt = prompt.view(1, -1).repeat(batch_size, 1)
     empty[:, :T] = prompt
@@ -148,7 +155,7 @@ def generate(
 
     device_sync(device)
     prefill_start = time.perf_counter()
-    next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+    next_token = prefill(model, prompt.view(batch_size, -1), input_pos, use_flash_kv_decode=use_flash_kv_decode, **sampling_kwargs)
     torch.cuda.synchronize()
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
@@ -159,7 +166,7 @@ def generate(
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
     decode_start = time.perf_counter()
-    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_decode=use_flash_decode, callback=callback, **sampling_kwargs)
+    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_kv_decode=use_flash_kv_decode, callback=callback, **sampling_kwargs)
     torch.cuda.synchronize()
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
@@ -242,26 +249,6 @@ def _load_model(model_name, device, precision):
 
     return model.eval()
 
-
-def _get_model_size(model):
-    model_size = 0
-    params = 0
-    for name, child in model.named_children():
-        if not isinstance(child, torch.nn.Embedding):
-            model_size += sum(
-                [
-                    p.numel() * p.dtype.itemsize
-                    for p in itertools.chain(child.parameters(), child.buffers())
-                ]
-            )
-            params += sum(
-                [
-                    p.numel()
-                    for p in itertools.chain(child.parameters(), child.buffers())
-                ]
-            )
-    return model_size, params
-
 B_INST, E_INST = "[INST]", "[/INST]"
 
 @torch.no_grad()
@@ -301,7 +288,7 @@ def get_cuda_graphs_for_decode(
     batch_size: int,
     max_new_tokens: int,
     cur_token: torch.Tensor,
-    use_flash_decode: bool,
+    use_flash_kv_decode: bool,
     **sampling_kwargs
 ):
     T = prompt.size(-1)
@@ -317,7 +304,7 @@ def get_cuda_graphs_for_decode(
             static_cur_token.view(batch_size, -1),
             static_input_pos,
             max_new_tokens - 1,
-            use_flash_decode=use_flash_decode,
+            use_flash_kv_decode=use_flash_kv_decode,
             **sampling_kwargs
         )
 
@@ -329,7 +316,7 @@ def get_cuda_graphs_for_decode(
             static_cur_token.view(batch_size, -1),
             static_input_pos,
             max_new_tokens - 1,
-            use_flash_decode=use_flash_decode,
+            use_flash_kv_decode=use_flash_kv_decode,
             **sampling_kwargs
         )
 
@@ -349,12 +336,12 @@ def main(
     profile: Optional[Path] = None,
     device=default_device,
     use_cuda_graphs: bool = False,
-    use_flash_decode: bool = False,
+    use_flash_kv_decode: bool = False,
 ) -> None:
     """Generates text samples based on a pre-trained Transformer model and tokenizer.
     """
 
-    print_rank_0(f"flash_decode is set to {use_flash_decode}")
+    print_rank_0(f"flash_kv_decode is set to {use_flash_kv_decode}")
 
     from gpt_fast import maybe_init_dist
     rank = maybe_init_dist()
@@ -383,12 +370,12 @@ def main(
         model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
 
     if compile:
-        global decode_one_token, prefill
+        global decode_one_token, decode_multi_token, prefill
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
-
-        # Uncomment to squeeze more perf out of prefill
+    
         if compile_prefill:
-            prefill = torch.compile(prefill, fullgraph=True, dynamic=True)
+            prefill = torch.compile(decode_multi_token, fullgraph=True, dynamic=True)
+            
     elif use_cuda_graphs:
         prefill_graph, static_x, static_input_pos, static_next_token = get_cuda_graphs_for_prefill(
             model,
@@ -404,7 +391,7 @@ def main(
             batch_size=batch_size,
             max_new_tokens=max_new_tokens,
             cur_token=static_next_token,
-            use_flash_decode=use_flash_decode,
+            use_flash_kv_decode=use_flash_kv_decode,
             temperature=temperature,
             top_k=top_k,
         )
@@ -432,35 +419,35 @@ def main(
 
         empty = torch.empty(batch_size, T_new, dtype=encoded.dtype, device=device)
 
-        with prof:
-            if use_cuda_graphs:
-                # NOTE we need to reset the static variable pointers for CUDA graph on each geenration here
-                # however, for benchmarking throughput, it doesn't matter
-                y = generate_using_cuda_graphs(
-                    prefill_graph,
-                    static_x,
-                    static_input_pos,
-                    static_next_token,
-                    decode_graph,
-                    static_cur_token,
-                    static_decode_input_pos,
-                    static_generated_tokens,
-                    encoded,
-                    batch_size=batch_size,
-                    empty=empty,
-                )
-            else:
-                y, decode_latency, prefill_latency = generate(
-                    model,
-                    encoded,
-                    max_new_tokens,
-                    batch_size=batch_size,
-                    empty=empty,
-                    use_flash_decode=use_flash_decode,
-                    callback=callback,
-                    temperature=temperature,
-                    top_k=top_k,
-                )
+        # with prof:
+        if use_cuda_graphs:
+            # NOTE we need to reset the static variable pointers for CUDA graph on each geenration here
+            # however, for benchmarking throughput, it doesn't matter
+            y = generate_using_cuda_graphs(
+                prefill_graph,
+                static_x,
+                static_input_pos,
+                static_next_token,
+                decode_graph,
+                static_cur_token,
+                static_decode_input_pos,
+                static_generated_tokens,
+                encoded,
+                batch_size=batch_size,
+                empty=empty,
+            )
+        else:
+            y, decode_latency, prefill_latency = generate(
+                model,
+                encoded,
+                max_new_tokens,
+                batch_size=batch_size,
+                empty=empty,
+                use_flash_kv_decode=use_flash_kv_decode,
+                callback=callback,
+                temperature=temperature,
+                top_k=top_k,
+            )
 
         if i == -5:
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
@@ -511,9 +498,9 @@ if __name__ == '__main__':
     parser.add_argument('--compile', action='store_true', help='Whether to compile the model.')
     parser.add_argument('--cuda_graph', action='store_true', help='Whether to use cuda graphs the model.')
     parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
+    parser.add_argument('--use_flash_kv_decode', action='store_true', help='Whether to flash decode with kv cache in attn (not compile generated one)')
     parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
     parser.add_argument('--device', type=str, default=default_device, help='Device to use')
-    parser.add_argument('--use_flash_decode', type=str, default=default_device, help='Device to use')
 
     args = parser.parse_args()
 
@@ -522,5 +509,5 @@ if __name__ == '__main__':
 
     main(
         args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
-        args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph, args.use_flash_decode
+        args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph, args.use_flash_kv_decode
     )
