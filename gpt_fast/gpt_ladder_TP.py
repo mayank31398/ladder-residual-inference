@@ -72,7 +72,9 @@ transformer_configs = {
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
     "llama-3-8b": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000),
+    "llama-3-8b-semi-compiled": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000, semi_compiled_model=True),
     "llama-3-70b": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000),
+    "llama-3-70b-semi-compiled": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000, semi_compiled_model=True),
     "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=8, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
         rope_scaling=dict(factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192),
     ),
@@ -164,10 +166,9 @@ class LadderTransformerBlock(nn.Module):
             current_attention_out = self.attention(self.attention_norm(residual), freqs_cis, mask, input_pos)
             return residual, current_attention_out
 
-        def _ffn(residual, previous_mlp_out):
-            residual = residual + previous_mlp_out
-            current_mlp_out = self.feed_forward(self.ffn_norm(residual))
-            return residual, current_mlp_out
+        def _ffn(x):
+            current_mlp_out = self.feed_forward(self.ffn_norm(x))
+            return current_mlp_out
 
         self._attn = torch.compile(_attn)
         self._ffn = torch.compile(_ffn)
@@ -200,7 +201,8 @@ class LadderTransformerBlock(nn.Module):
             mlp_handle.wait()
 
         if self.semi_compiled_model:
-            residual, current_mlp_out = self._ffn(residual, previous_mlp_out)
+            residual = residual + previous_mlp_out
+            current_mlp_out = self._ffn(residual)
         else:
             residual = residual + previous_mlp_out  
             current_mlp_out = self.feed_forward(self.ffn_norm(residual))

@@ -7,7 +7,7 @@ from torch import Tensor
 import math
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 import torch.distributed as dist
-from flash_attn import flash_attn_func, flash_attn_with_kvcache
+from flash_attn import flash_attn_func, flash_attn_with_kvcache, flash_attn_varlen_func
 from .tp import maybe_init_dist
 import torch.distributed._functional_collectives as funcol
 import itertools
@@ -188,7 +188,6 @@ class Attention(nn.Module):
         k = apply_rotary_emb(k, freqs_cis)
         
         if is_flash_kv_decode_enabled():
-
             k_cache = self.kv_cache.k_cache # (batch_size, n_local_heads, seqlen_cache, head_dim)
             k_cache = k_cache.transpose(1, 2)
             v_cache = self.kv_cache.v_cache
@@ -212,9 +211,9 @@ class Attention(nn.Module):
             )
             k_cache = k_cache.transpose(1, 2)
             v_cache = v_cache.transpose(1, 2)
-            
             self.kv_cache.k_cache = k_cache
             self.kv_cache.v_cache = v_cache
+            
         elif torch.compiler.is_compiling():
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:
@@ -229,7 +228,8 @@ class Attention(nn.Module):
                 k, v = map(lambda x: x.transpose(1, 2), (k, v))
                 k, v = self.kv_cache.update(input_pos, k, v)
                 k, v = map(lambda x: x.transpose(1, 2), (k, v))
-            y = flash_attn_func(q, k, v, causal=True)
+            # y = flash_attn_func(q, k, v, causal=True)
+            y = flash_attn_varlen_func(q, k, v, causal=True)
 
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)

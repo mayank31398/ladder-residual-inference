@@ -74,34 +74,17 @@ def sample(logits, temperature: float = 1.0, top_k: Optional[int] = None):
     idx_next = multinomial_sample_one_no_sync(probs)
     return idx_next, probs
 
-def decode_multi_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
-    logits = model(x, input_pos)
-    return sample(logits, **sampling_kwargs)
-
 @torch.no_grad()
-def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, use_flash_kv_decode: bool, **sampling_kwargs) -> torch.Tensor:
-    # input_pos: [B, S]
-    with (
-            torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
-            set_flash_kv_decode(use_flash_kv_decode),
-        ):
-        res = decode_multi_token(
-            model, x, input_pos, **sampling_kwargs
-        )
-    
-    return res[0]
-    
-    # logits = model(x, input_pos)
-    # return sample(logits, **sampling_kwargs)[0]
-
+def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> torch.Tensor:
+    logits = model(x, input_pos)
+    return sample(logits, **sampling_kwargs)[0]
 
 def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
     # input_pos: [B, 1]
     assert input_pos.shape[-1] == 1
     logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)
-
-
+    
 @torch.no_grad()
 def decode_n_tokens(
     model: torch.nn.Module,
@@ -155,8 +138,12 @@ def generate(
 
     device_sync(device)
     prefill_start = time.perf_counter()
-    next_token = prefill(model, prompt.view(batch_size, -1), input_pos, use_flash_kv_decode=use_flash_kv_decode, **sampling_kwargs)
-    torch.cuda.synchronize()
+    with (
+            torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
+            set_flash_kv_decode(False),
+        ):
+        next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+    device_sync(device)
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
 
@@ -165,9 +152,10 @@ def generate(
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
+    device_sync(device)
     decode_start = time.perf_counter()
     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_kv_decode=use_flash_kv_decode, callback=callback, **sampling_kwargs)
-    torch.cuda.synchronize()
+    device_sync(device)
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
@@ -374,7 +362,9 @@ def main(
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
     
         if compile_prefill:
-            prefill = torch.compile(decode_multi_token, fullgraph=True, dynamic=True)
+            dynamic = False
+            print_rank_0(f"Compiling prefill with dynamic={dynamic}")
+            prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
             
     elif use_cuda_graphs:
         prefill_graph, static_x, static_input_pos, static_next_token = get_cuda_graphs_for_prefill(

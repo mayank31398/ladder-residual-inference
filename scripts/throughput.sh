@@ -4,7 +4,7 @@
 #                                         --compile \
 #                                         --compile_prefill
 # > tmp.log 2>&1
-model_name=gpt_ladder:llama-3-8b
+model_name=gpt_ladder:llama-3-8b-semi-compiled
 folder=./
 mkdir -p ${folder}
 for bssize in 1
@@ -18,7 +18,6 @@ do
                                         --batch_size ${bssize} \
                                         --prompt_length 13 \
                                         --max_new_tokens 13 \
-                                        --use_flash_kv_decode \
                                         --device cuda
         echo "Finished running with bs=${bssize} tp=${tpsize}"
     done
