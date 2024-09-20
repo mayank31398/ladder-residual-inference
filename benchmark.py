@@ -213,7 +213,7 @@ def generate_using_cuda_graphs(
 
     empty[:, T + 1:] = torch.cat(static_generated_tokens, dim=-1)
 
-    return empty
+    return empty, decode_latency, prefill_latency
 
 
 def encode_tokens(tokenizer, string, bos=True, device=default_device):
