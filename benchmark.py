@@ -426,36 +426,36 @@ def main(
 
         empty = torch.empty(batch_size, T_new, dtype=encoded.dtype, device=device)
 
-        # with prof:
-        if use_cuda_graphs:
-            # NOTE we need to reset the static variable pointers for CUDA graph on each geenration here
-            # however, for benchmarking throughput, it doesn't matter
-            y, decode_latency, prefill_latency = generate_using_cuda_graphs(
-                prefill_graph,
-                static_x,
-                static_input_pos,
-                static_next_token_prefill,
-                decode_graph,
-                static_cur_token,
-                static_decode_input_pos,
-                static_next_token_decode,
-                encoded,
-                batch_size=batch_size,
-                empty=empty,
-                num_new_tokens=max_new_tokens,
-            )
-        else:
-            y, decode_latency, prefill_latency = generate(
-                model,
-                encoded,
-                max_new_tokens,
-                batch_size=batch_size,
-                empty=empty,
-                use_flash_attention=use_flash_attention,
-                callback=callback,
-                temperature=temperature,
-                top_k=top_k,
-            )
+        with prof:
+            if use_cuda_graphs:
+                # NOTE we need to reset the static variable pointers for CUDA graph on each geenration here
+                # however, for benchmarking throughput, it doesn't matter
+                y, decode_latency, prefill_latency = generate_using_cuda_graphs(
+                    prefill_graph,
+                    static_x,
+                    static_input_pos,
+                    static_next_token_prefill,
+                    decode_graph,
+                    static_cur_token,
+                    static_decode_input_pos,
+                    static_next_token_decode,
+                    encoded,
+                    batch_size=batch_size,
+                    empty=empty,
+                    num_new_tokens=max_new_tokens,
+                )
+            else:
+                y, decode_latency, prefill_latency = generate(
+                    model,
+                    encoded,
+                    max_new_tokens,
+                    batch_size=batch_size,
+                    empty=empty,
+                    use_flash_attention=use_flash_attention,
+                    callback=callback,
+                    temperature=temperature,
+                    top_k=top_k,
+                )
 
         if i == -5:
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
