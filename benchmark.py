@@ -470,8 +470,8 @@ def main(
     print_rank_0(f"Batch Size: {batch_size}")
     print_rank_0(f"Prompt Length: {prompt_length}")
     print_rank_0(f"Generated tokens: {max_new_tokens}")
-    print_rank_0(f"Average decode latency: {torch.mean(torch.tensor(aggregate_metrics['decode_latency'])).item():.02f} sec")
-    print_rank_0(f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'])).item():.02f} sec")
+    print_rank_0(f"Average decode latency: {torch.mean(torch.tensor(aggregate_metrics['decode_latency'])).item():.04f} sec")
+    print_rank_0(f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'])).item():.04f} sec")
     print_rank_0(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'])).item():.2f}")
     print_rank_0(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 

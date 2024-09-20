@@ -1,0 +1,192 @@
+W0919 21:20:55.692000 23168457094976 torch/distributed/run.py:779] 
+W0919 21:20:55.692000 23168457094976 torch/distributed/run.py:779] *****************************************
+W0919 21:20:55.692000 23168457094976 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0919 21:20:55.692000 23168457094976 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTLadder(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x LadderTransformerBlock(
+      semi_compiled = True
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
+        (wo): Linear(in_features=1024, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 1.07 seconds
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank1]:W0919 21:21:03.622000 22395225134912 torch/fx/experimental/symbolic_shapes.py:4449] [1/0_1] xindex is not in var_ranges, defaulting to unknown range.
+[rank0]:W0919 21:21:03.692000 22556081145664 torch/fx/experimental/symbolic_shapes.py:4449] [1/0_1] xindex is not in var_ranges, defaulting to unknown range.
+[rank3]:W0919 21:21:03.789000 22364654212928 torch/fx/experimental/symbolic_shapes.py:4449] [1/0_1] xindex is not in var_ranges, defaulting to unknown range.
+[rank2]:W0919 21:21:03.829000 22686669604672 torch/fx/experimental/symbolic_shapes.py:4449] [1/0_1] xindex is not in var_ranges, defaulting to unknown range.
+skipping cudagraphs due to skipping cudagraphs due to cpu device (cat). Found from : 
+   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1126, in flash_attn_varlen_func
+    cu_seqlens_q = torch.cat([torch.tensor([0], dtype=torch.int32), torch.cumsum(lens, dim=0, dtype=torch.int32)]).cuda()
+
+the dtype of cu_seqlens_q is torch.int32
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py:663: UserWarning: Graph break due to unsupported builtin flash_attn_2_cuda.PyCapsule.varlen_fwd. This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind). If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround. If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use torch.compiler.allow_in_graph.
+  torch._dynamo.utils.warn_once(msg)
+skipping cudagraphs due to skipping cudagraphs due to cpu device (cat). Found from : 
+   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1126, in flash_attn_varlen_func
+    cu_seqlens_q = torch.cat([torch.tensor([0], dtype=torch.int32), torch.cumsum(lens, dim=0, dtype=torch.int32)]).cuda()
+
+the dtype of cu_seqlens_q is torch.int32
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py:663: UserWarning: Graph break due to unsupported builtin flash_attn_2_cuda.PyCapsule.varlen_fwd. This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind). If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround. If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use torch.compiler.allow_in_graph.
+  torch._dynamo.utils.warn_once(msg)
+skipping cudagraphs due to skipping cudagraphs due to cpu device (cat). Found from : 
+   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1130, in torch_dynamo_resume_in_flash_attn_varlen_func_at_1128
+    cu_seqlens_k = torch.cat([torch.tensor([0], dtype=torch.int32), torch.cumsum(lens, dim=0, dtype=torch.int32)]).cuda()
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 500, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 430, in main
+[rank1]:     y, decode_latency, prefill_latency = generate(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 145, in generate
+[rank1]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 79, in prefill
+[rank1]:     logits = model(x, input_pos)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 128, in forward
+[rank1]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 193, in forward
+[rank1]:     current_attention_out = self._attn(residual, freqs_cis, mask, input_pos)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 433, in _fn
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 165, in _attn
+[rank1]:     current_attention_out = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 225, in forward
+[rank1]:     y = flash_attn_varlen_func(q.shape[0], q_var, k_var, v_var, q_var, q_var, q.size(1), k.size(1), causal=True)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1128, in flash_attn_varlen_func
+[rank1]:     print(f"the dtype of cu_seqlens_q is {cu_seqlens_q.dtype}")
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1133, in torch_dynamo_resume_in_flash_attn_varlen_func_at_1128
+[rank1]:     return FlashAttnVarlenFunc.apply(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 574, in apply
+[rank1]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 620, in forward
+[rank1]:     out, q, k, v, out_padded, softmax_lse, S_dmask, rng_state = _flash_attn_varlen_forward(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 90, in _flash_attn_varlen_forward
+[rank1]:     out, q, k, v, out_padded, softmax_lse, S_dmask, rng_state = flash_attn_cuda.varlen_fwd(
+[rank1]: RuntimeError: cu_seqlens_q must have dtype int32
+skipping cudagraphs due to skipping cudagraphs due to cpu device (cat). Found from : 
+   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1130, in torch_dynamo_resume_in_flash_attn_varlen_func_at_1128
+    cu_seqlens_k = torch.cat([torch.tensor([0], dtype=torch.int32), torch.cumsum(lens, dim=0, dtype=torch.int32)]).cuda()
+
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 500, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 430, in main
+[rank3]:     y, decode_latency, prefill_latency = generate(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 145, in generate
+[rank3]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 79, in prefill
+[rank3]:     logits = model(x, input_pos)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 128, in forward
+[rank3]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 193, in forward
+[rank3]:     current_attention_out = self._attn(residual, freqs_cis, mask, input_pos)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 433, in _fn
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 165, in _attn
+[rank3]:     current_attention_out = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 225, in forward
+[rank3]:     y = flash_attn_varlen_func(q.shape[0], q_var, k_var, v_var, q_var, q_var, q.size(1), k.size(1), causal=True)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1128, in flash_attn_varlen_func
+[rank3]:     print(f"the dtype of cu_seqlens_q is {cu_seqlens_q.dtype}")
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 1133, in torch_dynamo_resume_in_flash_attn_varlen_func_at_1128
+[rank3]:     return FlashAttnVarlenFunc.apply(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 574, in apply
+[rank3]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 620, in forward
+[rank3]:     out, q, k, v, out_padded, softmax_lse, S_dmask, rng_state = _flash_attn_varlen_forward(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/flash_attn/flash_attn_interface.py", line 90, in _flash_attn_varlen_forward
+[rank3]:     out, q, k, v, out_padded, softmax_lse, S_dmask, rng_state = flash_attn_cuda.varlen_fwd(
+[rank3]: RuntimeError: cu_seqlens_q must have dtype int32
+W0919 21:21:09.195000 23168457094976 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 815415 closing signal SIGTERM
+W0919 21:21:09.201000 23168457094976 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 815417 closing signal SIGTERM
+E0919 21:21:09.419000 23168457094976 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 1 (pid: 815416) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2024-09-19_21:21:09
+  host      : mk-xii-05.cloud.together.ai
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 815418)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-19_21:21:09
+  host      : mk-xii-05.cloud.together.ai
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 815416)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

@@ -232,10 +232,7 @@ class Attention(nn.Module):
                         torch.cumsum(lens, dim=0, dtype=torch.int32),
                     ]
                 ).int()
-
-                # force cu_seqlens as int32
-                seq_len = q_var.size(1)
-                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens, cu_seqlens, seq_len, seq_len, causal=True)
+                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens, cu_seqlens, q.size(1), k.size(1), causal=True)
         else:
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:

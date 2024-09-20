@@ -38,10 +38,7 @@ def maybe_init_dist() -> Optional[int]:
         # provided by torchrun
         rank = _get_rank()
         world_size = _get_world_size()
-
-        if world_size < 2:
-            # too few gpus to parallelize, tp is no-op
-            return None
+        
     except KeyError:
         # not run via torchrun, no-op
         return None
