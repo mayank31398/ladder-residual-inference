@@ -165,12 +165,12 @@ class DenseTransformerBlock(nn.Module):
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
         if self.semi_compiled_model:
             x = self._attn(x, x, freqs_cis, mask, input_pos)
-            x, _ = all_reduce_func(x, clone=True)
+            x = all_reduce_func(x, clone=True)[0]
             x = self._ffn(x, x)
-            x, _ = all_reduce_func(x, clone=True)
+            x = all_reduce_func(x, clone=True)[0]
         else:
-            x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=True)[0]
-            x = x + all_reduce_func(self.feed_forward(self.ffn_norm(x)), clone=True)[0]
+            x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+            x = x + all_reduce_func(self.feed_forward(self.ffn_norm(x)), clone=False)[0]
 
         return x
 

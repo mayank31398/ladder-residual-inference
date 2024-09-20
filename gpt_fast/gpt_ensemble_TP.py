@@ -177,14 +177,14 @@ class EnsembleTransformerBlock(nn.Module):
             x = self._attn(x, freqs_cis, mask, input_pos)
 
             if self.do_attention_all_reduce:
-                x = all_reduce_func(x, clone=True)
+                x = all_reduce_func(x, clone=True)[0]
             else:
                 x = x.clone()
 
             x = self._ffn(x)
 
             if self.do_mlp_all_reduce:
-                x = all_reduce_func(x, clone=True)
+                x = all_reduce_func(x, clone=True)[0]
             else:
                 x = x.clone()
         else:
@@ -193,7 +193,7 @@ class EnsembleTransformerBlock(nn.Module):
 
             if self.do_attention_all_reduce:
                 x = x + residual / tp_world_size
-                x = all_reduce_func(x, clone=False)
+                x = all_reduce_func(x, clone=False)[0]
             else:
                 x = x + residual
 
@@ -202,7 +202,7 @@ class EnsembleTransformerBlock(nn.Module):
 
             if self.do_mlp_all_reduce:
                 x = x + residual / tp_world_size
-                x = all_reduce_func(x, clone=False)
+                x = all_reduce_func(x, clone=False)[0]
             else:
                 x = x + residual
 

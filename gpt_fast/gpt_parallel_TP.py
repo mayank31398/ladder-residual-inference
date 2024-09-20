@@ -153,11 +153,11 @@ class ParallelTransformerBlock(nn.Module):
     def forward(self, x: Tensor, input_pos: Tensor, freqs_cis: Tensor, mask: Tensor) -> Tensor:
         if self.semi_compiled_model:
             x = self._attn_ffn(x, freqs_cis, mask, input_pos)
-            x = all_reduce_func(x, clone=True)
+            x = all_reduce_func(x, clone=True)[0]
             y = x
         else:
             y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
-            y = all_reduce_func(y, clone=False)
+            y = all_reduce_func(y, clone=False)[0]
             y = y + x
 
         return y
