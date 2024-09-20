@@ -19,11 +19,11 @@ do
                                         --model_name ${model_name} \
                                         --num_samples 10 \
                                         --batch_size ${bssize} \
-                                        --prompt_length 10 \
-                                        --max_new_tokens 10 \
+                                        --prompt_length 1024 \
+                                        --max_new_tokens 512 \
                                         --cuda_graph \
                                         --use_flash_attention \
-                                        --device cuda > ${folder}/model_name_bssize${bssize}_tpsize${tpsize}_91.log 2>&1
+                                        --device cuda > tmp.log
         echo "Finished running with bs=${bssize} tp=${tpsize}" 
     done
 done
