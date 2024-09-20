@@ -1,14 +1,14 @@
-W0919 22:23:11.082000 22768503084864 torch/distributed/run.py:779] 
-W0919 22:23:11.082000 22768503084864 torch/distributed/run.py:779] *****************************************
-W0919 22:23:11.082000 22768503084864 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0919 22:23:11.082000 22768503084864 torch/distributed/run.py:779] *****************************************
+W0919 22:28:53.022000 23211414509376 torch/distributed/run.py:779] 
+W0919 22:28:53.022000 23211414509376 torch/distributed/run.py:779] *****************************************
+W0919 22:28:53.022000 23211414509376 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0919 22:28:53.022000 23211414509376 torch/distributed/run.py:779] *****************************************
 flash_kv_decode is set to True
 Using device=cuda
 Loading model ...
-GPTDense(
+GPTLadder(
   (tok_embeddings): Embedding(128256, 4096)
   (layers): ModuleList(
-    (0-31): 32 x DenseTransformerBlock(
+    (0-31): 32 x LadderTransformerBlock(
       semi_compiled = False
       (attention): Attention(
         (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
@@ -25,7 +25,7 @@ GPTDense(
   (norm): RMSNorm()
   (output): Linear(in_features=4096, out_features=128256, bias=False)
 )
-Time to load model: 1.13 seconds
+Time to load model: 0.10 seconds
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
@@ -34,86 +34,49 @@ Time to load model: 1.13 seconds
   self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
-/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py:254: FutureWarning: The combination of ranks + tag as process group identifier has been deprecated. Please switch to using ProcessGroup, DeviceMesh, or group name instead.
-  x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py:254: FutureWarning: The combination of ranks + tag as process group identifier has been deprecated. Please switch to using ProcessGroup, DeviceMesh, or group name instead.
-  x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py:254: FutureWarning: The combination of ranks + tag as process group identifier has been deprecated. Please switch to using ProcessGroup, DeviceMesh, or group name instead.
-  x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py:254: FutureWarning: The combination of ranks + tag as process group identifier has been deprecated. Please switch to using ProcessGroup, DeviceMesh, or group name instead.
-  x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
-Prefill latency: 4.069857522990787 sec
-W0919 22:24:41.940000 22768503084864 torch/distributed/elastic/agent/server/api.py:688] Received Signals.SIGINT death signal, shutting down workers
-W0919 22:24:41.942000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890479 closing signal SIGINT
-W0919 22:24:41.943000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890480 closing signal SIGINT
-W0919 22:24:41.946000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890481 closing signal SIGINT
-W0919 22:24:41.948000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890482 closing signal SIGINT
+Prefill latency: 0.02142908499808982 sec
+Decode latency: 0.05851619699387811 sec
+Compilation time: 0.08 seconds
+Compilation time: 0.07 seconds
+Compilation time: 0.08 seconds
+Compilation time: 0.08 seconds
+Prefill latency: 0.006794016997446306 sec
+Decode latency: 0.05482418400060851 sec
+Prefill latency: 0.0067723210086114705 sec
+Decode latency: 0.0548556450085016 sec
+Prefill latency: 0.006769339001039043 sec
+Decode latency: 0.05485817800217774 sec
+Prefill latency: 0.006767774000763893 sec
+Decode latency: 0.054883245000382885 sec
+Prefill latency: 0.006788322993088514 sec
+Decode latency: 0.05489693100389559 sec
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 504, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 458, in main
+[rank1]:     aggregate_metrics['decode_latency'].append(decode_latency)
+[rank1]: UnboundLocalError: local variable 'decode_latency' referenced before assignment
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 504, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 458, in main
+[rank3]:     aggregate_metrics['decode_latency'].append(decode_latency)
+[rank3]: UnboundLocalError: local variable 'decode_latency' referenced before assignment
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 504, in <module>
+[rank2]:     main(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 458, in main
+[rank2]:     aggregate_metrics['decode_latency'].append(decode_latency)
+[rank2]: UnboundLocalError: local variable 'decode_latency' referenced before assignment
 [rank0]: Traceback (most recent call last):
 [rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 504, in <module>
 [rank0]:     main(
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 434, in main
-[rank0]:     y, decode_latency, prefill_latency = generate(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank0]:     return func(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
-[rank0]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank0]:     return func(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
-[rank0]:     next_token, next_prob = decode_one_token(
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
-[rank0]:     logits = model(x, input_pos)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-[rank0]:     return self._call_impl(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-[rank0]:     return forward_call(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 124, in forward
-[rank0]:     x = layer(x, input_pos, freqs_cis, mask)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-[rank0]:     return self._call_impl(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-[rank0]:     return forward_call(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 172, in forward
-[rank0]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=True)[0]
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/_functional_collectives.py", line 644, in __torch_dispatch__
-[rank0]:     unwrapped_kwargs = tree_map_only(AsyncCollectiveTensor, unwrap, kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_pytree.py", line 1120, in tree_map_only
-[rank0]:     return tree_map(map_only(__type_or_types_or_pred)(func), tree, is_leaf=is_leaf)
-[rank0]: KeyboardInterrupt
-W0919 22:24:42.267000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890479 closing signal SIGTERM
-W0919 22:24:42.271000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890480 closing signal SIGTERM
-W0919 22:24:42.275000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890481 closing signal SIGTERM
-W0919 22:24:42.280000 22768503084864 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 890482 closing signal SIGTERM
-Traceback (most recent call last):
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 680, in run
-    result = self._invoke_run(role)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 835, in _invoke_run
-    time.sleep(monitor_interval)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 79, in _terminate_process_handler
-    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
-torch.distributed.elastic.multiprocessing.api.SignalException: Process 890375 got signal: 2
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 689, in run
-    self._shutdown(e.sigval)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/local_elastic_agent.py", line 347, in _shutdown
-    self._pcontext.close(death_sig)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 544, in close
-    self._close(death_sig=death_sig, timeout=timeout)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 868, in _close
-    handler.proc.wait(time_to_wait)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 1209, in wait
-    return self._wait(timeout=timeout)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 1953, in _wait
-    time.sleep(delay)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 79, in _terminate_process_handler
-    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
-torch.distributed.elastic.multiprocessing.api.SignalException: Process 890375 got signal: 2
-
-During handling of the above exception, another exception occurred:
-
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 458, in main
+[rank0]:     aggregate_metrics['decode_latency'].append(decode_latency)
+[rank0]: UnboundLocalError: local variable 'decode_latency' referenced before assignment
+W0919 22:29:00.970000 23211414509376 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 893675 closing signal SIGTERM
+W0919 22:29:00.971000 23211414509376 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 893676 closing signal SIGTERM
+E0919 22:29:01.149000 23211414509376 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 2 (pid: 893677) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
 Traceback (most recent call last):
   File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
     sys.exit(main())
@@ -125,22 +88,27 @@ Traceback (most recent call last):
     elastic_launch(
   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
     return launch_agent(self._config, self._entrypoint, list(args))
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
-    result = agent.run()
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
-    result = f(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 694, in run
-    self._shutdown()
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/local_elastic_agent.py", line 347, in _shutdown
-    self._pcontext.close(death_sig)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 544, in close
-    self._close(death_sig=death_sig, timeout=timeout)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 868, in _close
-    handler.proc.wait(time_to_wait)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 1209, in wait
-    return self._wait(timeout=timeout)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 1953, in _wait
-    time.sleep(delay)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 79, in _terminate_process_handler
-    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
-torch.distributed.elastic.multiprocessing.api.SignalException: Process 890375 got signal: 2
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2024-09-19_22:29:00
+  host      : mk-xii-05.cloud.together.ai
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 893678)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-19_22:29:00
+  host      : mk-xii-05.cloud.together.ai
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 893677)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
