@@ -169,14 +169,15 @@ def generate_using_cuda_graphs(
     prefill_graph,
     static_x: torch.Tensor,
     static_input_pos: torch.Tensor,
-    static_next_token: torch.Tensor,
+    static_next_token_prefill: torch.Tensor,
     decode_graph,
     static_cur_token: torch.Tensor,
     static_decode_input_pos: torch.Tensor,
-    static_generated_tokens: torch.Tensor,
+    static_next_token_decode: torch.Tensor,
     prompt: torch.Tensor,
     batch_size: int,
     empty: torch.Tensor,
+    num_new_tokens: int,
 ) -> torch.Tensor:
     """
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
@@ -199,19 +200,27 @@ def generate_using_cuda_graphs(
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
 
-    empty[:, T] = static_next_token.squeeze()
-
-    static_cur_token.copy_(static_next_token)
-    static_decode_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
+    empty[:, T] = static_next_token_prefill.squeeze()
 
     device_sync(device)
     decode_start = time.perf_counter()
-    decode_graph.replay()
+
+    static_cur_token.copy_(static_next_token_prefill)
+    static_decode_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
+
+    new_tokens, new_probs = [], []
+    for _ in range(num_new_tokens - 1):
+        decode_graph.replay()
+        static_decode_input_pos += 1
+
+        new_tokens.append(static_next_token_decode.clone())
+        static_cur_token.copy_(static_next_token_decode.clone())
+
     torch.cuda.synchronize()
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
-    empty[:, T + 1:] = torch.cat(static_generated_tokens, dim=-1)
+    empty[:, T + 1:] = torch.cat(new_tokens, dim=-1)
 
     return empty, decode_latency, prefill_latency
 
@@ -289,30 +298,34 @@ def get_cuda_graphs_for_decode(
     for _ in range(3):
         static_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
 
-        decode_n_tokens(
-            model,
-            static_cur_token.view(batch_size, -1),
-            static_input_pos,
-            max_new_tokens - 1,
-            use_flash_attention=use_flash_attention,
-            **sampling_kwargs
-        )
+        decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+
+        # decode_n_tokens(
+        #     model,
+        #     static_cur_token.view(batch_size, -1),
+        #     static_input_pos,
+        #     max_new_tokens - 1,
+        #     use_flash_attention=use_flash_attention,
+        #     **sampling_kwargs
+        # )
 
     static_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
 
     # Capture CUDA graph
     g_decode = torch.cuda.CUDAGraph()
     with torch.cuda.graph(g_decode):
-        static_generated_tokens, _ = decode_n_tokens(
-            model,
-            static_cur_token.view(batch_size, -1),
-            static_input_pos,
-            max_new_tokens - 1,
-            use_flash_attention=use_flash_attention,
-            **sampling_kwargs
-        )
+        static_next_token, _ = decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
 
-    return g_decode, static_cur_token, static_input_pos, static_generated_tokens
+        # static_generated_tokens, _ = decode_n_tokens(
+        #     model,
+        #     static_cur_token.view(batch_size, -1),
+        #     static_input_pos,
+        #     max_new_tokens - 1,
+        #     use_flash_attention=use_flash_attention,
+        #     **sampling_kwargs
+        # )
+
+    return g_decode, static_cur_token, static_input_pos, static_next_token
 
 
 def main(
@@ -371,7 +384,7 @@ def main(
             prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
             
     elif use_cuda_graphs:
-        prefill_graph, static_x, static_input_pos, static_next_token = get_cuda_graphs_for_prefill(
+        prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
             model,
             prompt=encoded,
             batch_size=batch_size,
@@ -379,12 +392,12 @@ def main(
             top_k=top_k,
         )
 
-        decode_graph, static_cur_token, static_decode_input_pos, static_generated_tokens = get_cuda_graphs_for_decode(
+        decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
             model,
             prompt=encoded,
             batch_size=batch_size,
             max_new_tokens=max_new_tokens,
-            cur_token=static_next_token,
+            cur_token=static_next_token_prefill,
             use_flash_attention=use_flash_attention,
             temperature=temperature,
             top_k=top_k,
@@ -421,14 +434,15 @@ def main(
                 prefill_graph,
                 static_x,
                 static_input_pos,
-                static_next_token,
+                static_next_token_prefill,
                 decode_graph,
                 static_cur_token,
                 static_decode_input_pos,
-                static_generated_tokens,
+                static_next_token_decode,
                 encoded,
                 batch_size=batch_size,
                 empty=empty,
+                num_new_tokens=max_new_tokens,
             )
         else:
             y, decode_latency, prefill_latency = generate(
