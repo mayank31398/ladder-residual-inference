@@ -287,6 +287,8 @@ def get_cuda_graphs_for_decode(
 
     # Warm up
     for _ in range(3):
+        static_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
+
         decode_n_tokens(
             model,
             static_cur_token.view(batch_size, -1),
@@ -295,6 +297,8 @@ def get_cuda_graphs_for_decode(
             use_flash_attention=use_flash_attention,
             **sampling_kwargs
         )
+
+    static_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
 
     # Capture CUDA graph
     g_decode = torch.cuda.CUDAGraph()
