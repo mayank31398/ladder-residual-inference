@@ -417,7 +417,7 @@ def main(
         if use_cuda_graphs:
             # NOTE we need to reset the static variable pointers for CUDA graph on each geenration here
             # however, for benchmarking throughput, it doesn't matter
-            y = generate_using_cuda_graphs(
+            y, decode_latency, prefill_latency = generate_using_cuda_graphs(
                 prefill_graph,
                 static_x,
                 static_input_pos,
