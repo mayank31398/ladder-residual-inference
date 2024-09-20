@@ -188,6 +188,8 @@ class Attention(nn.Module):
         k = apply_rotary_emb(k, freqs_cis)
         
         if is_flash_attention_enabled():
+            device = q.device
+
             if seqlen <= 1: # decode time 
                 k_cache = self.kv_cache.k_cache # (batch_size, n_local_heads, seqlen_cache, head_dim)
                 k_cache = k_cache.transpose(1, 2)
@@ -222,11 +224,18 @@ class Attention(nn.Module):
                 q_var = q.reshape(-1, q.shape[-2], q.shape[-1])
                 k_var = k.reshape(-1, k.shape[-2], k.shape[-1])
                 v_var = v.reshape(-1, v.shape[-2], v.shape[-1])
-                lens = torch.full([q.shape[0]], seqlen, dtype=torch.int32)
-                cu_seqlens = torch.cat([torch.tensor([0], dtype=torch.int32), torch.cumsum(lens, dim=0, dtype=torch.int32)]).cuda()
+                lens = torch.full([q.shape[0]], seqlen, dtype=torch.int32, device=device)
+
+                cu_seqlens = torch.cat(
+                    [
+                        torch.tensor([0], dtype=torch.int32, device=device),
+                        torch.cumsum(lens, dim=0, dtype=torch.int32),
+                    ]
+                ).int()
+
                 # force cu_seqlens as int32
                 seq_len = q_var.size(1)
-                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens.int(), cu_seqlens, seq_len, seq_len, causal=True)
+                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens, cu_seqlens, seq_len, seq_len, causal=True)
         else:
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:
