@@ -1,0 +1,116 @@
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTDense(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x DenseTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=6144, bias=False)
+        (wo): Linear(in_features=4096, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=28672, bias=False)
+        (w2): Linear(in_features=14336, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 1.10 seconds
+Prefill latency: 0.2845086380839348 sec
+Decode latency: 4.534250441938639 sec
+Compilation time: 4.82 seconds
+Prefill latency: 0.28594967164099216 sec
+Decode latency: 4.535227144137025 sec
+Prefill latency: 0.2851321380585432 sec
+Decode latency: 4.534865170717239 sec
+Prefill latency: 0.2868223153054714 sec
+Decode latency: 4.533508909866214 sec
+Prefill latency: 0.2872232459485531 sec
+Decode latency: 4.531753107905388 sec
+Prefill latency: 0.2864774987101555 sec
+Decode latency: 4.532681707292795 sec
+Time for inference 1: 4.82 sec total, 424.91 tokens/sec
+Decode latency: 4.53 sec
+Prefill latency: 0.29 sec
+Bandwidth achieved: 6377.83 GB/s
+FLOPS achieved: 31.89 TF/s
+
+Prefill latency: 0.28667860478162766 sec
+Decode latency: 4.533392328768969 sec
+Time for inference 2: 4.82 sec total, 424.81 tokens/sec
+Decode latency: 4.53 sec
+Prefill latency: 0.29 sec
+Bandwidth achieved: 6376.40 GB/s
+FLOPS achieved: 31.88 TF/s
+
+Prefill latency: 0.2863871827721596 sec
+Decode latency: 4.533880325034261 sec
+Time for inference 3: 4.82 sec total, 424.81 tokens/sec
+Decode latency: 4.53 sec
+Prefill latency: 0.29 sec
+Bandwidth achieved: 6376.32 GB/s
+FLOPS achieved: 31.88 TF/s
+
+Prefill latency: 0.2872335519641638 sec
+Decode latency: 4.532997282221913 sec
+Time for inference 4: 4.82 sec total, 424.81 tokens/sec
+Decode latency: 4.53 sec
+Prefill latency: 0.29 sec
+Bandwidth achieved: 6376.33 GB/s
+FLOPS achieved: 31.88 TF/s
+
+Prefill latency: 0.2868608869612217 sec
+Decode latency: 4.531687714159489 sec
+Time for inference 5: 4.82 sec total, 424.96 tokens/sec
+Decode latency: 4.53 sec
+Prefill latency: 0.29 sec
+Bandwidth achieved: 6378.59 GB/s
+FLOPS achieved: 31.89 TF/s
+
+Prefill latency: 0.2866622041910887 sec
+Decode latency: 4.532378904521465 sec
+Time for inference 6: 4.82 sec total, 424.92 tokens/sec
+Decode latency: 4.53 sec
+Prefill latency: 0.29 sec
+Bandwidth achieved: 6377.94 GB/s
+FLOPS achieved: 31.89 TF/s
+
+Prefill latency: 0.28700555860996246 sec
+Decode latency: 4.533572183921933 sec
+Time for inference 7: 4.82 sec total, 424.79 tokens/sec
+Decode latency: 4.53 sec
+Prefill latency: 0.29 sec
+Bandwidth achieved: 6376.02 GB/s
+FLOPS achieved: 31.88 TF/s
+
+Prefill latency: 0.28633994050323963 sec
+W0920 07:18:28.936000 23189092919104 torch/distributed/elastic/agent/server/api.py:688] Received Signals.SIGTERM death signal, shutting down workers
+W0920 07:18:28.936000 23189092919104 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1792099 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
+    result = agent.run()
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
+    result = f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 680, in run
+    result = self._invoke_run(role)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 835, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 79, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1792030 got signal: 15

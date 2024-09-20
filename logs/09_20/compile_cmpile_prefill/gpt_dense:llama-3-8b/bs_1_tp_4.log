@@ -1,0 +1,179 @@
+W0920 07:07:10.724000 23275899123520 torch/distributed/run.py:779] 
+W0920 07:07:10.724000 23275899123520 torch/distributed/run.py:779] *****************************************
+W0920 07:07:10.724000 23275899123520 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0920 07:07:10.724000 23275899123520 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to False
+Using device=cuda
+Loading model ...
+GPTDense(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x DenseTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
+        (wo): Linear(in_features=1024, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 0.98 seconds
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank3]:W0920 07:07:41.441000 22921841923904 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank1]:W0920 07:07:41.561000 22907456857920 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank2]:W0920 07:07:41.760000 23340530931520 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank0]:W0920 07:07:41.760000 22797853394752 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+Prefill latency: 45.252412338973954 sec/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank1]:W0920 07:08:28.670000 22907456857920 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank0]:W0920 07:08:28.831000 22797853394752 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank2]:W0920 07:08:28.881000 23340530931520 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank3]:W0920 07:08:29.231000 22921841923904 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 63.260854774998734 sec
+Compilation time: 108.48 seconds
+Compilation time: 108.50 seconds
+Compilation time: 108.50 seconds
+Compilation time: 108.51 seconds
+Prefill latency: 1.0048936890088953 sec
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 0.7508005280105863 sec
+Prefill latency: 0.015734997985418886 sec
+Decode latency: 0.750101795012597 sec
+Prefill latency: 0.015125034988159314 sec
+Decode latency: 0.74977726401994 sec
+Prefill latency: 0.015098356001544744 sec
+Decode latency: 0.7496912720089313 sec
+Prefill latency: 0.015070108987856656 sec
+Decode latency: 0.7497299289971124 sec
+Time for inference 1: 0.77 sec total, 334.28 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.93 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015063483995618299 sec
+Decode latency: 0.7498050169961061 sec
+Time for inference 2: 0.77 sec total, 334.29 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.97 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.01518402702640742 sec
+Decode latency: 0.7497480410092976 sec
+Time for inference 3: 0.77 sec total, 334.22 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.67 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015183461975539103 sec
+Decode latency: 0.7498479680216406 sec
+Time for inference 4: 0.77 sec total, 334.19 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.49 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015076665993547067 sec
+Decode latency: 0.7498398319876287 sec
+Time for inference 5: 0.77 sec total, 334.24 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.73 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015060495003126562 sec
+Decode latency: 0.7498064319952391 sec
+Time for inference 6: 0.77 sec total, 334.27 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.88 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015074640978127718 sec
+Decode latency: 0.7497317590168677 sec
+Time for inference 7: 0.77 sec total, 334.28 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.94 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015081096003996208 sec
+Decode latency: 0.749724614986917 sec
+Time for inference 8: 0.77 sec total, 334.30 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1518.00 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015096712013473734 sec
+Decode latency: 0.7500309500028379 sec
+Time for inference 9: 0.77 sec total, 334.15 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1517.35 GB/s
+FLOPS achieved: 7.59 TF/s
+
+Prefill latency: 0.015096770017407835 sec
+Decode latency: 0.7502086829917971 sec
+Time for inference 10: 0.77 sec total, 334.06 tokens/sec
+Decode latency: 0.75 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 1516.93 GB/s
+FLOPS achieved: 7.58 TF/s
+
+==========
+Batch Size: 1
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 0.7498 sec
+Average prefill latency: 0.0151 sec
+Average tokens/sec: 334.23
+Memory used: 6.38 GB

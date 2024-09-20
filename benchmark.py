@@ -466,7 +466,7 @@ def main(
         device_sync(device=device) # MKG
         t = time.perf_counter() - t0
 
-        tokens_generated = y.size(-1) - prompt_length
+        tokens_generated = (y.size(-1) - prompt_length)*y.size(0)
         generated_tokens_sec = tokens_generated / t
         aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
         aggregate_metrics['decode_latency'].append(decode_latency)
