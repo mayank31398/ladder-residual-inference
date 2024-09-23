@@ -1,9 +1,9 @@
-mode=use_flash_attention
-for model_name in "gpt_ladder:llama-3-8b" "gpt_dense:llama-3-8b" "gpt_ensemble:llama-3-8b-upper-bound" "gpt_parallel:llama-3-8b" "gpt_ensemble:llama-3-8b"
+mode=compile_cmpile_prefill
+for model_name in "gpt_dense:llama-3-8b" "gpt_ensemble:llama-3-8b-upper-bound" "gpt_parallel:llama-3-8b" "gpt_ensemble:llama-3-8b"
 do
-    folder=./logs/09_20/${mode}/${model_name}
+    folder=./logs/09_20_float16/${mode}/${model_name}
     mkdir -p ${folder}
-    for bssize in 1 4 8 16 64
+    for bssize in 1 4 8
     do
         for tpsize in 1 2 4 8
         do
@@ -14,7 +14,8 @@ do
                                             --batch_size ${bssize} \
                                             --prompt_length 1024 \
                                             --max_new_tokens 256 \
-                                            --use_flash_attention \
+                                            --compile \
+                                            --compile_prefill \
                                             --device cuda 2>&1 | tee ${folder}/bs_${bssize}_tp_${tpsize}.log
             echo "Finished running with bs=${bssize} tp=${tpsize}" 
         done

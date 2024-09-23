@@ -1,0 +1,300 @@
+W0920 20:30:51.985000 23380142745408 torch/distributed/run.py:779] 
+W0920 20:30:51.985000 23380142745408 torch/distributed/run.py:779] *****************************************
+W0920 20:30:51.985000 23380142745408 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0920 20:30:51.985000 23380142745408 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to False
+Using device=cuda
+Loading model ...
+GPTParallel(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x ParallelTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=768, bias=False)
+        (wo): Linear(in_features=512, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=3584, bias=False)
+        (w2): Linear(in_features=1792, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 1.00 seconds
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank1]:W0920 20:31:21.124000 22684188022592 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank4]:W0920 20:31:21.214000 23261041030976 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank0]:W0920 20:31:21.270000 22389187225408 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank6]:W0920 20:31:21.420000 22920434108224 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank5]:W0920 20:31:21.532000 23331379357504 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank2]:W0920 20:31:21.603000 22834312038208 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank7]:W0920 20:31:21.643000 22845410821952 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank3]:W0920 20:31:21.654000 23123477841728 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+Prefill latency: 62.25230684876442 sec
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank1]:W0920 20:32:23.442000 22684188022592 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank3]:W0920 20:32:23.728000 23123477841728 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank2]:W0920 20:32:23.847000 22834312038208 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank0]:W0920 20:32:23.956000 22389187225408 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank6]:W0920 20:32:38.238000 22920434108224 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank5]:W0920 20:32:38.343000 23331379357504 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank4]:W0920 20:32:38.360000 23261041030976 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank7]:W0920 20:32:38.383000 22845410821952 torch/fx/experimental/symbolic_shapes.py:4449] [1/0] xindex is not in var_ranges, defaulting to unknown range.
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 86.09156108647585 sec
+Compilation time: 148.34 seconds
+Compilation time: 148.33 seconds
+Compilation time: 148.35 seconds
+Compilation time: 148.35 seconds
+Compilation time: 148.32 seconds
+Compilation time: 148.33 seconds
+Compilation time: 148.33 secondsCompilation time: 148.39 seconds
+
+Prefill latency: 1.5556136202067137 sec
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 4.450481284409761 sec
+Prefill latency: 0.1740308664739132 sec
+Decode latency: 29.83725280314684 sec
+Prefill latency: 0.06022842414677143 sec
+Decode latency: 10.469550933688879 sec
+Prefill latency: 0.06016581319272518 sec
+Decode latency: 11.354227377101779 sec
+Prefill latency: 0.08526105619966984 sec
+Decode latency: 18.955507781356573 sec
+Time for inference 1: 19.04 sec total, 107.54 tokens/sec
+Decode latency: 18.96 sec
+Prefill latency: 0.09 sec
+Bandwidth achieved: 300.68 GB/s
+FLOPS achieved: 1.50 TF/s
+
+Prefill latency: 0.06039233133196831 sec
+Decode latency: 3.8676763400435448 sec
+Time for inference 2: 3.93 sec total, 521.13 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 1457.10 GB/s
+FLOPS achieved: 7.29 TF/s
+
+Prefill latency: 0.060618581250309944 sec
+Decode latency: 8.50661570392549 sec
+Time for inference 3: 8.57 sec total, 238.97 tokens/sec
+Decode latency: 8.51 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 668.16 GB/s
+FLOPS achieved: 3.34 TF/s
+
+Prefill latency: 0.17615459114313126 sec
+Decode latency: 4.614923449233174 sec
+Time for inference 4: 4.80 sec total, 426.94 tokens/sec
+Decode latency: 4.61 sec
+Prefill latency: 0.18 sec
+Bandwidth achieved: 1193.73 GB/s
+FLOPS achieved: 5.97 TF/s
+
+Prefill latency: 0.08527902886271477 sec
+Decode latency: 7.221797663718462 sec
+Time for inference 5: 7.31 sec total, 280.09 tokens/sec
+Decode latency: 7.22 sec
+Prefill latency: 0.09 sec
+Bandwidth achieved: 783.14 GB/s
+FLOPS achieved: 3.92 TF/s
+
+Prefill latency: 0.17420689202845097 sec
+Decode latency: 2.3412354085594416 sec
+Time for inference 6: 2.52 sec total, 811.88 tokens/sec
+Decode latency: 2.34 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 2270.05 GB/s
+FLOPS achieved: 11.35 TF/s
+
+Prefill latency: 0.1356826089322567 sec
+Decode latency: 10.391794299706817 sec
+Time for inference 7: 10.53 sec total, 194.43 tokens/sec
+Decode latency: 10.39 sec
+Prefill latency: 0.14 sec
+Bandwidth achieved: 543.64 GB/s
+FLOPS achieved: 2.72 TF/s
+
+Prefill latency: 0.10116797871887684 sec
+Decode latency: 5.878009652718902 sec
+Time for inference 8: 5.98 sec total, 342.31 tokens/sec
+Decode latency: 5.88 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 957.10 GB/s
+FLOPS achieved: 4.79 TF/s
+
+Prefill latency: 0.06089694797992706 sec
+Decode latency: 4.153143113479018 sec
+Time for inference 9: 4.22 sec total, 485.66 tokens/sec
+Decode latency: 4.15 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 1357.92 GB/s
+FLOPS achieved: 6.79 TF/s
+
+Prefill latency: 0.1741857100278139 sec
+Decode latency: 3.4351695869117975 sec
+Time for inference 10: 3.61 sec total, 566.55 tokens/sec
+Decode latency: 3.44 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 1584.11 GB/s
+FLOPS achieved: 7.92 TF/s
+
+==========
+Batch Size: 8
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 6.9366 sec
+Average prefill latency: 0.1114 sec
+Average tokens/sec: 397.55
+Memory used: 7.92 GB
+[rank0]:[E920 20:45:37.527390475 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 0] Future for ProcessGroup abort timed out after 600000 ms
+[rank5]:[E920 20:45:37.527416156 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 5] Future for ProcessGroup abort timed out after 600000 ms
+[rank7]:[E920 20:45:37.527416267 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 7] Future for ProcessGroup abort timed out after 600000 ms
+[rank3]:[E920 20:45:37.527468546 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 3] Future for ProcessGroup abort timed out after 600000 ms
+[rank6]:[E920 20:45:37.527531645 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 6] Future for ProcessGroup abort timed out after 600000 ms
+[rank4]:[E920 20:45:37.527587494 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 4] Future for ProcessGroup abort timed out after 600000 ms
+[rank2]:[E920 20:45:37.527748573 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 2] Future for ProcessGroup abort timed out after 600000 ms
+[rank1]:[E920 20:45:37.527765968 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 1] Future for ProcessGroup abort timed out after 600000 ms
+[rank5]:[E920 20:50:59.460335030 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 5] First PG on this rank that detected no heartbeat of its watchdog.
+[rank5]:[E920 20:50:59.460404690 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 5] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank7]:[E920 20:50:59.508536880 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 7] First PG on this rank that detected no heartbeat of its watchdog.
+[rank7]:[E920 20:50:59.508605919 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 7] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank1]:[E920 20:50:59.526784623 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 1] First PG on this rank that detected no heartbeat of its watchdog.
+[rank1]:[E920 20:50:59.526833645 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 1] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank0]:[E920 20:50:59.530101901 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 0] First PG on this rank that detected no heartbeat of its watchdog.
+[rank0]:[E920 20:50:59.530167461 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 0] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank3]:[E920 20:50:59.536388232 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 3] First PG on this rank that detected no heartbeat of its watchdog.
+[rank3]:[E920 20:50:59.536439984 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 3] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank6]:[E920 20:50:59.543492869 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 6] First PG on this rank that detected no heartbeat of its watchdog.
+[rank6]:[E920 20:50:59.543547756 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 6] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank4]:[E920 20:50:59.550055325 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 4] First PG on this rank that detected no heartbeat of its watchdog.
+[rank4]:[E920 20:50:59.550113188 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 4] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank2]:[E920 20:50:59.558488284 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 2] First PG on this rank that detected no heartbeat of its watchdog.
+[rank2]:[E920 20:50:59.558543169 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 2] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank5]:[F920 21:00:59.460772274 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 5] [PG 0 (default_pg) Rank 5] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank7]:[F920 21:00:59.508997411 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 7] [PG 0 (default_pg) Rank 7] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank1]:[F920 21:00:59.527148674 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 1] [PG 0 (default_pg) Rank 1] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank0]:[F920 21:00:59.530431051 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 0] [PG 0 (default_pg) Rank 0] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank3]:[F920 21:00:59.536818777 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 3] [PG 0 (default_pg) Rank 3] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank6]:[F920 21:00:59.543914194 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 6] [PG 0 (default_pg) Rank 6] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank4]:[F920 21:00:59.550499630 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 4] [PG 0 (default_pg) Rank 4] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank2]:[F920 21:00:59.558756560 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 2] [PG 0 (default_pg) Rank 2] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+W0920 21:01:00.058000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1519309 closing signal SIGTERM
+W0920 21:01:00.058000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1519310 closing signal SIGTERM
+W0920 21:01:00.058000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1519311 closing signal SIGTERM
+W0920 21:01:00.063000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1519312 closing signal SIGTERM
+W0920 21:01:00.063000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1519313 closing signal SIGTERM
+W0920 21:01:00.063000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1519315 closing signal SIGTERM
+W0920 21:01:00.063000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1519316 closing signal SIGTERM
+E0920 21:01:01.545000 23380142745408 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: -6) local_rank: 5 (pid: 1519314) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+========================================================
+benchmark.py FAILED
+--------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+--------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-20_21:01:00
+  host      : mk-xii-03.cloud.together.ai
+  rank      : 5 (local_rank: 5)
+  exitcode  : -6 (pid: 1519314)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 1519314
+========================================================

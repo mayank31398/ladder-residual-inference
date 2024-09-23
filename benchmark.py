@@ -353,7 +353,7 @@ def main(
     use_tp = rank is not None
 
     print_rank_0(f"Using device={device}")
-    precision = torch.bfloat16
+    precision = torch.float16
 
     print_rank_0("Loading model ...")
     t0 = time.time()

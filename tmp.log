@@ -1,142 +1,163 @@
-W0920 07:24:45.845000 22514074494784 torch/distributed/run.py:779] 
-W0920 07:24:45.845000 22514074494784 torch/distributed/run.py:779] *****************************************
-W0920 07:24:45.845000 22514074494784 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0920 07:24:45.845000 22514074494784 torch/distributed/run.py:779] *****************************************
-[W920 07:24:49.657455916 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
-[W920 07:24:49.659509537 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
-[W920 07:24:49.663156419 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
-[W920 07:24:49.665604584 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
+W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] 
+W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] *****************************************
+W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] *****************************************
+[W920 07:49:19.354316892 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
+[W920 07:49:19.356188469 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
 flash_kv_decode is set to True
 Using device=cuda
 Loading model ...
+[W920 07:49:19.361099252 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
+[W920 07:49:19.362006635 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
 GPTLadder(
-  (tok_embeddings): Embedding(128256, 8192)
+  (tok_embeddings): Embedding(128256, 4096)
   (layers): ModuleList(
-    (0-79): 80 x LadderTransformerBlock(
+    (0-31): 32 x LadderTransformerBlock(
       semi_compiled = False
       (attention): Attention(
-        (wqkv): Linear(in_features=8192, out_features=2560, bias=False)
-        (wo): Linear(in_features=2048, out_features=8192, bias=False)
+        (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
+        (wo): Linear(in_features=1024, out_features=4096, bias=False)
       )
       (feed_forward): FeedForward(
-        (w1): Linear(in_features=8192, out_features=14336, bias=False)
-        (w2): Linear(in_features=7168, out_features=8192, bias=False)
+        (w1): Linear(in_features=4096, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=4096, bias=False)
       )
       (ffn_norm): RMSNorm()
       (attention_norm): RMSNorm()
     )
   )
   (norm): RMSNorm()
-  (output): Linear(in_features=8192, out_features=128256, bias=False)
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
 )
-Time to load model: 0.25 seconds
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-Prefill latency: 3.6376133029989433 sec
-Decode latency: 2.118643241992686 sec
-Compilation time: 5.76 seconds
-Compilation time: 5.76 seconds
-Compilation time: 5.76 seconds
-Compilation time: 5.76 seconds
-Prefill latency: 0.11000501000671647 sec
-Decode latency: 2.077835578995291 sec
-Prefill latency: 0.10992377100046724 sec
-Decode latency: 2.034831661992939 sec
-Prefill latency: 0.10959794098744169 sec
-Decode latency: 2.0303111640096176 sec
-Prefill latency: 0.10819433099823073 sec
-Decode latency: 2.0303064259933308 sec
-Prefill latency: 0.108762054995168 sec
-Decode latency: 2.0461082860128954 sec
-Time for inference 1: 2.16 sec total, 59.38 tokens/sec
-Decode latency: 2.05 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2157.35 GB/s
-FLOPS achieved: 19.42 TF/s
+Time to load model: 0.06 seconds
+[rank0]:[W920 07:49:23.671871161 CUDAGraph.cpp:150] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
+[rank1]:[W920 07:49:24.085549322 CUDAGraph.cpp:150] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
+Prefill latency: 0.04141509399050847 sec
+Decode latency: 0.19402085899491794 sec
+Compilation time: 0.21 seconds
+Compilation time: 0.22 seconds
+Compilation time: 0.25 seconds
+Compilation time: 0.24 seconds
+Prefill latency: 0.017711315013002604 sec
+Decode latency: 0.19402760700904764 sec
+Prefill latency: 0.01755788500304334 sec
+Decode latency: 0.19397363800089806 sec
+Prefill latency: 0.017621892999159172 sec
+Decode latency: 0.1940684620058164 sec
+Prefill latency: 0.01765692900517024 sec
+Decode latency: 0.19394812098471448 sec
+Prefill latency: 0.01757612600340508 sec
+Decode latency: 0.1940133869939018 sec
+Time for inference 1: 0.21 sec total, 603.46 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2740.23 GB/s
+FLOPS achieved: 24.66 TF/s
 
-Prefill latency: 0.10873830199125223 sec
-Decode latency: 2.037600121984724 sec
-Time for inference 2: 2.15 sec total, 59.62 tokens/sec
-Decode latency: 2.04 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2165.95 GB/s
-FLOPS achieved: 19.49 TF/s
+Prefill latency: 0.01752701698569581 sec
+Decode latency: 0.1939559169986751 sec
+Time for inference 2: 0.21 sec total, 603.66 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2741.16 GB/s
+FLOPS achieved: 24.67 TF/s
 
-Prefill latency: 0.10868577999644913 sec
-Decode latency: 2.024517451005522 sec
-Time for inference 3: 2.13 sec total, 59.99 tokens/sec
-Decode latency: 2.02 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2179.26 GB/s
-FLOPS achieved: 19.61 TF/s
+Prefill latency: 0.017564515001140535 sec
+Decode latency: 0.19396337799844332 sec
+Time for inference 3: 0.21 sec total, 603.58 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2740.79 GB/s
+FLOPS achieved: 24.67 TF/s
 
-Prefill latency: 0.10838419399806298 sec
-Decode latency: 2.0258486710081343 sec
-Time for inference 4: 2.13 sec total, 59.96 tokens/sec
-Decode latency: 2.03 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2178.24 GB/s
-FLOPS achieved: 19.60 TF/s
+Prefill latency: 0.017724766017636284 sec
+Decode latency: 0.19405688901315443 sec
+Time for inference 4: 0.21 sec total, 603.08 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2738.50 GB/s
+FLOPS achieved: 24.65 TF/s
 
-Prefill latency: 0.10794929999974556 sec
-Decode latency: 2.024151477002306 sec
-Time for inference 5: 2.13 sec total, 60.02 tokens/sec
-Decode latency: 2.02 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2180.39 GB/s
-FLOPS achieved: 19.62 TF/s
+Prefill latency: 0.017635127995163202 sec
+Decode latency: 0.19396129201049916 sec
+Time for inference 5: 0.21 sec total, 603.60 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2740.86 GB/s
+FLOPS achieved: 24.67 TF/s
 
-Prefill latency: 0.10865953299799003 sec
-Decode latency: 2.02288890699856 sec
-Time for inference 6: 2.13 sec total, 60.03 tokens/sec
-Decode latency: 2.02 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2180.97 GB/s
-FLOPS achieved: 19.63 TF/s
+Prefill latency: 0.01764338801149279 sec
+Decode latency: 0.19399904797319323 sec
+Time for inference 6: 0.21 sec total, 603.24 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2739.22 GB/s
+FLOPS achieved: 24.65 TF/s
 
-Prefill latency: 0.10825154298800044 sec
-Decode latency: 2.0235064439766575 sec
-Time for inference 7: 2.13 sec total, 60.03 tokens/sec
-Decode latency: 2.02 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2180.73 GB/s
-FLOPS achieved: 19.63 TF/s
+Prefill latency: 0.017517281987238675 sec
+Decode latency: 0.1940171709866263 sec
+Time for inference 7: 0.21 sec total, 603.41 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2739.99 GB/s
+FLOPS achieved: 24.66 TF/s
 
-Prefill latency: 0.1081903769809287 sec
-Decode latency: 2.0239359679981135 sec
-Time for inference 8: 2.13 sec total, 60.02 tokens/sec
-Decode latency: 2.02 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2180.36 GB/s
-FLOPS achieved: 19.62 TF/s
+Prefill latency: 0.017649226007051766 sec
+Decode latency: 0.19397485099034384 sec
+Time for inference 8: 0.21 sec total, 603.49 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2740.37 GB/s
+FLOPS achieved: 24.66 TF/s
 
-Prefill latency: 0.10875101701822132 sec
-Decode latency: 2.025601795001421 sec
-Time for inference 9: 2.14 sec total, 59.95 tokens/sec
-Decode latency: 2.03 sec
-Prefill latency: 0.11 sec
-Bandwidth achieved: 2178.04 GB/s
-FLOPS achieved: 19.60 TF/s
+Prefill latency: 0.017629815003601834 sec
+Decode latency: 0.19399781301035546 sec
+Time for inference 9: 0.21 sec total, 603.50 tokens/sec
+Decode latency: 0.19 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 2740.40 GB/s
+FLOPS achieved: 24.66 TF/s
 
-Prefill latency: 0.18157931801397353 sec
-Decode latency: 3.737182245007716 sec
-Time for inference 10: 90.89 sec total, 1.41 tokens/sec
-Decode latency: 3.74 sec
-Prefill latency: 0.18 sec
-Bandwidth achieved: 51.17 GB/s
-FLOPS achieved: 0.46 TF/s
+Prefill latency: 0.018239092984003946 sec
+Decode latency: 0.19993933298974298 sec
+Time for inference 10: 7.74 sec total, 16.54 tokens/sec
+Decode latency: 0.20 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 75.12 GB/s
+FLOPS achieved: 0.68 TF/s
 
 ==========
 Batch Size: 4
 Prompt Length: 256
 Generated tokens: 32
-Average decode latency: 2.1991 sec
-Average prefill latency: 0.1158 sec
-Average tokens/sec: 54.04
-Memory used: 39.07 GB
+Average decode latency: 0.1946 sec
+Average prefill latency: 0.0177 sec
+Average tokens/sec: 544.76
+Memory used: 6.81 GB
+W0920 07:51:48.469000 23225911494464 torch/distributed/elastic/agent/server/api.py:688] Received Signals.SIGTERM death signal, shutting down workers
+W0920 07:51:48.469000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128079 closing signal SIGTERM
+W0920 07:51:48.470000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128080 closing signal SIGTERM
+W0920 07:51:48.470000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128081 closing signal SIGTERM
+W0920 07:51:48.470000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128082 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
+    result = agent.run()
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
+    result = f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 680, in run
+    result = self._invoke_run(role)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 835, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 79, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1127994 got signal: 15

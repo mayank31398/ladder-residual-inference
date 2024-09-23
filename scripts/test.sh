@@ -1,4 +1,4 @@
-for model_name in "gpt_ladder:llama-3-70b"
+for model_name in "gpt_ladder:llama-3-8b"
 do
     for bssize in 4
     do
@@ -11,8 +11,9 @@ do
                                             --batch_size ${bssize} \
                                             --prompt_length 256 \
                                             --max_new_tokens 32 \
+                                            --cuda_graph \
                                             --use_flash_attention \
-                                            --profile ./profiles/use_flash_attention_v3 \
+                                            --profile ./profiles/use_flash_attention_v6 \
                                             --device cuda 2>&1 | tee ./tmp.log
             echo "Finished running with bs=${bssize} tp=${tpsize}" 
         done

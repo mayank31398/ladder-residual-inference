@@ -1,0 +1,154 @@
+W0920 09:42:38.264000 23252063041344 torch/distributed/run.py:779] 
+W0920 09:42:38.264000 23252063041344 torch/distributed/run.py:779] *****************************************
+W0920 09:42:38.264000 23252063041344 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0920 09:42:38.264000 23252063041344 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to False
+Using device=cuda
+Loading model ...
+GPTDense(
+  (tok_embeddings): Embedding(128256, 8192)
+  (layers): ModuleList(
+    (0-79): 80 x DenseTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=8192, out_features=5120, bias=False)
+        (wo): Linear(in_features=4096, out_features=8192, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=8192, out_features=28672, bias=False)
+        (w2): Linear(in_features=14336, out_features=8192, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=8192, out_features=128256, bias=False)
+)
+Time to load model: 0.77 seconds
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank1]:W0920 09:43:31.804000 23303766005568 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank0]:W0920 09:43:32.813000 22779863549760 torch/fx/experimental/symbolic_shapes.py:4449] [0/0] xindex is not in var_ranges, defaulting to unknown range.
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank1]:     y, decode_latency, prefill_latency = generate(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 145, in generate
+[rank1]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 433, in _fn
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 36, in inner
+[rank1]:     @functools.wraps(fn)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 600, in _fn
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 987, in forward
+[rank1]:     return compiled_fn(full_args)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 217, in runtime_wrapper
+[rank1]:     all_outs = call_func_at_runtime_with_args(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/utils.py", line 120, in call_func_at_runtime_with_args
+[rank1]:     out = normalize_as_list(f(args))
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 451, in wrapper
+[rank1]:     return compiled_fn(runtime_args)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1131, in __call__
+[rank1]:     return self.current_callable(inputs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 993, in run
+[rank1]:     return compiled_fn(new_inputs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 373, in deferred_cudagraphify
+[rank1]:     fn, out = cudagraphify(model, inputs, new_static_input_idxs, *args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 403, in cudagraphify
+[rank1]:     return manager.add_function(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 2089, in add_function
+[rank1]:     return fn, fn(inputs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 1841, in run
+[rank1]:     out = self._run(new_inputs, function_id)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 1932, in _run
+[rank1]:     return self.run_eager(new_inputs, function_id)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 2055, in run_eager
+[rank1]:     return node.run(new_inputs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 612, in run
+[rank1]:     out = self.wrapped_function.model(new_inputs)
+[rank1]:   File "/tmp/torchinductor_charlie/tw/ctwr6cjalycilwdvranswolyjl3bajtt4c3pyci4bwo3ghp34753.py", line 6908, in call
+[rank1]:     buf2282 = empty_strided_cuda((16384, 128256), (128256, 1), torch.float16)
+[rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 3.91 GiB. GPU 1 has a total capacity of 79.33 GiB of which 369.44 MiB is free. Including non-PyTorch memory, this process has 78.96 GiB memory in use. Of the allocated memory 77.34 GiB is allocated by PyTorch, with 5.26 GiB allocated in private pools (e.g., CUDA Graphs), and 19.62 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank0]:     y, decode_latency, prefill_latency = generate(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 145, in generate
+[rank0]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 433, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 36, in inner
+[rank0]:     @functools.wraps(fn)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 600, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 987, in forward
+[rank0]:     return compiled_fn(full_args)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 217, in runtime_wrapper
+[rank0]:     all_outs = call_func_at_runtime_with_args(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/utils.py", line 120, in call_func_at_runtime_with_args
+[rank0]:     out = normalize_as_list(f(args))
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 451, in wrapper
+[rank0]:     return compiled_fn(runtime_args)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1131, in __call__
+[rank0]:     return self.current_callable(inputs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 993, in run
+[rank0]:     return compiled_fn(new_inputs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 373, in deferred_cudagraphify
+[rank0]:     fn, out = cudagraphify(model, inputs, new_static_input_idxs, *args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 403, in cudagraphify
+[rank0]:     return manager.add_function(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 2089, in add_function
+[rank0]:     return fn, fn(inputs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 1841, in run
+[rank0]:     out = self._run(new_inputs, function_id)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 1932, in _run
+[rank0]:     return self.run_eager(new_inputs, function_id)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 2055, in run_eager
+[rank0]:     return node.run(new_inputs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/cudagraph_trees.py", line 612, in run
+[rank0]:     out = self.wrapped_function.model(new_inputs)
+[rank0]:   File "/tmp/torchinductor_charlie/td/ctdqpgrllho6zn4ylibn7wdaxafgrogvor7emawlaoll62iv2rfi.py", line 6908, in call
+[rank0]:     buf2282 = empty_strided_cuda((16384, 128256), (128256, 1), torch.float16)
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 3.91 GiB. GPU 0 has a total capacity of 79.33 GiB of which 369.44 MiB is free. Including non-PyTorch memory, this process has 78.96 GiB memory in use. Of the allocated memory 77.34 GiB is allocated by PyTorch, with 5.26 GiB allocated in private pools (e.g., CUDA Graphs), and 19.62 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+W0920 09:44:10.492000 23252063041344 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 849308 closing signal SIGTERM
+E0920 09:44:10.962000 23252063041344 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 849307) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-20_09:44:10
+  host      : mk-xii-01.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 849307)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

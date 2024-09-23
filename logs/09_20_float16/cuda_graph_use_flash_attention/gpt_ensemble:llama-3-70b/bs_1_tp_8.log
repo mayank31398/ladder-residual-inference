@@ -1,0 +1,158 @@
+W0920 10:44:11.933000 22929415718720 torch/distributed/run.py:779] 
+W0920 10:44:11.933000 22929415718720 torch/distributed/run.py:779] *****************************************
+W0920 10:44:11.933000 22929415718720 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0920 10:44:11.933000 22929415718720 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 8192)
+  (layers): ModuleList(
+    (0-79): 80 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=8192, out_features=1280, bias=False)
+        (wo): Linear(in_features=1024, out_features=8192, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=8192, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=8192, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=8192, out_features=128256, bias=False)
+)
+Time to load model: 1.07 seconds
+Prefill latency: 0.0749193299561739 sec
+Decode latency: 5.422593167051673 sec
+Compilation time: 5.51 seconds
+Compilation time: 5.53 seconds
+Compilation time: 5.50 seconds
+Compilation time: 5.52 seconds
+Compilation time: 5.49 seconds
+Compilation time: 5.50 seconds
+Compilation time: 5.51 seconds
+Compilation time: 5.56 seconds
+Prefill latency: 0.06212200038135052 sec
+Decode latency: 5.423177402466536 sec
+Prefill latency: 0.06209017522633076 sec
+Decode latency: 5.424738369882107 sec
+Prefill latency: 0.06211453676223755 sec
+Decode latency: 5.423430265858769 sec
+Prefill latency: 0.06213132478296757 sec
+Decode latency: 5.423552960157394 sec
+Prefill latency: 0.06209533475339413 sec
+Decode latency: 5.423895064741373 sec
+Time for inference 1: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.60 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.062144020572304726 sec
+Decode latency: 5.423759281635284 sec
+Time for inference 2: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.61 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.06213418021798134 sec
+Decode latency: 5.423849508166313 sec
+Time for inference 3: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.58 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.06205758824944496 sec
+Decode latency: 5.4241174310445786 sec
+Time for inference 4: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.56 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.06208334118127823 sec
+Decode latency: 5.425052285194397 sec
+Time for inference 5: 5.49 sec total, 46.65 tokens/sec
+Decode latency: 5.43 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.40 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.06196507066488266 sec
+Decode latency: 5.423336137086153 sec
+Time for inference 6: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.69 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.062008343636989594 sec
+Decode latency: 5.423932272940874 sec
+Time for inference 7: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.59 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.06205958500504494 sec
+Decode latency: 5.42406776919961 sec
+Time for inference 8: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.57 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.06214582175016403 sec
+Decode latency: 5.423636427149177 sec
+Time for inference 9: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.62 GB/s
+FLOPS achieved: 4.48 TF/s
+
+Prefill latency: 0.06201079301536083 sec
+Decode latency: 5.423530163243413 sec
+Time for inference 10: 5.49 sec total, 46.66 tokens/sec
+Decode latency: 5.42 sec
+Prefill latency: 0.06 sec
+Bandwidth achieved: 896.66 GB/s
+FLOPS achieved: 4.48 TF/s
+
+==========
+Batch Size: 1
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 5.4239 sec
+Average prefill latency: 0.0621 sec
+Average tokens/sec: 46.66
+Memory used: 23.21 GB
+[rank3]:[E920 10:56:00.538940482 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 3] Future for ProcessGroup abort timed out after 600000 ms
+[rank2]:[E920 10:56:00.538940476 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 2] Future for ProcessGroup abort timed out after 600000 ms
+[rank1]:[E920 10:56:00.538945708 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 1] Future for ProcessGroup abort timed out after 600000 ms
+[rank7]:[E920 10:56:00.538993939 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 7] Future for ProcessGroup abort timed out after 600000 ms
+[rank6]:[E920 10:56:00.539007760 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 6] Future for ProcessGroup abort timed out after 600000 ms
+[rank4]:[E920 10:56:00.539004229 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 4] Future for ProcessGroup abort timed out after 600000 ms
+[rank5]:[E920 10:56:00.539024012 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 5] Future for ProcessGroup abort timed out after 600000 ms
+[rank0]:[E920 10:56:00.539152254 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 0] Future for ProcessGroup abort timed out after 600000 ms
+[rank3]:[E920 11:04:22.822199678 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 3] First PG on this rank that detected no heartbeat of its watchdog.
+[rank3]:[E920 11:04:22.822252723 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 3] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank4]:[E920 11:04:22.877128211 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 4] First PG on this rank that detected no heartbeat of its watchdog.
+[rank4]:[E920 11:04:22.877211499 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 4] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank7]:[E920 11:04:22.882921132 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 7] First PG on this rank that detected no heartbeat of its watchdog.
+[rank7]:[E920 11:04:22.882977207 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 7] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank1]:[E920 11:04:22.892318938 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 1] First PG on this rank that detected no heartbeat of its watchdog.
+[rank1]:[E920 11:04:22.892366932 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 1] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank6]:[E920 11:04:22.909207945 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 6] First PG on this rank that detected no heartbeat of its watchdog.
+[rank6]:[E920 11:04:22.909264919 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 6] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank2]:[E920 11:04:22.922424008 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 2] First PG on this rank that detected no heartbeat of its watchdog.
+[rank2]:[E920 11:04:22.922480938 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 2] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank0]:[E920 11:04:22.923704334 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 0] First PG on this rank that detected no heartbeat of its watchdog.
+[rank0]:[E920 11:04:22.923759928 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 0] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank5]:[E920 11:04:22.934919956 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 5] First PG on this rank that detected no heartbeat of its watchdog.
+[rank5]:[E920 11:04:22.934974297 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 5] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0

@@ -1,0 +1,128 @@
+W0920 09:30:43.896000 22604584286016 torch/distributed/run.py:779] 
+W0920 09:30:43.896000 22604584286016 torch/distributed/run.py:779] *****************************************
+W0920 09:30:43.896000 22604584286016 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0920 09:30:43.896000 22604584286016 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=3072, bias=False)
+        (wo): Linear(in_features=2048, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=14336, bias=False)
+        (w2): Linear(in_features=7168, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 1.11 seconds
+Prefill latency: 0.07889808714389801 sec
+Compilation time: 2.64 seconds
+Decode latency: 2.587450345978141 sec
+Compilation time: 2.67 seconds
+Prefill latency: 0.07891353592276573 sec
+Decode latency: 2.585170431062579 sec
+Prefill latency: 0.07896308042109013 sec
+Decode latency: 2.5860545709729195 sec
+Prefill latency: 0.07910321652889252 sec
+Decode latency: 2.587252827361226 sec
+Prefill latency: 0.07891157642006874 sec
+Decode latency: 2.5893004555255175 sec
+Prefill latency: 0.07891334220767021 sec
+Decode latency: 2.586392115801573 sec
+Time for inference 1: 2.67 sec total, 384.12 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3084.65 GB/s
+FLOPS achieved: 15.42 TF/s
+
+Prefill latency: 0.07922232523560524 sec
+Decode latency: 2.5894641168415546 sec
+Time for inference 2: 2.67 sec total, 383.63 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3080.75 GB/s
+FLOPS achieved: 15.40 TF/s
+
+Prefill latency: 0.07916182465851307 sec
+Decode latency: 2.5876214001327753 sec
+Time for inference 3: 2.67 sec total, 383.90 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3082.94 GB/s
+FLOPS achieved: 15.41 TF/s
+
+Prefill latency: 0.0793231874704361 sec
+Decode latency: 2.5871506202965975 sec
+Time for inference 4: 2.67 sec total, 383.95 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3083.35 GB/s
+FLOPS achieved: 15.42 TF/s
+
+Prefill latency: 0.07916257902979851 sec
+Decode latency: 2.5734695065766573 sec
+Time for inference 5: 2.65 sec total, 385.95 tokens/sec
+Decode latency: 2.57 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3099.40 GB/s
+FLOPS achieved: 15.50 TF/s
+
+Prefill latency: 0.07903329841792583 sec
+Decode latency: 2.5872171726077795 sec
+Time for inference 6: 2.67 sec total, 383.99 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3083.62 GB/s
+FLOPS achieved: 15.42 TF/s
+
+Prefill latency: 0.07881086133420467 sec
+Decode latency: 2.5879365131258965 sec
+Time for inference 7: 2.67 sec total, 383.91 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3083.00 GB/s
+FLOPS achieved: 15.42 TF/s
+
+Prefill latency: 0.07943991012871265 sec
+Decode latency: 2.5871117282658815 sec
+Time for inference 8: 2.67 sec total, 383.94 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3083.21 GB/s
+FLOPS achieved: 15.42 TF/s
+
+Prefill latency: 0.07929176092147827 sec
+Decode latency: 2.587354116141796 sec
+Time for inference 9: 2.67 sec total, 383.92 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3083.07 GB/s
+FLOPS achieved: 15.42 TF/s
+
+Prefill latency: 0.07904081605374813 sec
+Decode latency: 2.588818548247218 sec
+Time for inference 10: 2.67 sec total, 383.72 tokens/sec
+Decode latency: 2.59 sec
+Prefill latency: 0.08 sec
+Bandwidth achieved: 3081.48 GB/s
+FLOPS achieved: 15.41 TF/s
+
+==========
+Batch Size: 4
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 2.5863 sec
+Average prefill latency: 0.0791 sec
+Average tokens/sec: 384.10
+Memory used: 11.11 GB

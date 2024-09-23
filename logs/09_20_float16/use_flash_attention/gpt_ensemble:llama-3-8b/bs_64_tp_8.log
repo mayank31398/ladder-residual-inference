@@ -1,0 +1,738 @@
+W0920 10:50:48.860000 23442315233088 torch/distributed/run.py:779] 
+W0920 10:50:48.860000 23442315233088 torch/distributed/run.py:779] *****************************************
+W0920 10:50:48.860000 23442315233088 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0920 10:50:48.860000 23442315233088 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=768, bias=False)
+        (wo): Linear(in_features=512, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=3584, bias=False)
+        (w2): Linear(in_features=1792, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 1.15 seconds
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Prefill latency: 11.68640094064176 sec
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank5]:     main(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank5]:     y, decode_latency, prefill_latency = generate(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank5]:     return func(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank5]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank5]:     return func(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank5]:     next_token, next_prob = decode_one_token(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank5]:     logits = model(x, input_pos)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank5]:     return forward_call(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank5]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank5]:     return forward_call(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank5]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank5]:     return forward_call(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank5]:     q = apply_rotary_emb(q, freqs_cis)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank5]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank5]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank5]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank5]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank5]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank4]:     main(
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank4]:     y, decode_latency, prefill_latency = generate(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank4]:     return func(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank4]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank4]:     return func(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank4]:     next_token, next_prob = decode_one_token(
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank4]:     logits = model(x, input_pos)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank4]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank4]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank4]:     q = apply_rotary_emb(q, freqs_cis)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank4]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank4]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank4]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank4]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank4]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank6]:     main(
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank6]:     y, decode_latency, prefill_latency = generate(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank6]:     return func(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank6]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank6]:     return func(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank6]:     next_token, next_prob = decode_one_token(
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank6]:     logits = model(x, input_pos)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank6]:     return forward_call(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank6]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank6]:     return forward_call(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank6]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank6]:     return forward_call(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank6]:     q = apply_rotary_emb(q, freqs_cis)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank6]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank6]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank6]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank6]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank6]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank3]:     y, decode_latency, prefill_latency = generate(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank3]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank3]:     next_token, next_prob = decode_one_token(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank3]:     logits = model(x, input_pos)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank3]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank3]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank3]:     q = apply_rotary_emb(q, freqs_cis)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank3]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank3]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank3]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank3]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank3]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank1]:     y, decode_latency, prefill_latency = generate(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank1]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank1]:     next_token, next_prob = decode_one_token(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank1]:     logits = model(x, input_pos)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank1]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank1]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank1]:     q = apply_rotary_emb(q, freqs_cis)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank1]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank1]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank1]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank1]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank1]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank0]:     y, decode_latency, prefill_latency = generate(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank0]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank0]:     next_token, next_prob = decode_one_token(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank0]:     logits = model(x, input_pos)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank0]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank0]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank0]:     q = apply_rotary_emb(q, freqs_cis)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank0]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank0]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank0]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank0]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank0]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank2]:     main(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank2]:     y, decode_latency, prefill_latency = generate(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank2]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank2]:     next_token, next_prob = decode_one_token(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank2]:     logits = model(x, input_pos)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank2]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank2]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank2]:     q = apply_rotary_emb(q, freqs_cis)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank2]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank2]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank2]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank2]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank2]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank7]:     main(
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 448, in main
+[rank7]:     y, decode_latency, prefill_latency = generate(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank7]:     return func(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 157, in generate
+[rank7]:     generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank7]:     return func(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 105, in decode_n_tokens
+[rank7]:     next_token, next_prob = decode_one_token(
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 85, in decode_one_token
+[rank7]:     logits = model(x, input_pos)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank7]:     return forward_call(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank7]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank7]:     return forward_call(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 200, in forward
+[rank7]:     x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank7]:     return forward_call(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 187, in forward
+[rank7]:     q = apply_rotary_emb(q, freqs_cis)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 118, in apply_rotary_emb
+[rank7]:     xshaped[..., 0] * freqs_cis[..., 0] - xshaped[..., 1] * freqs_cis[..., 1],
+[rank7]: RuntimeError: CUDA error: an illegal memory access was encountered
+[rank7]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank7]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank7]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[rank7]:[E920 10:51:12.770646853 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 7] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14730ef79f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14730ef28d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x14735db75f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x1473101c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x1473101ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x1473101d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x1473101d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x14735def0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x14735ef06ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x14735ef98850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG 0 (default_pg) Rank 7] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14730ef79f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14730ef28d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x14735db75f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x1473101c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x1473101ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x1473101d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x1473101d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x14735def0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x14735ef06ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x14735ef98850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14730ef79f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x14730fe5ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x14735def0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x14735ef06ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x14735ef98850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank0]:[E920 10:51:12.774363789 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 0] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14828e779f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14828e728d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x1482dd375f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x14828f9c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x14828f9ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x14828f9d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x14828f9d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x1482dd6f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x1482de722ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x1482de7b4850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG 0 (default_pg) Rank 0] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14828e779f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14828e728d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x1482dd375f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x14828f9c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x14828f9ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x14828f9d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x14828f9d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x1482dd6f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x1482de722ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x1482de7b4850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14828e779f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x14828f65ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x1482dd6f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x1482de722ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x1482de7b4850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank4]:[E920 10:51:12.775558007 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 4] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1518454cbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x15184547ad10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x1518455a6f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x1517f7bc5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x1517f7bca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x1517f7bd12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x1517f7bd371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x1518458f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x1518469a5ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x151846a37850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError[rank1]:[E920 10:51:12.775580003 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 1] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1478638cbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14786387ad10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x1478639a6f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x147815fc5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x147815fca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x147815fd12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x147815fd371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x147863cf0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x147864d53ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x147864de5850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+'
+terminate called after throwing an instance of 'c10::DistBackendError'
+[rank6]:[E920 10:51:12.775785334 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 6] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1553d3d79f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x1553d3d28d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x155422956f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x1553d4fc5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x1553d4fca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x1553d4fd12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x1553d4fd371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x155422cf0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x155423ce4ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x155423d76850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG 0 (default_pg) Rank 4] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1518454cbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x15184547ad10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x1518455a6f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x1517f7bc5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x1517f7bca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x1517f7bd12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x1517f7bd371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x1518458f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x1518469a5ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x151846a37850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1518454cbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x1517f785ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x1518458f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x1518469a5ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x151846a37850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+  what():  [PG 0 (default_pg) Rank 1] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1478638cbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14786387ad10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x1478639a6f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x147815fc5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x147815fca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x147815fd12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x147815fd371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x147863cf0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x147864d53ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x147864de5850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1478638cbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x147815c5ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x147863cf0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x147864d53ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x147864de5850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+  what():  [PG 0 (default_pg) Rank 6] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1553d3d79f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x1553d3d28d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x155422956f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x1553d4fc5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x1553d4fca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x1553d4fd12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x1553d4fd371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x155422cf0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x155423ce4ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x155423d76850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x1553d3d79f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x1553d4c5ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x155422cf0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x155423ce4ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x155423d76850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank5]:[E920 10:51:12.776804554 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 5] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x149ca7177f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x149ca7126d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x149ca795ef08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x149c597c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x149c597ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x149c597d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x149c597d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x149ca74f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x149ca8651ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x149ca86e3850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+[rank2]:[E920 10:51:12.776899890 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 2] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14d484ccbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14d484c7ad10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x14d484da6f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x14d4373c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x14d4373ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x14d4373d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x14d4373d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x14d4850f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x14d486136ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x14d4861c8850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+[rank3]:[E920 10:51:12.776995392 ProcessGroupNCCL.cpp:1515] [PG 0 (default_pg) Rank 3] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x150c60377f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x150c60326d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x150c60afff08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x150c129c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x150c129ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x150c129d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x150c129d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x150c606f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x150c617f2ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x150c61884850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG 0 (default_pg) Rank 5] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x149ca7177f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x149ca7126d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x149ca795ef08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x149c597c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x149c597ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x149c597d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x149c597d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x149ca74f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x149ca8651ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x149ca86e3850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x149ca7177f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x149c5945ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x149ca74f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x149ca8651ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x149ca86e3850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+  what():  [PG 0 (default_pg) Rank 2] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14d484ccbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x14d484c7ad10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x14d484da6f08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x14d4373c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x14d4373ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x14d4373d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x14d4373d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x14d4850f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x14d486136ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x14d4861c8850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14d484ccbf86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x14d43705ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x14d4850f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x14d486136ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x14d4861c8850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+  what():  [PG 0 (default_pg) Rank 3] Process group watchdog thread terminated with exception: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at ../c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x150c60377f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x150c60326d10 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x150c60afff08 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::WorkNCCL::finishedGPUExecutionInternal() const + 0x56 (0x150c129c5406 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::WorkNCCL::isCompleted() + 0xa0 (0x150c129ca620 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: c10d::ProcessGroupNCCL::watchdogHandler() + 0x1da (0x150c129d12da in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x10c (0x150c129d371c in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #7: <unknown function> + 0xd3b75 (0x150c606f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #8: <unknown function> + 0x94ac3 (0x150c617f2ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #9: <unknown function> + 0x126850 (0x150c61884850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1521 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x150c60377f86 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe5aa84 (0x150c1265ca84 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0xd3b75 (0x150c606f0b75 in /home/charlie/anaconda3/envs/gpt-fast/bin/../lib/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x150c617f2ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x150c61884850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+W0920 10:51:13.610000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1003652 closing signal SIGTERM
+W0920 10:51:13.610000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1003653 closing signal SIGTERM
+W0920 10:51:13.610000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1003654 closing signal SIGTERM
+W0920 10:51:13.611000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1003655 closing signal SIGTERM
+W0920 10:51:13.611000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1003656 closing signal SIGTERM
+W0920 10:51:13.611000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1003657 closing signal SIGTERM
+W0920 10:51:13.611000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1003658 closing signal SIGTERM
+E0920 10:51:14.854000 23442315233088 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: -6) local_rank: 7 (pid: 1003659) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+========================================================
+benchmark.py FAILED
+--------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+--------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-20_10:51:13
+  host      : mk-xii-15.cloud.together.ai
+  rank      : 7 (local_rank: 7)
+  exitcode  : -6 (pid: 1003659)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 1003659
+========================================================

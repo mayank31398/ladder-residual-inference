@@ -1,0 +1,58 @@
+flash_kv_decode is set to False
+Using device=cuda
+Loading model ...
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
+[rank0]:     model = _load_model(model_name, device, precision)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 240, in _load_model
+[rank0]:     model = model.to_empty(device=device)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1037, in to_empty
+[rank0]:     return self._apply(lambda t: torch.empty_like(t, device=device), recurse=recurse)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 780, in _apply
+[rank0]:     module._apply(fn)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 780, in _apply
+[rank0]:     module._apply(fn)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 780, in _apply
+[rank0]:     module._apply(fn)
+[rank0]:   [Previous line repeated 1 more time]
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 805, in _apply
+[rank0]:     param_applied = fn(param)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1037, in <lambda>
+[rank0]:     return self._apply(lambda t: torch.empty_like(t, device=device), recurse=recurse)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_prims_common/wrappers.py", line 266, in _fn
+[rank0]:     result = fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_refs/__init__.py", line 4890, in empty_like
+[rank0]:     return torch.empty_permuted(
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 896.00 MiB. GPU 0 has a total capacity of 79.33 GiB of which 73.44 MiB is free. Including non-PyTorch memory, this process has 79.25 GiB memory in use. Of the allocated memory 78.74 GiB is allocated by PyTorch, and 512.00 KiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+E0920 08:01:11.018000 23214716979008 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 739244) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-20_08:01:11
+  host      : mk-xii-01.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 739244)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
