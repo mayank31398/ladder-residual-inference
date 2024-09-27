@@ -1,163 +1,778 @@
-W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] 
-W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] *****************************************
-W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0920 07:49:15.676000 23225911494464 torch/distributed/run.py:779] *****************************************
-[W920 07:49:19.354316892 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
-[W920 07:49:19.356188469 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
-flash_kv_decode is set to True
-Using device=cuda
-Loading model ...
-[W920 07:49:19.361099252 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
-[W920 07:49:19.362006635 Utils.hpp:164] Warning: Environment variable NCCL_BLOCKING_WAIT is deprecated; use TORCH_NCCL_BLOCKING_WAIT instead (function operator())
-GPTLadder(
-  (tok_embeddings): Embedding(128256, 4096)
-  (layers): ModuleList(
-    (0-31): 32 x LadderTransformerBlock(
-      semi_compiled = False
-      (attention): Attention(
-        (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
-        (wo): Linear(in_features=1024, out_features=4096, bias=False)
-      )
-      (feed_forward): FeedForward(
-        (w1): Linear(in_features=4096, out_features=7168, bias=False)
-        (w2): Linear(in_features=3584, out_features=4096, bias=False)
-      )
-      (ffn_norm): RMSNorm()
-      (attention_norm): RMSNorm()
-    )
-  )
-  (norm): RMSNorm()
-  (output): Linear(in_features=4096, out_features=128256, bias=False)
-)
-Time to load model: 0.06 seconds
-[rank0]:[W920 07:49:23.671871161 CUDAGraph.cpp:150] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
-[rank1]:[W920 07:49:24.085549322 CUDAGraph.cpp:150] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
-Prefill latency: 0.04141509399050847 sec
-Decode latency: 0.19402085899491794 sec
-Compilation time: 0.21 seconds
-Compilation time: 0.22 seconds
-Compilation time: 0.25 seconds
-Compilation time: 0.24 seconds
-Prefill latency: 0.017711315013002604 sec
-Decode latency: 0.19402760700904764 sec
-Prefill latency: 0.01755788500304334 sec
-Decode latency: 0.19397363800089806 sec
-Prefill latency: 0.017621892999159172 sec
-Decode latency: 0.1940684620058164 sec
-Prefill latency: 0.01765692900517024 sec
-Decode latency: 0.19394812098471448 sec
-Prefill latency: 0.01757612600340508 sec
-Decode latency: 0.1940133869939018 sec
-Time for inference 1: 0.21 sec total, 603.46 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2740.23 GB/s
-FLOPS achieved: 24.66 TF/s
-
-Prefill latency: 0.01752701698569581 sec
-Decode latency: 0.1939559169986751 sec
-Time for inference 2: 0.21 sec total, 603.66 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2741.16 GB/s
-FLOPS achieved: 24.67 TF/s
-
-Prefill latency: 0.017564515001140535 sec
-Decode latency: 0.19396337799844332 sec
-Time for inference 3: 0.21 sec total, 603.58 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2740.79 GB/s
-FLOPS achieved: 24.67 TF/s
-
-Prefill latency: 0.017724766017636284 sec
-Decode latency: 0.19405688901315443 sec
-Time for inference 4: 0.21 sec total, 603.08 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2738.50 GB/s
-FLOPS achieved: 24.65 TF/s
-
-Prefill latency: 0.017635127995163202 sec
-Decode latency: 0.19396129201049916 sec
-Time for inference 5: 0.21 sec total, 603.60 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2740.86 GB/s
-FLOPS achieved: 24.67 TF/s
-
-Prefill latency: 0.01764338801149279 sec
-Decode latency: 0.19399904797319323 sec
-Time for inference 6: 0.21 sec total, 603.24 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2739.22 GB/s
-FLOPS achieved: 24.65 TF/s
-
-Prefill latency: 0.017517281987238675 sec
-Decode latency: 0.1940171709866263 sec
-Time for inference 7: 0.21 sec total, 603.41 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2739.99 GB/s
-FLOPS achieved: 24.66 TF/s
-
-Prefill latency: 0.017649226007051766 sec
-Decode latency: 0.19397485099034384 sec
-Time for inference 8: 0.21 sec total, 603.49 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2740.37 GB/s
-FLOPS achieved: 24.66 TF/s
-
-Prefill latency: 0.017629815003601834 sec
-Decode latency: 0.19399781301035546 sec
-Time for inference 9: 0.21 sec total, 603.50 tokens/sec
-Decode latency: 0.19 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 2740.40 GB/s
-FLOPS achieved: 24.66 TF/s
-
-Prefill latency: 0.018239092984003946 sec
-Decode latency: 0.19993933298974298 sec
-Time for inference 10: 7.74 sec total, 16.54 tokens/sec
-Decode latency: 0.20 sec
-Prefill latency: 0.02 sec
-Bandwidth achieved: 75.12 GB/s
-FLOPS achieved: 0.68 TF/s
-
-==========
-Batch Size: 4
-Prompt Length: 256
-Generated tokens: 32
-Average decode latency: 0.1946 sec
-Average prefill latency: 0.0177 sec
-Average tokens/sec: 544.76
-Memory used: 6.81 GB
-W0920 07:51:48.469000 23225911494464 torch/distributed/elastic/agent/server/api.py:688] Received Signals.SIGTERM death signal, shutting down workers
-W0920 07:51:48.469000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128079 closing signal SIGTERM
-W0920 07:51:48.470000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128080 closing signal SIGTERM
-W0920 07:51:48.470000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128081 closing signal SIGTERM
-W0920 07:51:48.470000 23225911494464 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1128082 closing signal SIGTERM
-Traceback (most recent call last):
-  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
-    sys.exit(main())
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
-    return f(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
-    run(args)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
-    elastic_launch(
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
-    result = agent.run()
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
-    result = f(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 680, in run
-    result = self._invoke_run(role)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 835, in _invoke_run
-    time.sleep(monitor_interval)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 79, in _terminate_process_handler
-    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
-torch.distributed.elastic.multiprocessing.api.SignalException: Process 1127994 got signal: 15
+mk-xii-05:3494268:3494268 [0] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494268:3494268 [0] NCCL INFO cudaDriverVersion 12020
+NCCL version 2.20.5+cuda12.4
+mk-xii-05:3494274:3494274 [6] NCCL INFO cudaDriverVersion 12020
+mk-xii-05:3494273:3494273 [5] NCCL INFO cudaDriverVersion 12020
+mk-xii-05:3494274:3494274 [6] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494273:3494273 [5] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494271:3494271 [3] NCCL INFO cudaDriverVersion 12020
+mk-xii-05:3494272:3494272 [4] NCCL INFO cudaDriverVersion 12020
+mk-xii-05:3494270:3494270 [2] NCCL INFO cudaDriverVersion 12020
+mk-xii-05:3494269:3494269 [1] NCCL INFO cudaDriverVersion 12020
+mk-xii-05:3494271:3494271 [3] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494275:3494275 [7] NCCL INFO cudaDriverVersion 12020
+mk-xii-05:3494270:3494270 [2] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494272:3494272 [4] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494269:3494269 [1] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494275:3494275 [7] NCCL INFO Bootstrap : Using enp50s0:172.27.35.115<0>
+mk-xii-05:3494268:3494347 [0] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494268:3494347 [0] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494268:3494347 [0] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494271:3494360 [3] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494271:3494360 [3] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494269:3494356 [1] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494269:3494356 [1] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494272:3494359 [4] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494272:3494359 [4] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494271:3494360 [3] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494270:3494357 [2] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494270:3494357 [2] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494269:3494356 [1] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494268:3494347 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494272:3494359 [4] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494268:3494347 [0] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494268:3494347 [0] NCCL INFO Using network IBext_v8
+mk-xii-05:3494275:3494358 [7] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494275:3494358 [7] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494270:3494357 [2] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494273:3494361 [5] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494273:3494361 [5] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494275:3494358 [7] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494273:3494361 [5] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494269:3494356 [1] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494269:3494356 [1] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494272:3494359 [4] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494272:3494359 [4] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494269:3494356 [1] NCCL INFO Using network IBext_v8
+mk-xii-05:3494272:3494359 [4] NCCL INFO Using network IBext_v8
+mk-xii-05:3494271:3494360 [3] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494270:3494357 [2] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494270:3494357 [2] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494270:3494357 [2] NCCL INFO Using network IBext_v8
+mk-xii-05:3494271:3494360 [3] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494271:3494360 [3] NCCL INFO Using network IBext_v8
+mk-xii-05:3494275:3494358 [7] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494275:3494358 [7] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494275:3494358 [7] NCCL INFO Using network IBext_v8
+mk-xii-05:3494273:3494361 [5] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494273:3494361 [5] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494273:3494361 [5] NCCL INFO Using network IBext_v8
+mk-xii-05:3494274:3494349 [6] NCCL INFO Plugin Path : /opt/hpcx/nccl_rdma_sharp_plugin/lib/libnccl-net.so
+mk-xii-05:3494274:3494349 [6] NCCL INFO P2P plugin IBext_v8
+mk-xii-05:3494274:3494349 [6] NCCL INFO NCCL_IB_MERGE_VFS set by environment to 0.
+mk-xii-05:3494274:3494349 [6] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB/SHARP [1]mlx5_1:1/IB/SHARP [2]mlx5_2:1/IB/SHARP [3]mlx5_3:1/IB/SHARP [4]mlx5_5:1/IB/SHARP [5]mlx5_6:1/IB/SHARP [6]mlx5_7:1/IB/SHARP [7]mlx5_8:1/IB/SHARP [8]mlx5_4:1/RoCE [RO]; OOB enp50s0:172.27.35.115<0>
+mk-xii-05:3494274:3494349 [6] NCCL INFO Using non-device net plugin version 0
+mk-xii-05:3494274:3494349 [6] NCCL INFO Using network IBext_v8
+mk-xii-05:3494272:3494359 [4] NCCL INFO comm 0x7f68fb0 rank 4 nranks 8 cudaDev 4 nvmlDev 4 busId 21000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494271:3494360 [3] NCCL INFO comm 0x7352400 rank 3 nranks 8 cudaDev 3 nvmlDev 3 busId 14000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494273:3494361 [5] NCCL INFO comm 0x776bf40 rank 5 nranks 8 cudaDev 5 nvmlDev 5 busId 22000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494270:3494357 [2] NCCL INFO comm 0x744c590 rank 2 nranks 8 cudaDev 2 nvmlDev 2 busId 13000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494269:3494356 [1] NCCL INFO comm 0x8b4ab00 rank 1 nranks 8 cudaDev 1 nvmlDev 1 busId 12000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494268:3494347 [0] NCCL INFO comm 0x8f08650 rank 0 nranks 8 cudaDev 0 nvmlDev 0 busId 11000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494275:3494358 [7] NCCL INFO comm 0x7133390 rank 7 nranks 8 cudaDev 7 nvmlDev 7 busId 24000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494274:3494349 [6] NCCL INFO comm 0x88615e0 rank 6 nranks 8 cudaDev 6 nvmlDev 6 busId 23000 commId 0xfa41aff77737cdb6 - Init START
+mk-xii-05:3494273:3494361 [5] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494272:3494359 [4] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494269:3494356 [1] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494274:3494349 [6] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494271:3494360 [3] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494270:3494357 [2] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494268:3494347 [0] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494275:3494358 [7] NCCL INFO NCCL_TOPO_FILE set by environment to /etc/crusoe/nccl_topo/h100-80gb-sxm-ib-qemu.xml
+mk-xii-05:3494271:3494360 [3] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494271:3494360 [3] NCCL INFO Setting affinity for GPU 3 to ffffff,ffffffff,ffffffff
+mk-xii-05:3494271:3494360 [3] NCCL INFO NVLS multicast support is available on dev 3
+mk-xii-05:3494268:3494347 [0] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494268:3494347 [0] NCCL INFO Setting affinity for GPU 0 to ffffff,ffffffff,ffffffff
+mk-xii-05:3494268:3494347 [0] NCCL INFO NVLS multicast support is available on dev 0
+mk-xii-05:3494274:3494349 [6] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494274:3494349 [6] NCCL INFO Setting affinity for GPU 6 to ffff,ffffffff,ffffffff,ff000000,00000000,00000000
+mk-xii-05:3494274:3494349 [6] NCCL INFO NVLS multicast support is available on dev 6
+mk-xii-05:3494275:3494358 [7] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494275:3494358 [7] NCCL INFO Setting affinity for GPU 7 to ffff,ffffffff,ffffffff,ff000000,00000000,00000000
+mk-xii-05:3494275:3494358 [7] NCCL INFO NVLS multicast support is available on dev 7
+mk-xii-05:3494273:3494361 [5] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494273:3494361 [5] NCCL INFO Setting affinity for GPU 5 to ffff,ffffffff,ffffffff,ff000000,00000000,00000000
+mk-xii-05:3494273:3494361 [5] NCCL INFO NVLS multicast support is available on dev 5
+mk-xii-05:3494269:3494356 [1] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494269:3494356 [1] NCCL INFO Setting affinity for GPU 1 to ffffff,ffffffff,ffffffff
+mk-xii-05:3494272:3494359 [4] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494269:3494356 [1] NCCL INFO NVLS multicast support is available on dev 1
+mk-xii-05:3494272:3494359 [4] NCCL INFO Setting affinity for GPU 4 to ffff,ffffffff,ffffffff,ff000000,00000000,00000000
+mk-xii-05:3494272:3494359 [4] NCCL INFO NVLS multicast support is available on dev 4
+mk-xii-05:3494270:3494357 [2] NCCL INFO NCCL_P2P_LEVEL set by environment to LOC
+mk-xii-05:3494270:3494357 [2] NCCL INFO Setting affinity for GPU 2 to ffffff,ffffffff,ffffffff
+mk-xii-05:3494270:3494357 [2] NCCL INFO NVLS multicast support is available on dev 2
+mk-xii-05:3494270:3494357 [2] NCCL INFO comm 0x744c590 rank 2 nRanks 8 nNodes 2 localRanks 4 localRank 2 MNNVL 0
+mk-xii-05:3494270:3494357 [2] NCCL INFO NVLS Head  0:  0  4
+mk-xii-05:3494270:3494357 [2] NCCL INFO NVLS Head  1:  1  5
+mk-xii-05:3494270:3494357 [2] NCCL INFO NVLS Head  2:  2  6
+mk-xii-05:3494270:3494357 [2] NCCL INFO NVLS Head  3:  3  7
+mk-xii-05:3494270:3494357 [2] NCCL INFO Trees [0] 3/-1/-1->2->1 [1] 3/6/-1->2->-1 [2] 3/-1/-1->2->1 [3] 3/-1/-1->2->6 [4] 3/-1/-1->2->1 [5] 3/6/-1->2->-1 [6] 3/-1/-1->2->1 [7] 3/-1/-1->2->6 [8] 3/-1/-1->2->1 [9] 3/6/-1->2->-1 [10] 3/-1/-1->2->1 [11] 3/-1/-1->2->6 [12] 3/-1/-1->2->1 [13] 3/6/-1->2->-1 [14] 3/-1/-1->2->1 [15] 3/-1/-1->2->6
+mk-xii-05:3494272:3494359 [4] NCCL INFO comm 0x7f68fb0 rank 4 nRanks 8 nNodes 2 localRanks 4 localRank 0 MNNVL 0
+mk-xii-05:3494271:3494360 [3] NCCL INFO comm 0x7352400 rank 3 nRanks 8 nNodes 2 localRanks 4 localRank 3 MNNVL 0
+mk-xii-05:3494273:3494361 [5] NCCL INFO comm 0x776bf40 rank 5 nRanks 8 nNodes 2 localRanks 4 localRank 1 MNNVL 0
+mk-xii-05:3494274:3494349 [6] NCCL INFO comm 0x88615e0 rank 6 nRanks 8 nNodes 2 localRanks 4 localRank 2 MNNVL 0
+mk-xii-05:3494269:3494356 [1] NCCL INFO comm 0x8b4ab00 rank 1 nRanks 8 nNodes 2 localRanks 4 localRank 1 MNNVL 0
+mk-xii-05:3494269:3494356 [1] NCCL INFO NVLS Head  0:  0  4
+mk-xii-05:3494268:3494347 [0] NCCL INFO comm 0x8f08650 rank 0 nRanks 8 nNodes 2 localRanks 4 localRank 0 MNNVL 0
+mk-xii-05:3494275:3494358 [7] NCCL INFO comm 0x7133390 rank 7 nRanks 8 nNodes 2 localRanks 4 localRank 3 MNNVL 0
+mk-xii-05:3494270:3494357 [2] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494272:3494359 [4] NCCL INFO Trees [0] 5/-1/-1->4->0 [1] 5/-1/-1->4->7 [2] 5/0/-1->4->-1 [3] 5/-1/-1->4->7 [4] 5/-1/-1->4->0 [5] 5/-1/-1->4->7 [6] 5/0/-1->4->-1 [7] 5/-1/-1->4->7 [8] 5/-1/-1->4->0 [9] 5/-1/-1->4->7 [10] 5/0/-1->4->-1 [11] 5/-1/-1->4->7 [12] 5/-1/-1->4->0 [13] 5/-1/-1->4->7 [14] 5/0/-1->4->-1 [15] 5/-1/-1->4->7
+mk-xii-05:3494271:3494360 [3] NCCL INFO NVLS Head  0:  0  4
+mk-xii-05:3494273:3494361 [5] NCCL INFO Trees [0] 6/-1/-1->5->4 [1] -1/-1/-1->5->4 [2] 6/-1/-1->5->4 [3] -1/-1/-1->5->4 [4] 6/-1/-1->5->4 [5] -1/-1/-1->5->4 [6] 6/-1/-1->5->4 [7] -1/-1/-1->5->4 [8] 6/-1/-1->5->4 [9] -1/-1/-1->5->4 [10] 6/-1/-1->5->4 [11] -1/-1/-1->5->4 [12] 6/-1/-1->5->4 [13] -1/-1/-1->5->4 [14] 6/-1/-1->5->4 [15] -1/-1/-1->5->4
+mk-xii-05:3494274:3494349 [6] NCCL INFO Trees [0] 7/-1/-1->6->5 [1] 7/-1/-1->6->2 [2] 7/-1/-1->6->5 [3] 7/2/-1->6->-1 [4] 7/-1/-1->6->5 [5] 7/-1/-1->6->2 [6] 7/-1/-1->6->5 [7] 7/2/-1->6->-1 [8] 7/-1/-1->6->5 [9] 7/-1/-1->6->2 [10] 7/-1/-1->6->5 [11] 7/2/-1->6->-1 [12] 7/-1/-1->6->5 [13] 7/-1/-1->6->2 [14] 7/-1/-1->6->5 [15] 7/2/-1->6->-1
+mk-xii-05:3494269:3494356 [1] NCCL INFO NVLS Head  1:  1  5
+mk-xii-05:3494268:3494347 [0] NCCL INFO NVLS Head  0:  0  4
+mk-xii-05:3494268:3494347 [0] NCCL INFO NVLS Head  1:  1  5
+mk-xii-05:3494275:3494358 [7] NCCL INFO Trees [0] -1/-1/-1->7->6 [1] 4/-1/-1->7->6 [2] -1/-1/-1->7->6 [3] 4/-1/-1->7->6 [4] -1/-1/-1->7->6 [5] 4/-1/-1->7->6 [6] -1/-1/-1->7->6 [7] 4/-1/-1->7->6 [8] -1/-1/-1->7->6 [9] 4/-1/-1->7->6 [10] -1/-1/-1->7->6 [11] 4/-1/-1->7->6 [12] -1/-1/-1->7->6 [13] 4/-1/-1->7->6 [14] -1/-1/-1->7->6 [15] 4/-1/-1->7->6
+mk-xii-05:3494275:3494358 [7] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494272:3494359 [4] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494271:3494360 [3] NCCL INFO NVLS Head  1:  1  5
+mk-xii-05:3494271:3494360 [3] NCCL INFO NVLS Head  2:  2  6
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 01/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494274:3494349 [6] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494269:3494356 [1] NCCL INFO NVLS Head  2:  2  6
+mk-xii-05:3494268:3494347 [0] NCCL INFO NVLS Head  2:  2  6
+mk-xii-05:3494271:3494360 [3] NCCL INFO NVLS Head  3:  3  7
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 03/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO NVLS Head  3:  3  7
+mk-xii-05:3494269:3494356 [1] NCCL INFO Trees [0] 2/-1/-1->1->0 [1] -1/-1/-1->1->0 [2] 2/-1/-1->1->0 [3] -1/-1/-1->1->0 [4] 2/-1/-1->1->0 [5] -1/-1/-1->1->0 [6] 2/-1/-1->1->0 [7] -1/-1/-1->1->0 [8] 2/-1/-1->1->0 [9] -1/-1/-1->1->0 [10] 2/-1/-1->1->0 [11] -1/-1/-1->1->0 [12] 2/-1/-1->1->0 [13] -1/-1/-1->1->0 [14] 2/-1/-1->1->0 [15] -1/-1/-1->1->0
+mk-xii-05:3494268:3494347 [0] NCCL INFO NVLS Head  3:  3  7
+mk-xii-05:3494271:3494360 [3] NCCL INFO Trees [0] -1/-1/-1->3->2 [1] 0/-1/-1->3->2 [2] -1/-1/-1->3->2 [3] 0/-1/-1->3->2 [4] -1/-1/-1->3->2 [5] 0/-1/-1->3->2 [6] -1/-1/-1->3->2 [7] 0/-1/-1->3->2 [8] -1/-1/-1->3->2 [9] 0/-1/-1->3->2 [10] -1/-1/-1->3->2 [11] 0/-1/-1->3->2 [12] -1/-1/-1->3->2 [13] 0/-1/-1->3->2 [14] -1/-1/-1->3->2 [15] 0/-1/-1->3->2
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 05/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 00/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494271:3494360 [3] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 07/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 01/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 02/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 09/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 03/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 11/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 04/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 13/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 05/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 06/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 15/0 : 7[7] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 07/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 08/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 09/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 10/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 11/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 12/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 13/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 14/16 :    0   3   2   1   4   7   6   5
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 15/16 :    0   3   6   5   4   7   2   1
+mk-xii-05:3494268:3494347 [0] NCCL INFO Trees [0] 1/4/-1->0->-1 [1] 1/-1/-1->0->3 [2] 1/-1/-1->0->4 [3] 1/-1/-1->0->3 [4] 1/4/-1->0->-1 [5] 1/-1/-1->0->3 [6] 1/-1/-1->0->4 [7] 1/-1/-1->0->3 [8] 1/4/-1->0->-1 [9] 1/-1/-1->0->3 [10] 1/-1/-1->0->4 [11] 1/-1/-1->0->3 [12] 1/4/-1->0->-1 [13] 1/-1/-1->0->3 [14] 1/-1/-1->0->4 [15] 1/-1/-1->0->3
+mk-xii-05:3494268:3494347 [0] NCCL INFO P2P Chunksize set to 131072
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 00/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 01/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 03/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 02/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 04/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 05/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 06/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 07/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 08/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 09/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 10/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 11/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 12/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 13/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 00/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 02/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 04/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 06/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 08/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 10/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 14/0 : 5[5] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 15/0 : 3[3] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 00/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 00/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 12/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 02/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 14/0 : 1[1] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 02/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 04/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 06/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 08/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 10/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 12/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 04/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 14/0 : 1[1] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 06/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 08/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 10/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 12/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 14/0 : 5[5] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 00 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 01 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 02 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 03 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 04 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 05 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 06 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 00 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 07 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 08 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 09 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 01 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 10 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 02 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 03 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 04 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 05 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 06 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 07 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 11 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 12 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 08 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 13 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 14 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 09 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 15 : 4[4] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 10 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 01/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 03/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 11 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 05/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 12 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 13 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 14 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 15 : 0[0] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 07/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 09/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 01/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 11/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 03/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 13/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 15/0 : 3[3] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 05/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 07/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 09/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 11/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 13/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 15/0 : 7[7] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 00 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 02 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 00 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 02 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 04 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 04 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 06 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 06 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 08 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 08 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 10 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 10 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 12 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 00 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 14 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 00 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 01 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 12 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 02 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 01 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 01 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 14 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 03 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 02 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 05 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 03 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 01 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 04 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 05 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 03 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 06 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 07 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 05 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 08 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 03 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 09 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 04 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 10 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 05 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 11 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 06 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 12 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 07 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 13 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 08 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 07 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 14 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 09 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 10 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 09 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 15 : 6[6] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 11 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 12 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 11 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 13 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 13 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 15 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 14 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 15 : 2[2] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 07 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 09 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 11 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 13 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 15 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Connected all rings
+mk-xii-05:3494271:3494360 [3] NCCL INFO Connected all rings
+mk-xii-05:3494270:3494357 [2] NCCL INFO Connected all rings
+mk-xii-05:3494272:3494359 [4] NCCL INFO Connected all rings
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 00 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 01 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 02 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Connected all rings
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 00 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Connected all rings
+mk-xii-05:3494273:3494361 [5] NCCL INFO Connected all rings
+mk-xii-05:3494274:3494349 [6] NCCL INFO Connected all rings
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 03 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 04 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 01 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 02 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 05 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 03 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 06 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 04 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 05 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 07 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 06 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 08 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 07 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 09 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 08 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 10 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 09 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 10 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 11 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 12 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 13 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 11 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 14 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 00 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 12 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 01 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 15 : 0[0] -> 1[1] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 02 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 13 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 03 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 14 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 04 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 15 : 4[4] -> 5[5] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 05 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 06 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 00 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 07 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 01 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 08 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 02 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 09 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 10 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 03 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 11 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 12 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 04 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 13 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 05 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 14 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 06 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 07 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 15 : 2[2] -> 3[3] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 08 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 01 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 09 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 10 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 03 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 11 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 05 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 07 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 09 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 12 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 11 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 13 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 14 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 13 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 00 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 15 : 6[6] -> 7[7] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 15 : 3[3] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 02 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 04 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 06 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 08 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 10 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 01 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 03 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 05 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 07 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 09 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 11 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 00 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 12 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 13 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 15 : 7[7] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 02 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 14 : 1[1] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 04 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 00 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 02 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 04 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 06 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 08 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 10 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 12 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 14 : 1[1] -> 0[0] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 06 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 00/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 01/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 08 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 02/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 03/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 10 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 04/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 05/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 12 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 06/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 07/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 14 : 5[5] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 09/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 00 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 11/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 08/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 10/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 00/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 02/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 01/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 03/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 02 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 13/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 04/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 12/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 05/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 04 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 15/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 01/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 03/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 05/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 07/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 09/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 11/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 13/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 15/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 07/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 06/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 14/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 06 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 00/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 08/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 10/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 08 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 10 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 09/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 02/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 12/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 14/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 12 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 14 : 5[5] -> 4[4] via SHM/direct/direct
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 00/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 04/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 11/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 02/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 06/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 13/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 04/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 08/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 06/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 10/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 12/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 14/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 15/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 08/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 10/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 12/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 01/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 03/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 14/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 05/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 07/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 09/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 11/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 13/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 15/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 01 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 03 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 05 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 01 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 07 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 03 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 05 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 07 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 09 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 09 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 11 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 11 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 13 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 13 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 15 : 7[7] -> 6[6] via SHM/direct/direct
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 15 : 3[3] -> 2[2] via SHM/direct/direct
+mk-xii-05:3494268:3494347 [0] NCCL INFO Connected all trees
+mk-xii-05:3494269:3494356 [1] NCCL INFO Connected all trees
+mk-xii-05:3494272:3494359 [4] NCCL INFO Connected all trees
+mk-xii-05:3494273:3494361 [5] NCCL INFO Connected all trees
+mk-xii-05:3494270:3494357 [2] NCCL INFO Connected all trees
+mk-xii-05:3494271:3494360 [3] NCCL INFO Connected all trees
+mk-xii-05:3494274:3494349 [6] NCCL INFO Connected all trees
+mk-xii-05:3494275:3494358 [7] NCCL INFO Connected all trees
+mk-xii-05:3494268:3494347 [0] NCCL INFO NVLS comm 0x8f08650 headRank 0 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494269:3494356 [1] NCCL INFO NVLS comm 0x8b4ab00 headRank 1 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494270:3494357 [2] NCCL INFO NVLS comm 0x744c590 headRank 2 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494272:3494359 [4] NCCL INFO NVLS comm 0x7f68fb0 headRank 0 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494271:3494360 [3] NCCL INFO NVLS comm 0x7352400 headRank 3 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494273:3494361 [5] NCCL INFO NVLS comm 0x776bf40 headRank 1 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494274:3494349 [6] NCCL INFO NVLS comm 0x88615e0 headRank 2 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494275:3494358 [7] NCCL INFO NVLS comm 0x7133390 headRank 3 nHeads 4 buffSize 4194304 memSize 2097152 nvlsPerRankSize 201326592 nvlsTotalSize 805306368
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 00/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 00/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 01/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 00/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 02/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 01/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 03/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 05/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 01/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 07/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 04/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 02/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 03/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 09/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 02/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 06/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 04/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 11/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 03/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 08/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 13/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 04/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 05/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 06/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 07/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 08/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 09/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 05/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 10/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 15/0 : 4[4] -> 0[0] [receive] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 01/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 10/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 12/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 03/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 05/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 11/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 14/0 : 6[6] -> 2[2] [receive] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 07/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 06/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 12/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 13/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 09/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 11/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 14/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 15/0 : 5[5] -> 1[1] [receive] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 00/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 00/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 13/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494268:3494347 [0] NCCL INFO Channel 15/0 : 0[0] -> 4[4] [send] via NET/IBext_v8/4/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 01/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 07/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 02/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 02/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 03/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 08/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 04/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 04/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 09/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 06/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 05/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 10/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 06/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 11/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 07/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 12/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 13/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 00/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 14/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 08/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 08/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 15/0 : 7[7] -> 3[3] [receive] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 00/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 01/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 02/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 03/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 04/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 01/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 09/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 05/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 06/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 10/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 12/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 00/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 00/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 10/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 03/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 07/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Channel 14/0 : 2[2] -> 6[6] [send] via NET/IBext_v8/6/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 02/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 11/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 01/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 08/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 05/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 01/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 12/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 13/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 14/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494269:3494356 [1] NCCL INFO Channel 15/0 : 1[1] -> 5[5] [send] via NET/IBext_v8/5/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 04/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 02/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 06/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 07/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 09/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 02/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 10/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 09/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 03/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 11/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 04/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 12/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 11/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 08/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 05/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 13/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 13/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 06/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 14/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 15/0 : 0[0] -> 4[4] [receive] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 07/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494271:3494360 [3] NCCL INFO Channel 15/0 : 3[3] -> 7[7] [send] via NET/IBext_v8/7/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 03/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 10/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 01/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 08/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 09/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 04/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 12/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 14/0 : 2[2] -> 6[6] [receive] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 03/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 10/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 11/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 12/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 13/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 05/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 14/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 00/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 05/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 15/0 : 3[3] -> 7[7] [receive] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 00/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 01/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 02/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 03/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 06/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 02/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 04/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 05/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 06/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 07/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 08/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 09/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 10/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 07/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 04/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 11/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 06/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 08/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 10/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 12/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494274:3494349 [6] NCCL INFO Channel 14/0 : 6[6] -> 2[2] [send] via NET/IBext_v8/2/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 08/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 09/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 12/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 07/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 10/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 13/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 14/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 09/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 11/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494275:3494358 [7] NCCL INFO Channel 15/0 : 7[7] -> 3[3] [send] via NET/IBext_v8/3/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 11/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 12/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 13/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 13/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 14/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 15/0 : 1[1] -> 5[5] [receive] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494272:3494359 [4] NCCL INFO Channel 15/0 : 4[4] -> 0[0] [send] via NET/IBext_v8/0/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 00/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 01/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 02/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 03/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 04/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 05/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 06/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 07/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 08/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 09/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 10/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 11/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 12/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 13/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 14/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494273:3494361 [5] NCCL INFO Channel 15/0 : 5[5] -> 1[1] [send] via NET/IBext_v8/1/GDRDMA
+mk-xii-05:3494270:3494357 [2] NCCL INFO Connected NVLS tree
+mk-xii-05:3494270:3494357 [2] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494274:3494349 [6] NCCL INFO Connected NVLS tree
+mk-xii-05:3494270:3494357 [2] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494274:3494349 [6] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494274:3494349 [6] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494268:3494347 [0] NCCL INFO Connected NVLS tree
+mk-xii-05:3494268:3494347 [0] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494268:3494347 [0] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494272:3494359 [4] NCCL INFO Connected NVLS tree
+mk-xii-05:3494272:3494359 [4] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494272:3494359 [4] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494273:3494361 [5] NCCL INFO Connected NVLS tree
+mk-xii-05:3494269:3494356 [1] NCCL INFO Connected NVLS tree
+mk-xii-05:3494269:3494356 [1] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494273:3494361 [5] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494273:3494361 [5] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494269:3494356 [1] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494275:3494358 [7] NCCL INFO Connected NVLS tree
+mk-xii-05:3494275:3494358 [7] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494271:3494360 [3] NCCL INFO Connected NVLS tree
+mk-xii-05:3494271:3494360 [3] NCCL INFO threadThresholds 8/8/64 | 64/8/64 | 512 | 512
+mk-xii-05:3494271:3494360 [3] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494275:3494358 [7] NCCL INFO 16 coll channels, 0 collnet channels, 16 nvls channels, 16 p2p channels, 2 p2p channels per peer
+mk-xii-05:3494271:3494360 [3] NCCL INFO comm 0x7352400 rank 3 nranks 8 cudaDev 3 nvmlDev 3 busId 14000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+mk-xii-05:3494268:3494347 [0] NCCL INFO comm 0x8f08650 rank 0 nranks 8 cudaDev 0 nvmlDev 0 busId 11000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+mk-xii-05:3494270:3494357 [2] NCCL INFO comm 0x744c590 rank 2 nranks 8 cudaDev 2 nvmlDev 2 busId 13000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+mk-xii-05:3494269:3494356 [1] NCCL INFO comm 0x8b4ab00 rank 1 nranks 8 cudaDev 1 nvmlDev 1 busId 12000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+mk-xii-05:3494273:3494361 [5] NCCL INFO comm 0x776bf40 rank 5 nranks 8 cudaDev 5 nvmlDev 5 busId 22000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+mk-xii-05:3494275:3494358 [7] NCCL INFO comm 0x7133390 rank 7 nranks 8 cudaDev 7 nvmlDev 7 busId 24000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+mk-xii-05:3494272:3494359 [4] NCCL INFO comm 0x7f68fb0 rank 4 nranks 8 cudaDev 4 nvmlDev 4 busId 21000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+mk-xii-05:3494274:3494349 [6] NCCL INFO comm 0x88615e0 rank 6 nranks 8 cudaDev 6 nvmlDev 6 busId 23000 commId 0xfa41aff77737cdb6 - Init COMPLETE
+Average all_reduce latency over 10 iterations: 0.0674 ms
+mk-xii-05:3494270:3494525 [2] NCCL INFO [Service thread] Connection closed by localRank 2
+mk-xii-05:3494275:3494528 [7] NCCL INFO [Service thread] Connection closed by localRank 3
+mk-xii-05:3494271:3494538 [3] NCCL INFO [Service thread] Connection closed by localRank 3
+mk-xii-05:3494269:3494536 [1] NCCL INFO [Service thread] Connection closed by localRank 1
+mk-xii-05:3494272:3494530 [4] NCCL INFO [Service thread] Connection closed by localRank 0
+mk-xii-05:3494268:3494540 [0] NCCL INFO [Service thread] Connection closed by localRank 0
+mk-xii-05:3494274:3494534 [6] NCCL INFO [Service thread] Connection closed by localRank 2
+mk-xii-05:3494273:3494532 [5] NCCL INFO [Service thread] Connection closed by localRank 1
+mk-xii-05:3494270:3494553 [2] NCCL INFO comm 0x744c590 rank 2 nranks 8 cudaDev 2 busId 13000 - Abort COMPLETE
+mk-xii-05:3494275:3494554 [7] NCCL INFO comm 0x7133390 rank 7 nranks 8 cudaDev 7 busId 24000 - Abort COMPLETE
+mk-xii-05:3494272:3494557 [4] NCCL INFO comm 0x7f68fb0 rank 4 nranks 8 cudaDev 4 busId 21000 - Abort COMPLETE
+mk-xii-05:3494274:3494559 [6] NCCL INFO comm 0x88615e0 rank 6 nranks 8 cudaDev 6 busId 23000 - Abort COMPLETE
+mk-xii-05:3494271:3494555 [3] NCCL INFO comm 0x7352400 rank 3 nranks 8 cudaDev 3 busId 14000 - Abort COMPLETE
+mk-xii-05:3494268:3494558 [0] NCCL INFO comm 0x8f08650 rank 0 nranks 8 cudaDev 0 busId 11000 - Abort COMPLETE
+mk-xii-05:3494269:3494556 [1] NCCL INFO comm 0x8b4ab00 rank 1 nranks 8 cudaDev 1 busId 12000 - Abort COMPLETE
+mk-xii-05:3494273:3494560 [5] NCCL INFO comm 0x776bf40 rank 5 nranks 8 cudaDev 5 busId 22000 - Abort COMPLETE

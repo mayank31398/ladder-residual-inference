@@ -1,26 +1,32 @@
-Traceback (most recent call last):
-  File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 15, in <module>
-    from gpt_fast.utils import set_flash_attention, _get_model_size
-  File "/home/charlie/skip-residual/gpt-fast/gpt_fast/__init__.py", line 1, in <module>
-    from .gpt_dense_TP import GPTDense
-  File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 16, in <module>
-    from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward, all_reduce_func
-  File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 34, in <module>
-    maybe_init_dist()
-  File "/home/charlie/skip-residual/gpt-fast/gpt_fast/tp.py", line 48, in maybe_init_dist
-    dist.init_process_group(backend="nccl", rank=rank, world_size=world_size)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/c10d_logger.py", line 79, in wrapper
-    return func(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/c10d_logger.py", line 93, in wrapper
-    func_return = func(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1361, in init_process_group
-    store, rank, world_size = next(rendezvous_iterator)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/rendezvous.py", line 258, in _env_rendezvous_handler
-    store = _create_c10d_store(master_addr, master_port, rank, world_size, timeout, use_libuv)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/rendezvous.py", line 185, in _create_c10d_store
-    return TCPStore(
-RuntimeError: The server socket has failed to listen on any local network address. useIpv6: 0, code: -98, name: EADDRINUSE, message: address already in use
-E0920 11:50:29.358000 23302726551360 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 3786089) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
+[rank0]:     model = _load_model(model_name, device, precision)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 240, in _load_model
+[rank0]:     model = model.to_empty(device=device)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1037, in to_empty
+[rank0]:     return self._apply(lambda t: torch.empty_like(t, device=device), recurse=recurse)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 780, in _apply
+[rank0]:     module._apply(fn)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 780, in _apply
+[rank0]:     module._apply(fn)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 780, in _apply
+[rank0]:     module._apply(fn)
+[rank0]:   [Previous line repeated 1 more time]
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 805, in _apply
+[rank0]:     param_applied = fn(param)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1037, in <lambda>
+[rank0]:     return self._apply(lambda t: torch.empty_like(t, device=device), recurse=recurse)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_prims_common/wrappers.py", line 266, in _fn
+[rank0]:     result = fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_refs/__init__.py", line 4890, in empty_like
+[rank0]:     return torch.empty_permuted(
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 160.00 MiB. GPU 0 has a total capacity of 79.11 GiB of which 136.88 MiB is free. Including non-PyTorch memory, this process has 78.97 GiB memory in use. Of the allocated memory 78.46 GiB is allocated by PyTorch, and 512.00 KiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+E0925 03:18:35.168000 22489638606656 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 4192292) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
 Traceback (most recent call last):
   File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
     sys.exit(main())
@@ -43,10 +49,10 @@ Failures:
 ------------------------------------------------------------
 Root Cause (first observed failure):
 [0]:
-  time      : 2024-09-20_11:50:29
-  host      : mk-xii-26.cloud.together.ai
+  time      : 2024-09-25_03:18:35
+  host      : mk-xii-18.cloud.together.ai
   rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 3786089)
+  exitcode  : 1 (pid: 4192292)
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ============================================================

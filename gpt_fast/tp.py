@@ -17,6 +17,7 @@ else:
 
 from model import Attention, FeedForward, Transformer
 from quantize import WeightOnlyInt4Linear
+from datetime import timedelta
 
 
 def _get_rank() -> int:
@@ -45,7 +46,7 @@ def maybe_init_dist() -> Optional[int]:
 
     if not dist.is_initialized():
         torch.cuda.set_device(rank)
-        dist.init_process_group(backend="nccl", rank=rank, world_size=world_size)
+        dist.init_process_group(backend="nccl", rank=rank, world_size=world_size, timeout=timedelta(seconds=60))
 
     return rank
 

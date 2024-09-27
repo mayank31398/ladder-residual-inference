@@ -1,7 +1,7 @@
-W0920 11:11:39.805000 22824999638848 torch/distributed/run.py:779] 
-W0920 11:11:39.805000 22824999638848 torch/distributed/run.py:779] *****************************************
-W0920 11:11:39.805000 22824999638848 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0920 11:11:39.805000 22824999638848 torch/distributed/run.py:779] *****************************************
+W0925 01:16:33.040000 22851142907712 torch/distributed/run.py:779] 
+W0925 01:16:33.040000 22851142907712 torch/distributed/run.py:779] *****************************************
+W0925 01:16:33.040000 22851142907712 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0925 01:16:33.040000 22851142907712 torch/distributed/run.py:779] *****************************************
 flash_kv_decode is set to True
 Using device=cuda
 Loading model ...
@@ -25,54 +25,7 @@ GPTEnsemble(
   (norm): RMSNorm()
   (output): Linear(in_features=8192, out_features=128256, bias=False)
 )
-Time to load model: 1.14 seconds
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 276, in get_cuda_graphs_for_prefill
-[rank0]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank0]:     return func(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 79, in prefill
-[rank0]:     logits = model(x, input_pos)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-[rank0]:     return self._call_impl(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-[rank0]:     return forward_call(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
-[rank0]:     x = layer(x, input_pos, freqs_cis, mask)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-[rank0]:     return self._call_impl(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-[rank0]:     return forward_call(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 209, in forward
-[rank0]:     x = self.feed_forward(self.ffn_norm(x))
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-[rank0]:     return self._call_impl(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-[rank0]:     return forward_call(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 140, in forward
-[rank0]:     y = self.w2(F.silu(g) * u)
-[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 79.11 GiB of which 76.94 MiB is free. Including non-PyTorch memory, this process has 79.03 GiB memory in use. Of the allocated memory 72.70 GiB is allocated by PyTorch, with 3.67 GiB allocated in private pools (e.g., CUDA Graphs), and 4.58 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
-
-[rank0]: During handling of the above exception, another exception occurred:
-
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
-[rank0]:     main(
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 387, in main
-[rank0]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank0]:     return func(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 275, in get_cuda_graphs_for_prefill
-[rank0]:     with torch.cuda.graph(g):
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/cuda/graphs.py", line 185, in __exit__
-[rank0]:     self.cuda_graph.capture_end()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/cuda/graphs.py", line 83, in capture_end
-[rank0]:     super().capture_end()
-[rank0]: RuntimeError: CUDA error: out of memory
-[rank0]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
-[rank0]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
-[rank0]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
-
+Time to load model: 1.20 seconds
 [rank1]: Traceback (most recent call last):
 [rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 276, in get_cuda_graphs_for_prefill
 [rank1]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
@@ -120,8 +73,55 @@ Time to load model: 1.14 seconds
 [rank1]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
 [rank1]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
 
-W0920 11:11:52.162000 22824999638848 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 3775805 closing signal SIGTERM
-E0920 11:11:52.275000 22824999638848 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 1 (pid: 3775806) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 276, in get_cuda_graphs_for_prefill
+[rank0]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 79, in prefill
+[rank0]:     logits = model(x, input_pos)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 134, in forward
+[rank0]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 209, in forward
+[rank0]:     x = self.feed_forward(self.ffn_norm(x))
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 140, in forward
+[rank0]:     y = self.w2(F.silu(g) * u)
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 79.11 GiB of which 76.94 MiB is free. Including non-PyTorch memory, this process has 79.03 GiB memory in use. Of the allocated memory 72.70 GiB is allocated by PyTorch, with 3.67 GiB allocated in private pools (e.g., CUDA Graphs), and 4.58 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 387, in main
+[rank0]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 275, in get_cuda_graphs_for_prefill
+[rank0]:     with torch.cuda.graph(g):
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/cuda/graphs.py", line 185, in __exit__
+[rank0]:     self.cuda_graph.capture_end()
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/cuda/graphs.py", line 83, in capture_end
+[rank0]:     super().capture_end()
+[rank0]: RuntimeError: CUDA error: out of memory
+[rank0]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank0]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank0]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+W0925 01:16:47.082000 22851142907712 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 4167616 closing signal SIGTERM
+E0925 01:16:47.296000 22851142907712 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 4167615) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
 Traceback (most recent call last):
   File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
     sys.exit(main())
@@ -144,10 +144,10 @@ Failures:
 ------------------------------------------------------------
 Root Cause (first observed failure):
 [0]:
-  time      : 2024-09-20_11:11:52
-  host      : mk-xii-26.cloud.together.ai
-  rank      : 1 (local_rank: 1)
-  exitcode  : 1 (pid: 3775806)
+  time      : 2024-09-25_01:16:47
+  host      : mk-xii-18.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 4167615)
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ============================================================

@@ -489,6 +489,7 @@ def main(
     print_rank_0(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'])).item():.2f}")
     print_rank_0(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
+    dist.barrier()
     dist.destroy_process_group()
     exit()
 

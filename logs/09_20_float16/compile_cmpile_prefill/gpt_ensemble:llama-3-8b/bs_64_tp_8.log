@@ -1,0 +1,102 @@
+W0925 09:17:20.042000 23315145639744 torch/distributed/run.py:779] 
+W0925 09:17:20.042000 23315145639744 torch/distributed/run.py:779] *****************************************
+W0925 09:17:20.042000 23315145639744 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0925 09:17:20.042000 23315145639744 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to False
+Using device=cuda
+Loading model ...
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=768, bias=False)
+        (wo): Linear(in_features=512, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=3584, bias=False)
+        (w2): Linear(in_features=1792, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 0.81 seconds
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank5]:     main(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 375, in main
+[rank5]:     model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 122, in setup_caches
+[rank5]:     b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 44, in __init__
+[rank5]:     self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_device.py", line 79, in __torch_function__
+[rank5]:     return func(*args, **kwargs)
+[rank5]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 5 has a total capacity of 79.33 GiB of which 13.75 MiB is free. Process 618677 has 74.00 GiB memory in use. Including non-PyTorch memory, this process has 5.30 GiB memory in use. Of the allocated memory 4.70 GiB is allocated by PyTorch, and 1.48 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 518, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 375, in main
+[rank3]:     model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 122, in setup_caches
+[rank3]:     b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 44, in __init__
+[rank3]:     self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_device.py", line 79, in __torch_function__
+[rank3]:     return func(*args, **kwargs)
+[rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 3 has a total capacity of 79.33 GiB of which 19.75 MiB is free. Process 618675 has 73.92 GiB memory in use. Including non-PyTorch memory, this process has 5.38 GiB memory in use. Of the allocated memory 4.77 GiB is allocated by PyTorch, and 1.48 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+W0925 09:17:26.042000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 632516 closing signal SIGTERM
+W0925 09:17:26.043000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 632517 closing signal SIGTERM
+W0925 09:17:26.043000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 632518 closing signal SIGTERM
+W0925 09:17:26.043000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 632519 closing signal SIGTERM
+W0925 09:17:26.044000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 632520 closing signal SIGTERM
+W0925 09:17:26.044000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 632522 closing signal SIGTERM
+W0925 09:17:26.044000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 632523 closing signal SIGTERM
+E0925 09:17:26.409000 23315145639744 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 5 (pid: 632521) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-25_09:17:26
+  host      : mk-xii-17.cloud.together.ai
+  rank      : 5 (local_rank: 5)
+  exitcode  : 1 (pid: 632521)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

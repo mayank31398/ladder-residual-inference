@@ -1,5 +1,5 @@
 mode=compile_cmpile_prefill
-for model_name in "gpt_ladder:llama-3-70b" "gpt_dense:llama-3-70b" "gpt_ensemble:llama-3-70b-upper-bound" "gpt_parallel:llama-3-70b" "gpt_ensemble:llama-3-70b"
+for model_name in "gpt_ensemble:llama-3-70b"
 do
     folder=./logs/09_20_float16/${mode}/${model_name}
     mkdir -p ${folder}

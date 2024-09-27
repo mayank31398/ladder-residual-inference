@@ -1,20 +1,22 @@
-for model_name in "gpt_ladder:llama-3-8b"
+mode=cuda_graph_use_flash_attention
+for model_name in "gpt_dense:llama-3-8b"
 do
-    for bssize in 4
+    folder=./logs/09_20_float16/${mode}/${model_name}
+    mkdir -p ${folder}
+    for bssize in 4 8
     do
         for tpsize in 4
         do
             echo "Running with bs=${bssize} tp=${tpsize}"
-            NCCL_BLOCKING_WAIT=0 ENABLE_INTRA_NODE_COMM=1 torchrun --standalone --nproc_per_node=${tpsize} benchmark.py \
+            NCCL_DEBUG=INFO ENABLE_INTRA_NODE_COMM=1 torchrun --standalone --nproc_per_node=${tpsize} benchmark.py \
                                             --model_name ${model_name} \
-                                            --num_samples 10 \
+                                            --num_samples 2 \
                                             --batch_size ${bssize} \
-                                            --prompt_length 256 \
-                                            --max_new_tokens 32 \
+                                            --prompt_length 128 \
+                                            --max_new_tokens 64 \
                                             --cuda_graph \
                                             --use_flash_attention \
-                                            --profile ./profiles/use_flash_attention_v6 \
-                                            --device cuda 2>&1 | tee ./tmp.log
+                                            --device cuda 2>&1 | tee tmp.log
             echo "Finished running with bs=${bssize} tp=${tpsize}" 
         done
     done
