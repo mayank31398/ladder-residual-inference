@@ -1,0 +1,134 @@
+W0926 20:10:37.932000 23204623259456 torch/distributed/run.py:779] 
+W0926 20:10:37.932000 23204623259456 torch/distributed/run.py:779] *****************************************
+W0926 20:10:37.932000 23204623259456 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0926 20:10:37.932000 23204623259456 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTLadder(
+  (tok_embeddings): Embedding(128256, 8192)
+  (layers): ModuleList(
+    (0-79): 80 x LadderTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=8192, out_features=1280, bias=False)
+        (wo): Linear(in_features=1024, out_features=8192, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=8192, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=8192, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=8192, out_features=128256, bias=False)
+)
+Time to load model: 0.40 seconds
+[mk-xii-14:2639184:0:2639184] Caught signal 11 (Segmentation fault: address not mapped to object at address 0x5c0)
+[rank4]:[E926 20:11:53.279427308 ProcessGroupNCCL.cpp:607] [Rank 4] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=689, OpType=ALLREDUCE, NumelIn=32768, NumelOut=32768, Timeout(ms)=60000) ran for 60013 milliseconds before timing out.
+[rank4]:[E926 20:11:53.279708422 ProcessGroupNCCL.cpp:1664] [PG 0 (default_pg) Rank 4] Exception (either an error or timeout) detected by watchdog at work: 689, last enqueued NCCL work: 739, last completed NCCL work: 688.
+[rank0]:[E926 20:11:53.297905950 ProcessGroupNCCL.cpp:607] [Rank 0] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=689, OpType=ALLREDUCE, NumelIn=32768, NumelOut=32768, Timeout(ms)=60000) ran for 60058 milliseconds before timing out.
+[rank0]:[E926 20:11:53.298110195 ProcessGroupNCCL.cpp:1664] [PG 0 (default_pg) Rank 0] Exception (either an error or timeout) detected by watchdog at work: 689, last enqueued NCCL work: 689, last completed NCCL work: 688.
+[mk-xii-14:2639181:0:2639181] Caught signal 11 (Segmentation fault: address not mapped to object at address 0x5c0)
+[rank1]:[E926 20:11:53.314545420 ProcessGroupNCCL.cpp:607] [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=689, OpType=ALLREDUCE, NumelIn=32768, NumelOut=32768, Timeout(ms)=60000) ran for 60075 milliseconds before timing out.
+[rank1]:[E926 20:11:53.314731151 ProcessGroupNCCL.cpp:1664] [PG 0 (default_pg) Rank 1] Exception (either an error or timeout) detected by watchdog at work: 689, last enqueued NCCL work: 689, last completed NCCL work: 688.
+[rank2]:[E926 20:11:53.317871620 ProcessGroupNCCL.cpp:607] [Rank 2] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=689, OpType=ALLREDUCE, NumelIn=32768, NumelOut=32768, Timeout(ms)=60000) ran for 60078 milliseconds before timing out.
+[rank2]:[E926 20:11:53.318101058 ProcessGroupNCCL.cpp:1664] [PG 0 (default_pg) Rank 2] Exception (either an error or timeout) detected by watchdog at work: 689, last enqueued NCCL work: 689, last completed NCCL work: 688.
+==== backtrace (tid:2639184) ====
+ 0 0x0000000000042520 __sigaction()  ???:0
+ 1 0x000000000004b44a ncclMemoryPoolAlloc<ncclProxyOp>()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/include/utils.h:280
+ 2 0x000000000004b44a addProxyOpIfNeeded()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:180
+ 3 0x000000000004b44a addProxyOpIfNeeded()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:176
+ 4 0x000000000004ccd8 addCBDCollToPlan()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:481
+ 5 0x0000000000050bad ncclLaunchPrepare()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:814
+ 6 0x0000000000050bad ncclLaunchPrepare()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:1224
+ 7 0x0000000000054bab groupLaunch()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:129
+ 8 0x0000000000054bab groupLaunch()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:339
+ 9 0x0000000000055dd8 ncclGroupEndInternal()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:418
+10 0x0000000000055dd8 ncclGroupEndInternal()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:368
+11 0x000000000004ecaf ncclEnqueueCheck()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:1981
+12 0x00000000000467da ncclAllReduce()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/collectives.cc:49
+13 0x00000000011dbf20 c10d::ProcessGroupNCCL::collective<c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}, c10d::ProcessGroupNCCL::collective<c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}>(at::Tensor&, at::Tensor&, c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}, c10d::OpType, char const*, bool)::{lambda(c10::cuda::CUDAStream&, c10::intrusive_ptr<c10d::ProcessGroupNCCL::WorkNCCL, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroupNCCL::WorkNCCL> >&)#1}, c10d::ProcessGroupNCCL::collective<c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}>(at::Tensor&, at::Tensor&, c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}, c10d::OpType, char const*, bool)::{lambda(c10::cuda::CUDAStream&, c10::intrusive_ptr<c10d::ProcessGroupNCCL::WorkNCCL, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroupNCCL::WorkNCCL> >&)#2}>()  ProcessGroupNCCL.cpp:0
+14 0x00000000011dcf90 c10d::ProcessGroupNCCL::allreduce_impl()  ???:0
+15 0x00000000011dd6b5 c10d::ProcessGroupNCCL::allreduce()  ???:0
+16 0x0000000005ca549e c10d::ops::(anonymous namespace)::allreduce_CUDA()  Ops.cpp:0
+17 0x0000000005caffe4 c10::impl::call_functor_with_args_from_stack_<c10::impl::detail::WrapFunctionIntoRuntimeFunctor_<std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > > (*)(c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long), std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > >, c10::guts::typelist::typelist<c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long> >, false, 0ul, 1ul, 2ul, 3ul, 4ul, c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long>()  :0
+18 0x0000000005cb1199 c10::impl::make_boxed_from_unboxed_functor<c10::impl::detail::WrapFunctionIntoRuntimeFunctor_<std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > > (*)(c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long), std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > >, c10::guts::typelist::typelist<c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long> >, false>::call()  :0
+19 0x00000000052d0c1b c10::OperatorHandle::redispatchBoxed()  :0
+20 0x00000000052ce494 torch::autograd::basicAutogradNotImplementedFallbackImpl()  autograd_not_implemented_fallback.cpp:0
+21 0x0000000001ace5a8 c10::BoxedKernel::make_boxed_function<&(anonymous namespace)::autograd_fallback>()  VariableFallbackKernel.cpp:0
+22 0x0000000005cb6935 c10::impl::BoxedKernelWrapper<std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > > (c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long), void>::call()  :0
+23 0x0000000005cc48bd c10d::ProcessGroup::allreduce()  :0
+24 0x0000000000db3635 pybind11::cpp_function::initialize<pybind11::cpp_function::initialize<c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> >, c10d::ProcessGroup, std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&, pybind11::name, pybind11::is_method, pybind11::sibling, pybind11::arg, pybind11::arg_v, pybind11::call_guard<pybind11::gil_scoped_release> >(c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > (c10d::ProcessGroup::*)(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&), pybind11::name const&, pybind11::is_method const&, pybind11::sibling const&, pybind11::arg const&, pybind11::arg_v const&, pybind11::call_guard<pybind11::gil_scoped_release> const&)::{lambda(c10d::ProcessGroup*, std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&)#1}, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> >, c10d::ProcessGroup*, std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&, pybind11::name, pybind11::is_method, pybind11::sibling, pybind11::arg, pybind11::arg_v, pybind11::call_guard<pybind11::gil_scoped_release> >(pybind11::cpp_function::initialize<c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> >, c10d::ProcessGroup, std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&, pybind11::name, pybind11::is_method, pybind11::sibling, pybind11::arg, pybind11::arg_v, pybind11::call_guard<pybind11::gil_scoped_release> >(c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > (c10d::ProcessGroup::*)(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&), pybind11::name const&, pybind11::is_method const&, pybind11::sibling const&, pybind11::arg const&, pybind11::arg_v const&, pybind11::call_guard<pybind11::gil_scoped_release> const&)::{lambda(c10d::ProcessGroup*, std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&)#1}&&, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > (*)(c10d::ProcessGroup*, std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::AllreduceOptions const&), pybind11::name const&, pybind11::is_method const&, pybind11::sibling const&, pybind11::arg const&, pybind11::arg_v const&, pybind11::call_guard<pybind11::gil_scoped_release> const&)::{lambda(pybind11::detail::function_call&)#3}::_FUN()  :0
+25 0x00000000004b00e4 pybind11::cpp_function::dispatcher()  :0
+26 0x00000000004fdc87 cfunction_call()  /usr/local/src/conda/python-3.10.14/Objects/methodobject.c:543
+27 0x00000000004fdc87 _Py_CheckFunctionResult()  /usr/local/src/conda/python-3.10.14/Objects/call.c:39
+28 0x00000000004fdc87 cfunction_call()  /usr/local/src/conda/python-3.10.14/Objects/methodobject.c:554
+29 0x00000000004f741b _PyObject_MakeTpCall()  /usr/local/src/conda/python-3.10.14/Objects/call.c:215
+30 0x00000000004f741b _PyObject_MakeTpCall()  /usr/local/src/conda/python-3.10.14/Objects/call.c:216
+31 0x0000000000509cbf _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:112
+32 0x0000000000509cbf _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:99
+33 0x0000000000509cbf method_vectorcall()  /usr/local/src/conda/python-3.10.14/Objects/classobject.c:53
+34 0x00000000004f2c16 _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:114
+35 0x00000000004f2c16 _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:115
+36 0x00000000004f2c16 PyObject_Vectorcall()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:123
+37 0x00000000004f2c16 call_function()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5893
+38 0x00000000004f2c16 _PyEval_EvalFrameDefault()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:4181
+39 0x00000000004fe0cf _PyEval_EvalFrame()  /usr/local/src/conda/python-3.10.14/Include/internal/pycore_ceval.h:46
+40 0x00000000004fe0cf _PyEval_Vector()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5074
+41 0x00000000004fe0cf _PyFunction_Vectorcall()  /usr/local/src/conda/python-3.10.14/Objects/call.c:342
+42 0x000000000050a508 PyVectorcall_Call()  /usr/local/src/conda/python-3.10.14/Objects/call.c:267
+43 0x000000000050a508 _PyObject_Call()  /usr/local/src/conda/python-3.10.14/Objects/call.c:290
+44 0x000000000050a508 PyObject_Call()  /usr/local/src/conda/python-3.10.14/Objects/call.c:317
+45 0x00000000004f0c69 do_call_core()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5945
+46 0x00000000004f0c69 _PyEval_EvalFrameDefault()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:4277
+47 0x00000000004fe0cf _PyEval_EvalFrame()  /usr/local/src/conda/python-3.10.14/Include/internal/pycore_ceval.h:46
+48 0x00000000004fe0cf _PyEval_Vector()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5074
+49 0x00000000004fe0cf _PyFunction_Vectorcall()  /usr/local/src/conda/python-3.10.14/Objects/call.c:342
+50 0x00000000004ef4a3 _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:114
+51 0x00000000004ef4a3 _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:115
+52 0x00000000004ef4a3 PyObject_Vectorcall()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:123
+53 0x00000000004ef4a3 call_function()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5893
+54 0x00000000004ef4a3 _PyEval_EvalFrameDefault()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:4231
+55 0x00000000004fe0cf _PyEval_EvalFrame()  /usr/local/src/conda/python-3.10.14/Include/internal/pycore_ceval.h:46
+56 0x00000000004fe0cf _PyEval_Vector()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5074
+=================================
+W0926 20:16:17.280000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2639181 closing signal SIGTERM
+W0926 20:16:17.280000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2639182 closing signal SIGTERM
+W0926 20:16:17.281000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2639183 closing signal SIGTERM
+W0926 20:16:17.281000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2639185 closing signal SIGTERM
+W0926 20:16:17.282000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2639186 closing signal SIGTERM
+W0926 20:16:17.282000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2639187 closing signal SIGTERM
+W0926 20:16:17.282000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2639188 closing signal SIGTERM
+E0926 20:16:19.013000 23204623259456 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: -11) local_rank: 3 (pid: 2639184) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+=========================================================
+benchmark.py FAILED
+---------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+---------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-26_20:16:17
+  host      : mk-xii-14.cloud.together.ai
+  rank      : 3 (local_rank: 3)
+  exitcode  : -11 (pid: 2639184)
+  error_file: <N/A>
+  traceback : Signal 11 (SIGSEGV) received by PID 2639184
+=========================================================

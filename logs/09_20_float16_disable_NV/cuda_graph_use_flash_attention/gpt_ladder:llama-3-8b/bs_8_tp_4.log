@@ -1,0 +1,180 @@
+W0926 21:43:15.159000 22953208551232 torch/distributed/run.py:779] 
+W0926 21:43:15.159000 22953208551232 torch/distributed/run.py:779] *****************************************
+W0926 21:43:15.159000 22953208551232 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0926 21:43:15.159000 22953208551232 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTLadder(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x LadderTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
+        (wo): Linear(in_features=1024, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 0.18 seconds
+[rank0]:[W926 21:43:23.307771079 CUDAGraph.cpp:150] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
+Prefill latency: 0.10590953205246478 sec
+Decode latency: 2.3670302479877137 sec
+Compilation time: 2.47 seconds
+Compilation time: 2.47 seconds
+Compilation time: 2.47 seconds
+Compilation time: 2.47 seconds
+Prefill latency: 0.10228138195816427 sec
+Decode latency: 2.366648589959368 sec
+Prefill latency: 0.10196995199657977 sec
+Decode latency: 2.3686088590184227 sec
+Prefill latency: 0.10195227601798251 sec
+Decode latency: 2.3666794860037044 sec
+Prefill latency: 0.10213314899010584 sec
+Decode latency: 2.367395478009712 sec
+Prefill latency: 0.10228895500767976 sec
+Decode latency: 2.3666262390324846 sec
+Time for inference 1: 2.47 sec total, 829.26 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3765.55 GB/s
+FLOPS achieved: 18.83 TF/s
+
+Prefill latency: 0.10238391597522423 sec
+Decode latency: 2.368685628985986 sec
+Time for inference 2: 2.47 sec total, 828.55 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3762.34 GB/s
+FLOPS achieved: 18.81 TF/s
+
+Prefill latency: 0.10187923401826993 sec
+Decode latency: 2.3667228650301695 sec
+Time for inference 3: 2.47 sec total, 829.40 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3766.18 GB/s
+FLOPS achieved: 18.83 TF/s
+
+Prefill latency: 0.10214449698105454 sec
+Decode latency: 2.3669502590200864 sec
+Time for inference 4: 2.47 sec total, 829.22 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3765.37 GB/s
+FLOPS achieved: 18.83 TF/s
+
+Prefill latency: 0.10246773698600009 sec
+Decode latency: 2.3675733919953927 sec
+Time for inference 5: 2.47 sec total, 828.87 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3763.79 GB/s
+FLOPS achieved: 18.82 TF/s
+
+Prefill latency: 0.10190407402114943 sec
+Decode latency: 2.3693418559851125 sec
+Time for inference 6: 2.47 sec total, 828.48 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3762.03 GB/s
+FLOPS achieved: 18.81 TF/s
+
+Prefill latency: 0.1022625119658187 sec
+Decode latency: 2.3669370370334946 sec
+Time for inference 7: 2.47 sec total, 829.14 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3765.00 GB/s
+FLOPS achieved: 18.82 TF/s
+
+Prefill latency: 0.10273258696543053 sec
+Decode latency: 2.3692600220092572 sec
+Time for inference 8: 2.47 sec total, 828.20 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3760.74 GB/s
+FLOPS achieved: 18.80 TF/s
+
+Prefill latency: 0.10232952196383849 sec
+Decode latency: 2.3700385550037026 sec
+Time for inference 9: 2.47 sec total, 828.10 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3760.29 GB/s
+FLOPS achieved: 18.80 TF/s
+
+Prefill latency: 0.1022895080386661 sec
+Decode latency: 2.36781357601285 sec
+Time for inference 10: 2.47 sec total, 828.88 tokens/sec
+Decode latency: 2.37 sec
+Prefill latency: 0.10 sec
+Bandwidth achieved: 3763.83 GB/s
+FLOPS achieved: 18.82 TF/s
+
+==========
+Batch Size: 8
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 2.3680 sec
+Average prefill latency: 0.1023 sec
+Average tokens/sec: 828.81
+Memory used: 14.63 GB
+[rank3]:[E926 21:45:03.157119696 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 3] Future for ProcessGroup abort timed out after 60000 ms
+[rank2]:[E926 21:45:03.157120657 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 2] Future for ProcessGroup abort timed out after 60000 ms
+[rank0]:[E926 21:45:03.157125123 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 0] Future for ProcessGroup abort timed out after 60000 ms
+[rank1]:[E926 21:45:03.157124470 ProcessGroupNCCL.cpp:1076] [PG 0 (default_pg) Rank 1] Future for ProcessGroup abort timed out after 60000 ms
+[rank3]:[E926 22:03:19.527677688 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 3] First PG on this rank that detected no heartbeat of its watchdog.
+[rank3]:[E926 22:03:19.527787666 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 3] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank1]:[E926 22:03:19.529533980 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 1] First PG on this rank that detected no heartbeat of its watchdog.
+[rank1]:[E926 22:03:19.529578591 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 1] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank2]:[E926 22:03:19.531612270 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 2] First PG on this rank that detected no heartbeat of its watchdog.
+[rank2]:[E926 22:03:19.531657180 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 2] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank0]:[E926 22:03:19.532045893 ProcessGroupNCCL.cpp:1375] [PG 0 (default_pg) Rank 0] First PG on this rank that detected no heartbeat of its watchdog.
+[rank0]:[E926 22:03:19.532087278 ProcessGroupNCCL.cpp:1413] [PG 0 (default_pg) Rank 0] Heartbeat monitor timed out! Process will be terminated after dumping debug info. workMetaList_.size()=0
+[rank3]:[F926 22:13:19.528032539 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 3] [PG 0 (default_pg) Rank 3] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank1]:[F926 22:13:19.529799847 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 1] [PG 0 (default_pg) Rank 1] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank2]:[F926 22:13:19.531874392 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 2] [PG 0 (default_pg) Rank 2] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+[rank0]:[F926 22:13:19.532307465 ProcessGroupNCCL.cpp:1224] [PG 0 (default_pg) Rank 0] [PG 0 (default_pg) Rank 0] ProcessGroupNCCL's watchdog got stuck for 600 seconds without making progress in monitoring enqueued collectives. This typically indicates a NCCL/CUDA API hang blocking the watchdog, and could be triggered by another thread holding the GIL inside a CUDA api, or other deadlock-prone behaviors.If you suspect the watchdog is not actually stuck and a longer timeout would help, you can either increase the timeout (TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC) to a larger value or disable the heartbeat monitor (TORCH_NCCL_ENABLE_MONITORING=0).If either of aforementioned helps, feel free to file an issue to PyTorch about the short timeout or false positive abort; otherwise, please attempt to debug the hang. workMetaList_.size() = 0
+W0926 22:13:19.346000 22953208551232 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 893453 closing signal SIGTERM
+W0926 22:13:19.347000 22953208551232 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 893454 closing signal SIGTERM
+W0926 22:13:19.347000 22953208551232 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 893455 closing signal SIGTERM
+E0926 22:13:21.413000 22953208551232 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: -6) local_rank: 3 (pid: 893456) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+=======================================================
+benchmark.py FAILED
+-------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+-------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-26_22:13:19
+  host      : mk-xii-11.cloud.together.ai
+  rank      : 3 (local_rank: 3)
+  exitcode  : -6 (pid: 893456)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 893456
+=======================================================

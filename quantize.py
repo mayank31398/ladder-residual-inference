@@ -9,7 +9,6 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from tokenizer import get_tokenizer
 
 try:
     from GPTQ import GenericGPTQRunner, InputRecorder
@@ -578,8 +577,8 @@ def quantize(
 
         tokenizer_path = checkpoint_path.parent / "tokenizer.model"
         assert tokenizer_path.is_file(), str(tokenizer_path)
-        tokenizer = get_tokenizer(tokenizer_path, checkpoint_path)
-
+        #tokenizer = get_tokenizer(tokenizer_path, checkpoint_path)
+        tokenizer = None
         quantized_state_dict = quant_handler.create_quantized_state_dict(
             tokenizer,
             blocksize,
