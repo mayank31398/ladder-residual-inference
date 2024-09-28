@@ -490,6 +490,7 @@ def main(
     print_rank_0(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
     dist.barrier()
+    print_rank_0("Done. we are killing the process")
     dist.destroy_process_group()
     exit()
 

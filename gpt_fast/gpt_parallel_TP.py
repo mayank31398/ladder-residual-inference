@@ -13,7 +13,7 @@ from torch import Tensor
 import torch.distributed as dist
 from .tp import maybe_init_dist
 
-from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward, all_reduce_func
+from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward, all_reduce_func, FuseAttentionMLP
 
 
 def find_multiple(n: int, k: int) -> int:
@@ -133,9 +133,8 @@ class GPTParallel(nn.Module):
 class ParallelTransformerBlock(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
         super().__init__()
-        self.attention = Attention(config)
+        self.attention = FuseAttentionMLP(config)
         self.feed_forward = FeedForward(config)
-        self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
         def _attn_ffn(x, freqs_cis, mask, input_pos):
@@ -156,7 +155,7 @@ class ParallelTransformerBlock(nn.Module):
             x = all_reduce_func(x, clone=True)[0]
             y = x
         else:
-            y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
+            y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) #+ self.feed_forward(self.ffn_norm(x))
             y = all_reduce_func(y, clone=False)[0]
             y = y + x
 

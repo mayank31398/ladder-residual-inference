@@ -1,3 +1,6 @@
+# export NCCL_P2P_DISABLE=1
+# NCCL_P2P_DISABLE=1
+
 # === 8B ===
 # mode=cuda_graph_use_flash_attention
 # for model_name in "gpt_ladder:llama-3-8b" "gpt_dense:llama-3-8b" "gpt_ensemble:llama-3-8b-upper-bound" "gpt_parallel:llama-3-8b" "gpt_ensemble:llama-3-8b"
