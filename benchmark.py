@@ -491,7 +491,7 @@ def main(
 
     dist.barrier()
     print_rank_0("Done. we are killing the process")
-    dist.destroy_process_group()
+    #dist.destroy_process_group()
     exit()
 
 

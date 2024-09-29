@@ -6,7 +6,7 @@ do
         for tpsize in 4
         do
             echo "Running with bs=${bssize} tp=${tpsize}"
-            NCCL_DEBUG=INFO torchrun --standalone --nproc_per_node=${tpsize} benchmark.py \
+            torchrun --standalone --nproc_per_node=${tpsize} benchmark.py \
                                             --model_name ${model_name} \
                                             --num_samples 2 \
                                             --batch_size ${bssize} \
