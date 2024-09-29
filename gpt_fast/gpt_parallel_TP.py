@@ -134,11 +134,11 @@ class ParallelTransformerBlock(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
         super().__init__()
         self.attention = FuseAttentionMLP(config)
-        self.feed_forward = FeedForward(config)
+        # self.feed_forward = FeedForward(config)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
         def _attn_ffn(x, freqs_cis, mask, input_pos):
-            y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos) + self.feed_forward(self.ffn_norm(x))
+            y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
 
             if tp_rank == 0:
                 y = y + x
