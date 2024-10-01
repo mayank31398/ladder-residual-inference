@@ -91,17 +91,13 @@ def decode_n_tokens(
     cur_token: torch.Tensor,
     input_pos: torch.Tensor,
     num_new_tokens: int,
-    use_flash_attention: bool,
     callback=lambda _: _,
     **sampling_kwargs
 ):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
         # Actually better for Inductor to codegen attention here
-        with (
-            torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
-            set_flash_attention(use_flash_attention),
-        ):
+        with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
             next_token, next_prob = decode_one_token(
                 model, cur_token, input_pos, **sampling_kwargs
             )
@@ -121,7 +117,6 @@ def generate(
     batch_size: int,
     empty: torch.Tensor,
     *,
-    use_flash_attention,
     callback = lambda x: x,
     **sampling_kwargs
 ) -> torch.Tensor:
@@ -138,10 +133,7 @@ def generate(
 
     device_sync(device)
     prefill_start = time.perf_counter()
-    with (
-            torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True),
-            set_flash_attention(use_flash_attention),
-        ):
+    with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
         next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
     device_sync(device)
     prefill_latency = time.perf_counter() - prefill_start
@@ -154,7 +146,7 @@ def generate(
 
     device_sync(device)
     decode_start = time.perf_counter()
-    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, use_flash_attention=use_flash_attention, callback=callback, **sampling_kwargs)
+    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
     device_sync(device)
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
@@ -285,7 +277,6 @@ def get_cuda_graphs_for_decode(
     batch_size: int,
     max_new_tokens: int,
     cur_token: torch.Tensor,
-    use_flash_attention: bool,
     **sampling_kwargs
 ):
     T = prompt.size(-1)
@@ -297,17 +288,7 @@ def get_cuda_graphs_for_decode(
     # Warm up
     for _ in range(3):
         static_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
-
         decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
-
-        # decode_n_tokens(
-        #     model,
-        #     static_cur_token.view(batch_size, -1),
-        #     static_input_pos,
-        #     max_new_tokens - 1,
-        #     use_flash_attention=use_flash_attention,
-        #     **sampling_kwargs
-        # )
 
     static_input_pos.copy_(torch.tensor([T], device=device, dtype=torch.int))
 
@@ -315,15 +296,6 @@ def get_cuda_graphs_for_decode(
     g_decode = torch.cuda.CUDAGraph()
     with torch.cuda.graph(g_decode):
         static_next_token, _ = decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
-
-        # static_generated_tokens, _ = decode_n_tokens(
-        #     model,
-        #     static_cur_token.view(batch_size, -1),
-        #     static_input_pos,
-        #     max_new_tokens - 1,
-        #     use_flash_attention=use_flash_attention,
-        #     **sampling_kwargs
-        # )
 
     return g_decode, static_cur_token, static_input_pos, static_next_token
 
@@ -341,12 +313,9 @@ def main(
     profile: Optional[Path] = None,
     device=default_device,
     use_cuda_graphs: bool = False,
-    use_flash_attention: bool = False,
 ) -> None:
     """Generates text samples based on a pre-trained Transformer model and tokenizer.
     """
-
-    print_rank_0(f"flash_kv_decode is set to {use_flash_attention}")
 
     from gpt_fast import maybe_init_dist
     rank = maybe_init_dist()
@@ -384,7 +353,6 @@ def main(
             prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
             
     elif use_cuda_graphs:
-        # with set_flash_attention(use_flash_attention) !! not impelemented!
         prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
             model,
             prompt=encoded,
@@ -399,7 +367,6 @@ def main(
             batch_size=batch_size,
             max_new_tokens=max_new_tokens,
             cur_token=static_next_token_prefill,
-            use_flash_attention=use_flash_attention,
             temperature=temperature,
             top_k=top_k,
         )
@@ -452,7 +419,6 @@ def main(
                     max_new_tokens,
                     batch_size=batch_size,
                     empty=empty,
-                    use_flash_attention=use_flash_attention,
                     callback=callback,
                     temperature=temperature,
                     top_k=top_k,
@@ -518,7 +484,10 @@ if __name__ == '__main__':
     if args.cuda_graph:
         assert not args.compile
 
-    main(
-        args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
-        args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph, args.use_flash_attention
-    )
+    print_rank_0(f"flash_kv_decode is set to {args.use_flash_attention}")
+
+    with set_flash_attention(args.use_flash_attention):
+        main(
+            args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
+            args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph
+        )
