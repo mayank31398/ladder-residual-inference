@@ -1,145 +1,135 @@
-W0930 19:13:12.936000 22462241777472 torch/distributed/run.py:779] 
-W0930 19:13:12.936000 22462241777472 torch/distributed/run.py:779] *****************************************
-W0930 19:13:12.936000 22462241777472 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0930 19:13:12.936000 22462241777472 torch/distributed/run.py:779] *****************************************
-[rank7]: Traceback (most recent call last):
-[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank7]:     main(
-[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank7]:     model = _load_model(model_name, device, precision)
-[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank7]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank7]:     return cls(ModelArgs.from_name(name))
-[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank7]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank7]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-[rank1]: Traceback (most recent call last):
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank1]:     main(
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank1]:     model = _load_model(model_name, device, precision)
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank1]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank1]:     return cls(ModelArgs.from_name(name))
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank1]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank1]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-[rank2]: Traceback (most recent call last):
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank2]:     main(
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank2]:     model = _load_model(model_name, device, precision)
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank2]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank2]:     return cls(ModelArgs.from_name(name))
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank2]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank2]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-[rank4]: Traceback (most recent call last):
-[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank4]:     main(
-[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank4]:     model = _load_model(model_name, device, precision)
-[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank4]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank4]:     return cls(ModelArgs.from_name(name))
-[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank4]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank4]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-[rank6]: Traceback (most recent call last):
-[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank6]:     main(
-[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank6]:     model = _load_model(model_name, device, precision)
-[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank6]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank6]:     return cls(ModelArgs.from_name(name))
-[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank6]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank6]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-[rank3]: Traceback (most recent call last):
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank3]:     main(
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank3]:     model = _load_model(model_name, device, precision)
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank3]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank3]:     return cls(ModelArgs.from_name(name))
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank3]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank3]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-[rank5]: Traceback (most recent call last):
-[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank5]:     main(
-[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank5]:     model = _load_model(model_name, device, precision)
-[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank5]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank5]:     return cls(ModelArgs.from_name(name))
-[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank5]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank5]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+W1001 01:58:19.682000 22525234267968 torch/distributed/run.py:779] 
+W1001 01:58:19.682000 22525234267968 torch/distributed/run.py:779] *****************************************
+W1001 01:58:19.682000 22525234267968 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1001 01:58:19.682000 22525234267968 torch/distributed/run.py:779] *****************************************
 flash_kv_decode is set to True
 Using device=cuda
 Loading model ...
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank0]:     main(
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank0]:     model = _load_model(model_name, device, precision)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank0]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank0]:     return cls(ModelArgs.from_name(name))
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank0]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank0]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-W0930 19:13:17.692000 22462241777472 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1552461 closing signal SIGTERM
-W0930 19:13:17.692000 22462241777472 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1552462 closing signal SIGTERM
-W0930 19:13:17.693000 22462241777472 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1552463 closing signal SIGTERM
-W0930 19:13:17.693000 22462241777472 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1552464 closing signal SIGTERM
-W0930 19:13:17.693000 22462241777472 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1552465 closing signal SIGTERM
-W0930 19:13:17.693000 22462241777472 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1552466 closing signal SIGTERM
-E0930 19:13:18.021000 22462241777472 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 1552460) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
-Traceback (most recent call last):
-  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
-    sys.exit(main())
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
-    return f(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
-    run(args)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
-    elastic_launch(
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
-    raise ChildFailedError(
-torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
-============================================================
-benchmark.py FAILED
-------------------------------------------------------------
-Failures:
-[1]:
-  time      : 2024-09-30_19:13:17
-  host      : mk-xii-19.cloud.together.ai
-  rank      : 7 (local_rank: 7)
-  exitcode  : 1 (pid: 1552467)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-------------------------------------------------------------
-Root Cause (first observed failure):
-[0]:
-  time      : 2024-09-30_19:13:17
-  host      : mk-xii-19.cloud.together.ai
-  rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 1552460)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-============================================================
+GPTEnsemble(
+  (tok_embeddings): Embedding(49152, 1536)
+  (layers): ModuleList(
+    (0-39): 40 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=1536, out_features=576, bias=False)
+        (wo): Linear(in_features=192, out_features=1536, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=1536, out_features=1024, bias=False)
+        (w2): Linear(in_features=512, out_features=1536, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=1536, out_features=49152, bias=False)
+)
+Time to load model: 1.10 seconds
+Prefill latency: 0.06271402700804174 sec
+Decode latency: 2.3220975330332294 sec
+Compilation time: 2.39 seconds
+Compilation time: 2.42 seconds
+Compilation time: 2.38 seconds
+Compilation time: 2.42 seconds
+Compilation time: 2.44 secondsCompilation time: 2.44 seconds
+
+Compilation time: 2.42 seconds
+Compilation time: 2.38 seconds
+Prefill latency: 0.05348812905140221 sec
+Decode latency: 2.321728815091774 sec
+Prefill latency: 0.05342702998314053 sec
+Decode latency: 2.322326675057411 sec
+Prefill latency: 0.05332958803046495 sec
+Decode latency: 2.321228572051041 sec
+Prefill latency: 0.05358999001327902 sec
+Decode latency: 2.3204487100010738 sec
+Prefill latency: 0.05342788901180029 sec
+Decode latency: 2.3210382310207933 sec
+Time for inference 1: 2.38 sec total, 1723.95 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 748.82 GB/s
+FLOPS achieved: 3.74 TF/s
+
+Prefill latency: 0.05336192704271525 sec
+Decode latency: 2.3217555849114433 sec
+Time for inference 2: 2.38 sec total, 1723.93 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 748.81 GB/s
+FLOPS achieved: 3.74 TF/s
+
+Prefill latency: 0.053268329007551074 sec
+Decode latency: 2.31857967202086 sec
+Time for inference 3: 2.37 sec total, 1726.24 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.81 GB/s
+FLOPS achieved: 3.75 TF/s
+
+Prefill latency: 0.0533297989750281 sec
+Decode latency: 2.318465947988443 sec
+Time for inference 4: 2.37 sec total, 1726.38 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.87 GB/s
+FLOPS achieved: 3.75 TF/s
+
+Prefill latency: 0.053245804039761424 sec
+Decode latency: 2.318435500958003 sec
+Time for inference 5: 2.37 sec total, 1726.44 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.89 GB/s
+FLOPS achieved: 3.75 TF/s
+
+Prefill latency: 0.05325541598722339 sec
+Decode latency: 2.319123109919019 sec
+Time for inference 6: 2.37 sec total, 1725.86 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.64 GB/s
+FLOPS achieved: 3.75 TF/s
+
+Prefill latency: 0.053296515019610524 sec
+Decode latency: 2.31884781899862 sec
+Time for inference 7: 2.37 sec total, 1726.02 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.71 GB/s
+FLOPS achieved: 3.75 TF/s
+
+Prefill latency: 0.05333628202788532 sec
+Decode latency: 2.3181291989749297 sec
+Time for inference 8: 2.37 sec total, 1726.56 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.95 GB/s
+FLOPS achieved: 3.75 TF/s
+
+Prefill latency: 0.05353792489040643 sec
+Decode latency: 2.318709501065314 sec
+Time for inference 9: 2.37 sec total, 1725.95 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.68 GB/s
+FLOPS achieved: 3.75 TF/s
+
+Prefill latency: 0.05335398390889168 sec
+Decode latency: 2.3192209450062364 sec
+Time for inference 10: 2.37 sec total, 1725.69 tokens/sec
+Decode latency: 2.32 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 749.57 GB/s
+FLOPS achieved: 3.75 TF/s
+
+==========
+Batch Size: 16
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 2.3192 sec
+Average prefill latency: 0.0533 sec
+Average tokens/sec: 1725.70
+Memory used: 5.48 GB
+Done. we are killing the process

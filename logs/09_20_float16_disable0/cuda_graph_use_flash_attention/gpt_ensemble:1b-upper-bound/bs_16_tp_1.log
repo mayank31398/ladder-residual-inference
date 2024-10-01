@@ -1,45 +1,124 @@
 flash_kv_decode is set to True
 Using device=cuda
 Loading model ...
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
-[rank0]:     main(
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 360, in main
-[rank0]:     model = _load_model(model_name, device, precision)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 237, in _load_model
-[rank0]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 143, in from_name
-[rank0]:     return cls(ModelArgs.from_name(name))
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 100, in __init__
-[rank0]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-[rank0]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
-E0930 19:13:00.857000 23143493875520 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 1551827) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
-Traceback (most recent call last):
-  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
-    sys.exit(main())
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
-    return f(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
-    run(args)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
-    elastic_launch(
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
-    raise ChildFailedError(
-torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
-============================================================
-benchmark.py FAILED
-------------------------------------------------------------
-Failures:
-  <NO_OTHER_FAILURES>
-------------------------------------------------------------
-Root Cause (first observed failure):
-[0]:
-  time      : 2024-09-30_19:13:00
-  host      : mk-xii-19.cloud.together.ai
-  rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 1551827)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-============================================================
+GPTEnsemble(
+  (tok_embeddings): Embedding(49152, 1536)
+  (layers): ModuleList(
+    (0-39): 40 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=1536, out_features=4608, bias=False)
+        (wo): Linear(in_features=1536, out_features=1536, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=1536, out_features=8192, bias=False)
+        (w2): Linear(in_features=4096, out_features=1536, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=1536, out_features=49152, bias=False)
+)
+Time to load model: 1.01 seconds
+Prefill latency: 0.2089097040006891 sec
+Decode latency: 3.367484744056128 sec
+Compilation time: 3.58 seconds
+Prefill latency: 0.20818289695307612 sec
+Decode latency: 3.3674493950093165 sec
+Prefill latency: 0.2083244319073856 sec
+Decode latency: 3.366124521009624 sec
+Prefill latency: 0.208265685942024 sec
+Decode latency: 3.3660102940630168 sec
+Prefill latency: 0.20817493100184947 sec
+Decode latency: 3.366051855031401 sec
+Prefill latency: 0.20845792395994067 sec
+Decode latency: 3.366495155962184 sec
+Time for inference 1: 3.58 sec total, 1145.51 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2767.74 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.20824196096509695 sec
+Decode latency: 3.3659042060608044 sec
+Time for inference 2: 3.57 sec total, 1145.79 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2768.41 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.2082685159984976 sec
+Decode latency: 3.3657947710016742 sec
+Time for inference 3: 3.57 sec total, 1145.78 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2768.40 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.20836289401631802 sec
+Decode latency: 3.366043151007034 sec
+Time for inference 4: 3.58 sec total, 1145.67 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2768.13 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.20839272299781442 sec
+Decode latency: 3.365788088995032 sec
+Time for inference 5: 3.57 sec total, 1145.74 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2768.31 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.20831044402439147 sec
+Decode latency: 3.366982652922161 sec
+Time for inference 6: 3.58 sec total, 1145.34 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2767.33 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.2082769830012694 sec
+Decode latency: 3.365982661023736 sec
+Time for inference 7: 3.58 sec total, 1145.68 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2768.16 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.2084459139732644 sec
+Decode latency: 3.366131788934581 sec
+Time for inference 8: 3.58 sec total, 1145.61 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2767.99 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.20832101500127465 sec
+Decode latency: 3.3658020839793608 sec
+Time for inference 9: 3.57 sec total, 1145.78 tokens/sec
+Decode latency: 3.37 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2768.39 GB/s
+FLOPS achieved: 13.84 TF/s
+
+Prefill latency: 0.2082990730414167 sec
+Decode latency: 3.320440539973788 sec
+Time for inference 10: 3.53 sec total, 1160.50 tokens/sec
+Decode latency: 3.32 sec
+Prefill latency: 0.21 sec
+Bandwidth achieved: 2803.97 GB/s
+FLOPS achieved: 14.02 TF/s
+
+==========
+Batch Size: 16
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 3.3615 sec
+Average prefill latency: 0.2083 sec
+Average tokens/sec: 1147.14
+Memory used: 12.67 GB
+Done. we are killing the process
