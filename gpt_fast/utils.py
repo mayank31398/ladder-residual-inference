@@ -150,6 +150,8 @@ class Attention(nn.Module):
 
         assert total_head_dim % tp_world_size == 0
         assert config.dim % tp_world_size == 0
+        assert config.n_head % tp_world_size == 0
+        assert config.n_local_heads % tp_world_size == 0
 
         # key, query, value projections for all heads, but in a batch
         self.wqkv = nn.Linear(config.dim, total_head_dim // tp_world_size, bias=False)
@@ -259,6 +261,8 @@ class FuseAttentionMLP(nn.Module):
         assert total_head_dim % tp_world_size == 0
         assert config.dim % tp_world_size == 0
         assert config.intermediate_size % tp_world_size == 0
+        assert config.n_head % tp_world_size == 0
+        assert config.n_local_heads % tp_world_size == 0
 
         # key, query, value projections for all heads, but in a batch
         self.wqkv1 = nn.Linear(config.dim, total_head_dim // tp_world_size + 2 * config.intermediate_size // tp_world_size, bias=False)
