@@ -62,8 +62,8 @@ class ModelArgs:
 
 transformer_configs = {
     "CodeLlama-7b-Python-hf": dict(block_size=16384, vocab_size=32000, n_layer=32, dim = 4096, rope_base=1000000),
-    "1b": dict(block_size=2048, n_layer=40, n_head=24, n_local_heads=8, dim=1536, intermediate_size=4096, vocab_size=49152, rope_base=10000),
-    "3b": dict(block_size=2048, n_layer=40, n_head=36, n_local_heads=8, dim=2304, intermediate_size=4096, vocab_size=49152, rope_base=10000),
+    "1b": dict(block_size=2048, n_layer=40, n_head=24, n_local_heads=24, dim=1536, intermediate_size=4096, vocab_size=49152, rope_base=10000),
+    "3b": dict(block_size=2048, n_layer=40, n_head=36, n_local_heads=36, dim=2304, intermediate_size=9216, vocab_size=49152, rope_base=10000),
     "7B": dict(n_layer=32, n_head=32, dim=4096),
     "13B": dict(n_layer=40, n_head=40, dim=5120),
     "30B": dict(n_layer=60, n_head=52, dim=6656),

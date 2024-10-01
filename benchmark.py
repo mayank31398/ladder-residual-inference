@@ -384,6 +384,7 @@ def main(
             prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
             
     elif use_cuda_graphs:
+        # with set_flash_attention(use_flash_attention) !! not impelemented!
         prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
             model,
             prompt=encoded,
