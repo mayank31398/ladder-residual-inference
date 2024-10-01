@@ -13,7 +13,7 @@ from torch import Tensor
 import torch.distributed as dist
 from .tp import maybe_init_dist
 
-from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward, all_reduce_func, FuseAttentionMLP
+from .utils import RMSNorm, precompute_freqs_cis, KVCache, all_reduce_func, FuseAttentionMLP
 
 
 def find_multiple(n: int, k: int) -> int:
