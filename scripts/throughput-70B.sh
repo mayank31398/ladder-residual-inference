@@ -1,16 +1,16 @@
-#export NCCL_P2P_DISABLE=1
-#export NCCL_P2P_DISABLE=0
+NVLINK=0
 mode=cuda_graph_use_flash_attention
-for model_name in "gpt_ensemble:llama-3-70b"
+export NCCL_P2P_DISABLE=${NVLINK}
+for model_name in "gpt_dense:llama-3-70b"
 do
-    folder=./logs/09_20_float16_disable0/${mode}/${model_name}
+    folder=./logs/09_20_float16_disable${NVLINK}/${mode}/${model_name}
     mkdir -p ${folder}
-    for bssize in 1 4 8 16 64
+    for bssize in 8
     do
-        for tpsize in 1 2 4 8
+        for tpsize in 4
         do
             echo "Running with bs=${bssize} tp=${tpsize}"
-            torchrun --standalone --nproc_per_node=${tpsize} benchmark.py \
+            NCCL_P2P_DISABLE=${NVLINK} torchrun --standalone --nproc_per_node=${tpsize} --master_port=15328 benchmark.py \
                                             --model_name ${model_name} \
                                             --num_samples 10 \
                                             --batch_size ${bssize} \

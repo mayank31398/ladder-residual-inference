@@ -1,0 +1,83 @@
+W0928 17:56:35.634000 23148755126080 torch/distributed/run.py:779] 
+W0928 17:56:35.634000 23148755126080 torch/distributed/run.py:779] *****************************************
+W0928 17:56:35.634000 23148755126080 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0928 17:56:35.634000 23148755126080 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 375, in main
+[rank1]:     model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 122, in setup_caches
+[rank1]:     b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 44, in __init__
+[rank1]:     self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_device.py", line 79, in __torch_function__
+[rank1]:     return func(*args, **kwargs)
+[rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 80.00 MiB. GPU 1 has a total capacity of 79.33 GiB of which 43.44 MiB is free. Including non-PyTorch memory, this process has 79.28 GiB memory in use. Of the allocated memory 78.68 GiB is allocated by PyTorch, and 1.48 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 8192)
+  (layers): ModuleList(
+    (0-79): 80 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=8192, out_features=5120, bias=False)
+        (wo): Linear(in_features=4096, out_features=8192, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=8192, out_features=28672, bias=False)
+        (w2): Linear(in_features=14336, out_features=8192, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=8192, out_features=128256, bias=False)
+)
+Time to load model: 1.25 seconds
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 375, in main
+[rank0]:     model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ensemble_TP.py", line 122, in setup_caches
+[rank0]:     b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 44, in __init__
+[rank0]:     self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_device.py", line 79, in __torch_function__
+[rank0]:     return func(*args, **kwargs)
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 80.00 MiB. GPU 0 has a total capacity of 79.33 GiB of which 43.44 MiB is free. Including non-PyTorch memory, this process has 79.28 GiB memory in use. Of the allocated memory 78.68 GiB is allocated by PyTorch, and 1.48 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+W0928 17:56:40.388000 23148755126080 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1185238 closing signal SIGTERM
+E0928 17:56:40.802000 23148755126080 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 1 (pid: 1185239) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-09-28_17:56:40
+  host      : mk-xii-19.cloud.together.ai
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 1185239)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

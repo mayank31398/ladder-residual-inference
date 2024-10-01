@@ -1,7 +1,7 @@
-W0926 19:40:19.065000 22393133832000 torch/distributed/run.py:779] 
-W0926 19:40:19.065000 22393133832000 torch/distributed/run.py:779] *****************************************
-W0926 19:40:19.065000 22393133832000 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0926 19:40:19.065000 22393133832000 torch/distributed/run.py:779] *****************************************
+W0928 18:39:34.823000 23291312744256 torch/distributed/run.py:779] 
+W0928 18:39:34.823000 23291312744256 torch/distributed/run.py:779] *****************************************
+W0928 18:39:34.823000 23291312744256 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0928 18:39:34.823000 23291312744256 torch/distributed/run.py:779] *****************************************
 flash_kv_decode is set to True
 Using device=cuda
 Loading model ...
@@ -25,7 +25,7 @@ GPTLadder(
   (norm): RMSNorm()
   (output): Linear(in_features=8192, out_features=128256, bias=False)
 )
-Time to load model: 0.30 seconds
+Time to load model: 0.32 seconds
 [rank1]: Traceback (most recent call last):
 [rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 276, in get_cuda_graphs_for_prefill
 [rank1]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
@@ -58,7 +58,7 @@ Time to load model: 0.30 seconds
 [rank1]: During handling of the above exception, another exception occurred:
 
 [rank1]: Traceback (most recent call last):
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 519, in <module>
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
 [rank1]:     main(
 [rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 387, in main
 [rank1]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
@@ -107,7 +107,7 @@ Time to load model: 0.30 seconds
 [rank0]: During handling of the above exception, another exception occurred:
 
 [rank0]: Traceback (most recent call last):
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 519, in <module>
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 520, in <module>
 [rank0]:     main(
 [rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 387, in main
 [rank0]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
@@ -124,8 +124,8 @@ Time to load model: 0.30 seconds
 [rank0]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
 [rank0]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
 
-W0926 19:40:27.288000 22393133832000 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2635804 closing signal SIGTERM
-E0926 19:40:27.502000 22393133832000 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 1 (pid: 2635805) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+W0928 18:39:43.540000 23291312744256 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 1192673 closing signal SIGTERM
+E0928 18:39:43.653000 23291312744256 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 1 (pid: 1192674) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
 Traceback (most recent call last):
   File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
     sys.exit(main())
@@ -148,10 +148,10 @@ Failures:
 ------------------------------------------------------------
 Root Cause (first observed failure):
 [0]:
-  time      : 2024-09-26_19:40:27
-  host      : mk-xii-14.cloud.together.ai
+  time      : 2024-09-28_18:39:43
+  host      : mk-xii-19.cloud.together.ai
   rank      : 1 (local_rank: 1)
-  exitcode  : 1 (pid: 2635805)
+  exitcode  : 1 (pid: 1192674)
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ============================================================
