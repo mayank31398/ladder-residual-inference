@@ -1,0 +1,116 @@
+W1001 20:03:09.729000 22472867092288 torch/distributed/run.py:779] 
+W1001 20:03:09.729000 22472867092288 torch/distributed/run.py:779] *****************************************
+W1001 20:03:09.729000 22472867092288 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1001 20:03:09.729000 22472867092288 torch/distributed/run.py:779] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTLadder(
+  (tok_embeddings): Embedding(49152, 1536)
+  (layers): ModuleList(
+    (0-39): 40 x LadderTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=1536, out_features=1152, bias=False)
+        (wo): Linear(in_features=384, out_features=1536, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=1536, out_features=2048, bias=False)
+        (w2): Linear(in_features=1024, out_features=1536, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=1536, out_features=49152, bias=False)
+)
+Time to load model: 0.13 seconds
+[rank2]:[W1001 20:03:16.339358807 CUDAGraph.cpp:150] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
+[rank0]:[W1001 20:03:16.348888994 CUDAGraph.cpp:150] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
+Prefill latency: 0.020601681899279356 sec
+Decode latency: 1.8868614649400115 sec
+Compilation time: 1.92 seconds
+Compilation time: 1.91 seconds
+Compilation time: 1.96 seconds
+Compilation time: 1.91 seconds
+Prefill latency: 0.019935401040129364 sec
+Decode latency: 1.895711243036203 sec
+Prefill latency: 0.019975857925601304 sec
+Decode latency: 1.9065485779428855 sec
+Prefill latency: 0.019691872061230242 sec
+Decode latency: 1.9072022590553388 sec
+Prefill latency: 0.019787139957770705 sec
+Decode latency: 1.9140502309892327 sec
+Prefill latency: 0.019859431078657508 sec
+Decode latency: 1.913192960084416 sec
+Time for inference 1: 1.94 sec total, 132.23 tokens/sec
+Decode latency: 1.91 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 94.87 GB/s
+FLOPS achieved: 0.47 TF/s
+
+Prefill latency: 0.019745390047319233 sec
+Decode latency: 1.9261451659258455 sec
+Time for inference 2: 1.95 sec total, 131.35 tokens/sec
+Decode latency: 1.93 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 94.24 GB/s
+FLOPS achieved: 0.47 TF/s
+
+Prefill latency: 0.019907056936062872 sec
+Decode latency: 1.9298341419780627 sec
+Time for inference 3: 1.95 sec total, 131.09 tokens/sec
+Decode latency: 1.93 sec
+Prefill latency: 0.02 sec
+Bandwidth achieved: 94.05 GB/s
+FLOPS achieved: 0.47 TF/s
+
+Prefill latency: 0.019519111956469715 sec
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 490, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 401, in main
+[rank0]:     y, decode_latency, prefill_latency = generate_using_cuda_graphs(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 208, in generate_using_cuda_graphs
+[rank0]:     new_tokens.append(static_next_token_decode.clone())
+[rank0]: RuntimeError: CUDA error: unspecified launch failure
+[rank0]: CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+[rank0]: For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+[rank0]: Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+W1001 20:03:34.508000 22472867092288 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2068190 closing signal SIGTERM
+W1001 20:03:34.508000 22472867092288 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2068191 closing signal SIGTERM
+W1001 20:03:34.508000 22472867092288 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 2068192 closing signal SIGTERM
+E1001 20:03:34.886000 22472867092288 torch/distributed/elastic/multiprocessing/api.py:833] failed (exitcode: 1) local_rank: 0 (pid: 2068189) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-10-01_20:03:34
+  host      : mk-xii-02.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 2068189)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

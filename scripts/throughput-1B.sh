@@ -1,12 +1,12 @@
 mode=cuda_graph_use_flash_attention
-for P2P_DISABLE in 0 1
+for P2P_DISABLE in 1
 do
     export NCCL_P2P_DISABLE=${P2P_DISABLE}
-    for model_name in "gpt_ladder:1b" "gpt_dense:1b" "gpt_ensemble:1b-upper-bound" "gpt_parallel:1b" "gpt_ensemble:1b"
+    for model_name in "gpt_ladder:llama-3-8b" "gpt_dense:llama-3-8b" "gpt_ensemble:llama-3-8b-upper-bound" "gpt_parallel:llama-3-8b" "gpt_ensemble:llama-3-8b"
     do
-        folder=./logs/09_20_float16_disable${P2P_DISABLE}/${mode}/${model_name}
+        folder=./logs/10_02_float16_disable${P2P_DISABLE}/${mode}/${model_name}
         mkdir -p ${folder}
-        for bssize in 1 4 8 16 64
+        for bssize in 1 4 16 64
         do
             for tpsize in 1 2 4 8
             do
@@ -16,7 +16,7 @@ do
                                                 --num_samples 10 \
                                                 --batch_size ${bssize} \
                                                 --prompt_length 1024 \
-                                                --max_new_tokens 256 \
+                                                --max_new_tokens 32 \
                                                 --cuda_graph \
                                                 --use_flash_attention \
                                                 --device cuda 2>&1 | tee ${folder}/bs_${bssize}_tp_${tpsize}.log
