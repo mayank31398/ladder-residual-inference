@@ -26,6 +26,9 @@ torch._inductor.config.triton.unique_kernel_names = True
 torch._inductor.config.fx_graph_cache = True 
 # torch._functorch.config.enable_autograd_cache = True
 
+# allows overlap
+torch._inductor.config.reorder_for_compute_comm_overlap = True
+
 default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # support running without installing as a package
