@@ -196,7 +196,8 @@ class LadderTransformerBlock(nn.Module):
         grid = (triton.cdiv(numel, 1024),)
 
         output = torch.empty_like(residual)
-        add_tensor_forward_triton_kernel[grid](residual, previous_attention_out, output, numel, 1024)
+        with torch.device(residual.device):
+            add_tensor_forward_triton_kernel[grid](residual, previous_attention_out, output, numel, 1024)
         residual = output
 
         if self.semi_compiled_model:
@@ -210,7 +211,8 @@ class LadderTransformerBlock(nn.Module):
             mlp_handle.wait()
 
         output = torch.empty_like(residual)
-        add_tensor_forward_triton_kernel[grid](residual, previous_mlp_out, output, numel, 1024)
+        with torch.device(residual.device):
+            add_tensor_forward_triton_kernel[grid](residual, previous_mlp_out, output, numel, 1024)
         residual = output
 
         if self.semi_compiled_model:
