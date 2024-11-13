@@ -346,7 +346,6 @@ def main(
         model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
 
     if compile:
-        print_rank_0(f"Compiling decode with dynamic={dynamic}")
         global decode_one_token, decode_multi_token, prefill
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
     
