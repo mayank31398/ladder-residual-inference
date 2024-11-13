@@ -11,6 +11,8 @@ import torch.nn as nn
 from torch import Tensor
 
 import torch.distributed as dist
+import triton
+import triton.language as tl
 from .tp import maybe_init_dist
 
 from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward, all_reduce_func
@@ -189,8 +191,14 @@ class LadderTransformerBlock(nn.Module):
     ) -> Tensor:
         if attention_handle is not None:
             attention_handle.wait()
-        
-        residual = residual + previous_attention_out
+
+        numel = residual.numel()
+        grid = (triton.cdiv(numel, 1024),)
+
+        output = torch.empty_like(residual)
+        add_tensor_forward_triton_kernel[grid](residual, previous_attention_out, output, numel, 1024)
+        residual = output
+
         if self.semi_compiled_model:
             current_attention_out = self._attn(residual, freqs_cis, mask, input_pos)
         else:
@@ -201,7 +209,10 @@ class LadderTransformerBlock(nn.Module):
         if mlp_handle is not None:
             mlp_handle.wait()
 
-        residual = residual + previous_mlp_out
+        output = torch.empty_like(residual)
+        add_tensor_forward_triton_kernel[grid](residual, previous_mlp_out, output, numel, 1024)
+        residual = output
+
         if self.semi_compiled_model:
             current_mlp_out = self._ffn(residual)
         else:
@@ -213,3 +224,19 @@ class LadderTransformerBlock(nn.Module):
 
     def extra_repr(self) -> str:
         return f"semi_compiled = {self.semi_compiled_model}"
+
+
+@triton.jit
+def add_tensor_forward_triton_kernel(x_ptr, y_ptr, output_ptr, num_elements, BLOCK_SIZE: tl.constexpr):
+    pid = tl.program_id(axis=0)
+
+    block_start = pid * BLOCK_SIZE
+    indices = block_start + tl.arange(0, BLOCK_SIZE)
+    mask = indices < num_elements
+
+    x = tl.load(x_ptr + indices, mask=mask)
+    y = tl.load(y_ptr + indices, mask=mask)
+
+    output = x + y
+
+    tl.store(output_ptr + indices, output, mask=mask)
