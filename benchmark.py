@@ -330,23 +330,23 @@ def main(
     print_rank_0("Loading model ...")
     t0 = time.time()
     model = _load_model(model_name, device, precision)
-
     device_sync(device=device) # MKG
+    
     print_rank_0(f"Time to load model: {time.time() - t0:.02f} seconds")
-
     # generate a fully synthetic prompt
     encoded = torch.randint(0, 1024, (prompt_length,), device=device, dtype=torch.int64)
 
     torch.manual_seed(1234)
     model_size, params = _get_model_size(model)
 
-    T_new = encoded.size(-1) + max_new_tokens
+    T_new = encoded.size(-1) + max_new_tokens # include encode sequence length
     max_seq_length = min(T_new, model.config.block_size)
 
     with torch.device(device):
         model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length)
 
     if compile:
+        print_rank_0(f"Compiling decode with dynamic={dynamic}")
         global decode_one_token, decode_multi_token, prefill
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
     
@@ -356,6 +356,7 @@ def main(
             prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
             
     elif use_cuda_graphs:
+        print_rank_0('CUDA_GRAPH are activate')
         prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
             model,
             prompt=encoded,
@@ -384,7 +385,6 @@ def main(
         t0 = time.perf_counter()
 
         import contextlib
-
         if not profile or (use_tp and rank != 0) or i != num_samples - 1:
             prof = contextlib.nullcontext()
         else:
@@ -430,13 +430,14 @@ def main(
         if i == -5:
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
 
+        device_sync(device=device) # MKG
+        
         if i < 0:
             continue
-
-        device_sync(device=device) # MKG
+        
         t = time.perf_counter() - t0
 
-        tokens_generated = (y.size(-1) - prompt_length)*y.size(0)
+        tokens_generated = (y.size(-1) - prompt_length)*y.size(0) # seq length * batch_size
         generated_tokens_sec = tokens_generated / t
         aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
         aggregate_metrics['decode_latency'].append(decode_latency)
@@ -461,7 +462,6 @@ def main(
 
     dist.barrier()
     print_rank_0("Done. we are killing the process")
-    #dist.destroy_process_group()
     exit()
 
 
@@ -488,7 +488,6 @@ if __name__ == '__main__':
         assert not args.compile
 
     print_rank_0(f"flash_kv_decode is set to {args.use_flash_attention}")
-
     with set_flash_attention(args.use_flash_attention):
         main(
             args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
