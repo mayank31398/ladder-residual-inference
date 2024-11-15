@@ -1,0 +1,133 @@
+W1113 12:13:45.539000 1458582 site-packages/torch/distributed/run.py:793] 
+W1113 12:13:45.539000 1458582 site-packages/torch/distributed/run.py:793] *****************************************
+W1113 12:13:45.539000 1458582 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1113 12:13:45.539000 1458582 site-packages/torch/distributed/run.py:793] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
+        (wo): Linear(in_features=1024, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 1.19 seconds
+CUDA_GRAPH are activate
+Prefill latency: 0.04982314072549343 sec
+Decode latency: 1.5714896079152822 sec
+Compilation time: 1.62 seconds
+Compilation time: 1.62 seconds
+Compilation time: 1.63 seconds
+Compilation time: 1.62 seconds
+Prefill latency: 0.049671465530991554 sec
+Decode latency: 1.5697034988552332 sec
+Prefill latency: 0.04963099770247936 sec
+Decode latency: 1.569387037307024 sec
+Prefill latency: 0.049690667539834976 sec
+Decode latency: 1.5687139760702848 sec
+Prefill latency: 0.0496060810983181 sec
+Decode latency: 1.5691593866795301 sec
+Prefill latency: 0.04975254274904728 sec
+Decode latency: 1.569240154698491 sec
+Time for inference 1: 1.62 sec total, 632.25 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2870.96 GB/s
+FLOPS achieved: 14.35 TF/s
+
+Prefill latency: 0.04957767389714718 sec
+Decode latency: 1.5699021276086569 sec
+Time for inference 2: 1.62 sec total, 632.03 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2869.97 GB/s
+FLOPS achieved: 14.35 TF/s
+
+Prefill latency: 0.04963345639407635 sec
+Decode latency: 1.570101162418723 sec
+Time for inference 3: 1.62 sec total, 631.88 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2869.28 GB/s
+FLOPS achieved: 14.35 TF/s
+
+Prefill latency: 0.04963848739862442 sec
+Decode latency: 1.5717488192021847 sec
+Time for inference 4: 1.62 sec total, 631.28 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2866.57 GB/s
+FLOPS achieved: 14.33 TF/s
+
+Prefill latency: 0.04958371818065643 sec
+Decode latency: 1.568992730230093 sec
+Time for inference 5: 1.62 sec total, 632.32 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2871.27 GB/s
+FLOPS achieved: 14.36 TF/s
+
+Prefill latency: 0.04958188720047474 sec
+Decode latency: 1.5725095104426146 sec
+Time for inference 6: 1.62 sec total, 630.99 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2865.25 GB/s
+FLOPS achieved: 14.33 TF/s
+
+Prefill latency: 0.049552809447050095 sec
+Decode latency: 1.5696055311709642 sec
+Time for inference 7: 1.62 sec total, 632.18 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2870.64 GB/s
+FLOPS achieved: 14.35 TF/s
+
+Prefill latency: 0.04958898574113846 sec
+Decode latency: 1.5689817238599062 sec
+Time for inference 8: 1.62 sec total, 632.41 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2871.71 GB/s
+FLOPS achieved: 14.36 TF/s
+
+Prefill latency: 0.04956282861530781 sec
+Decode latency: 1.5692890509963036 sec
+Time for inference 9: 1.62 sec total, 632.31 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2871.21 GB/s
+FLOPS achieved: 14.36 TF/s
+
+Prefill latency: 0.04965670220553875 sec
+Decode latency: 1.5691864602267742 sec
+Time for inference 10: 1.62 sec total, 632.33 tokens/sec
+Decode latency: 1.57 sec
+Prefill latency: 0.05 sec
+Bandwidth achieved: 2871.32 GB/s
+FLOPS achieved: 14.36 TF/s
+
+==========
+Batch Size: 4
+Prompt Length: 1024
+Generated tokens: 256
+Average decode latency: 1.5700 sec
+Average prefill latency: 0.0496 sec
+Average tokens/sec: 632.00
+Memory used: 9.05 GB
+Done. we are killing the process
+[rank0]:[W1113 12:14:23.397286699 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
