@@ -1,0 +1,145 @@
+W1114 07:06:05.379000 2379466 site-packages/torch/distributed/run.py:793] 
+W1114 07:06:05.379000 2379466 site-packages/torch/distributed/run.py:793] *****************************************
+W1114 07:06:05.379000 2379466 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1114 07:06:05.379000 2379466 site-packages/torch/distributed/run.py:793] *****************************************
+flash_kv_decode is set to True
+Using device=cuda
+Loading model ...
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 8192)
+  (layers): ModuleList(
+    (0-79): 80 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=8192, out_features=1280, bias=False)
+        (wo): Linear(in_features=1024, out_features=8192, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=8192, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=8192, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=8192, out_features=128256, bias=False)
+)
+Time to load model: 1.43 seconds
+CUDA_GRAPH are activate
+Prefill latency: 2.5883923545479774 sec
+Compilation time: 11.60 seconds
+Decode latency: 9.032747268676758 sec
+Compilation time: 11.62 seconds
+Compilation time: 11.60 seconds
+Compilation time: 11.59 seconds
+Compilation time: 11.61 seconds
+Compilation time: 11.60 seconds
+Compilation time: 11.72 seconds
+Compilation time: 11.78 seconds
+Prefill latency: 2.583411139436066 sec
+Decode latency: 9.032718415372074 sec
+Prefill latency: 2.584710613824427 sec
+Decode latency: 8.894484679214656 sec
+Prefill latency: 2.581844622269273 sec
+Decode latency: 9.031746132299304 sec
+Prefill latency: 2.5728413350880146 sec
+Decode latency: 8.887485147453845 sec
+Prefill latency: 2.577748280018568 sec
+Decode latency: 9.031733124516904 sec
+Time for inference 1: 11.61 sec total, 2822.25 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.58 sec
+Bandwidth achieved: 54234.44 GB/s
+FLOPS achieved: 162.70 TF/s
+
+Prefill latency: 2.569143293425441 sec
+Decode latency: 9.031524762511253 sec
+Time for inference 2: 11.60 sec total, 2824.41 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54275.97 GB/s
+FLOPS achieved: 162.83 TF/s
+
+Prefill latency: 2.5703140757977962 sec
+Decode latency: 9.031080078333616 sec
+Time for inference 3: 11.60 sec total, 2824.22 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54272.28 GB/s
+FLOPS achieved: 162.82 TF/s
+
+Prefill latency: 2.5659725638106465 sec
+Decode latency: 9.031628735363483 sec
+Time for inference 4: 11.60 sec total, 2825.16 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54290.30 GB/s
+FLOPS achieved: 162.87 TF/s
+
+Prefill latency: 2.5668164659291506 sec
+Decode latency: 9.031483508646488 sec
+Time for inference 5: 11.60 sec total, 2824.99 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54287.08 GB/s
+FLOPS achieved: 162.86 TF/s
+
+Prefill latency: 2.56643012072891 sec
+Decode latency: 8.629843425005674 sec
+Time for inference 6: 11.20 sec total, 2926.42 tokens/sec
+Decode latency: 8.63 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 56236.20 GB/s
+FLOPS achieved: 168.71 TF/s
+
+Prefill latency: 2.566997685469687 sec
+Decode latency: 9.032004468142986 sec
+Time for inference 7: 11.60 sec total, 2824.82 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54283.82 GB/s
+FLOPS achieved: 162.85 TF/s
+
+Prefill latency: 2.5660016434267163 sec
+Decode latency: 9.032259793952107 sec
+Time for inference 8: 11.60 sec total, 2824.98 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54286.85 GB/s
+FLOPS achieved: 162.86 TF/s
+
+Prefill latency: 2.567782511934638 sec
+Decode latency: 9.030145661905408 sec
+Time for inference 9: 11.60 sec total, 2825.05 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54288.35 GB/s
+FLOPS achieved: 162.87 TF/s
+
+Prefill latency: 2.5680668829008937 sec
+[rank6]:[W1114 07:09:13.480481727 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 6]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank3]:[W1114 07:09:14.881929148 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+Decode latency: 9.031519185751677 sec
+Time for inference 10: 11.60 sec total, 2824.68 tokens/sec
+Decode latency: 9.03 sec
+Prefill latency: 2.57 sec
+Bandwidth achieved: 54281.08 GB/s
+FLOPS achieved: 162.84 TF/s
+
+==========
+Batch Size: 64
+Prompt Length: 1024
+Generated tokens: 512
+Average decode latency: 8.9913 sec
+Average prefill latency: 2.5685 sec
+Average tokens/sec: 2834.70
+Memory used: 49.80 GB
+[rank0]:[W1114 07:09:14.154200111 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank5]:[W1114 07:09:14.325596201 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 5]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank4]:[W1114 07:09:15.849092717 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 4]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank7]:[W1114 07:09:15.905782868 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 7]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank2]:[W1114 07:09:16.340622525 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank1]:[W1114 07:09:17.470331962 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+Done. we are killing the process
+[rank0]:[W1114 07:09:24.942465853 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
