@@ -1,0 +1,155 @@
+W1114 11:22:26.807000 3860295 site-packages/torch/distributed/run.py:793] 
+W1114 11:22:26.807000 3860295 site-packages/torch/distributed/run.py:793] *****************************************
+W1114 11:22:26.807000 3860295 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1114 11:22:26.807000 3860295 site-packages/torch/distributed/run.py:793] *****************************************
+flash_kv_decode is set to False
+Using device=cuda
+Loading model ...
+GPTDense(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x DenseTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=3072, bias=False)
+        (wo): Linear(in_features=2048, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=14336, bias=False)
+        (w2): Linear(in_features=7168, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 0.86 seconds
+Compiling prefill with dynamic=False
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+Prefill latency: 45.9635182810016 sec
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 56.5549144516699 sec
+Compilation time: 102.52 seconds
+Compilation time: 102.52 seconds
+Prefill latency: 1.1688994881697 sec
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/dccstor/mayankmish2/miniconda3/envs/ai/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 3.600464623887092 sec
+Prefill latency: 0.44372917991131544 sec
+Decode latency: 3.598040343262255 sec
+Prefill latency: 0.443455392960459 sec
+Decode latency: 3.59476041700691 sec
+Prefill latency: 0.44543356634676456 sec
+Decode latency: 3.5973223773762584 sec
+Prefill latency: 0.4424105668440461 sec
+Decode latency: 3.5997259500436485 sec
+Time for inference 1: 4.04 sec total, 2025.67 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16267.21 GB/s
+FLOPS achieved: 48.80 TF/s
+
+Prefill latency: 0.4439347190782428 sec
+Decode latency: 3.5978531413711607 sec
+Time for inference 2: 4.04 sec total, 2025.94 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16269.34 GB/s
+FLOPS achieved: 48.81 TF/s
+
+Prefill latency: 0.4432961759157479 sec
+Decode latency: 3.5998346339911222 sec
+Time for inference 3: 4.05 sec total, 2025.21 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16263.52 GB/s
+FLOPS achieved: 48.79 TF/s
+
+Prefill latency: 0.4442607359960675 sec
+Decode latency: 3.6013238760642707 sec
+Time for inference 4: 4.05 sec total, 2023.96 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16253.43 GB/s
+FLOPS achieved: 48.76 TF/s
+
+Prefill latency: 0.44501518085598946 sec
+Decode latency: 3.600333185400814 sec
+Time for inference 5: 4.05 sec total, 2024.08 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.45 sec
+Bandwidth achieved: 16254.45 GB/s
+FLOPS achieved: 48.76 TF/s
+
+Prefill latency: 0.4441199619323015 sec
+Decode latency: 3.5983413229696453 sec
+Time for inference 6: 4.04 sec total, 2025.56 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16266.34 GB/s
+FLOPS achieved: 48.80 TF/s
+
+Prefill latency: 0.4449111092835665 sec
+Decode latency: 3.6002684831619263 sec
+Time for inference 7: 4.05 sec total, 2024.22 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16255.52 GB/s
+FLOPS achieved: 48.77 TF/s
+
+Prefill latency: 0.44538828916847706 sec
+Decode latency: 3.5979889472946525 sec
+Time for inference 8: 4.05 sec total, 2025.12 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.45 sec
+Bandwidth achieved: 16262.80 GB/s
+FLOPS achieved: 48.79 TF/s
+
+Prefill latency: 0.44334085611626506 sec
+Decode latency: 3.599970194976777 sec
+Time for inference 9: 4.05 sec total, 2025.10 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16262.59 GB/s
+FLOPS achieved: 48.79 TF/s
+
+Prefill latency: 0.4446084829978645 sec
+Decode latency: 3.6008068933151662 sec
+Time for inference 10: 4.05 sec total, 2024.04 tokens/sec
+Decode latency: 3.60 sec
+Prefill latency: 0.44 sec
+Bandwidth achieved: 16254.10 GB/s
+FLOPS achieved: 48.76 TF/s
+
+==========
+Batch Size: 16
+Prompt Length: 1024
+Generated tokens: 512
+Average decode latency: 3.5996 sec
+Average prefill latency: 0.4441 sec
+Average tokens/sec: 2024.89
+Memory used: 21.67 GB
+Done. we are killing the process
+[rank0]:[W1114 11:25:14.251049266 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
