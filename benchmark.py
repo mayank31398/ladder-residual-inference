@@ -488,6 +488,6 @@ if __name__ == '__main__':
 
     with set_flash_attention(args.use_flash_attention):
         main(
-            args.model_name, args.tensor_parallel_world_size, args.pipeline_parallel_world_size, args.pipeline_parallel_world_size, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
+            args.model_name, args.tensor_parallel_world_size, args.pipeline_parallel_world_size, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
             args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph
         )
