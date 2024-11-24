@@ -146,7 +146,7 @@ def generate(
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
     """
 
-    pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
+    ProcessGroupManager.get_pipeline_parallel_rank()
     pp_world_size = ProcessGroupManager.get_pipeline_parallel_world_size()
 
     T = prompt.size(-1)

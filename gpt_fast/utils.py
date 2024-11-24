@@ -407,16 +407,28 @@ def _get_model_size(model):
     return model_size, params
 
 
-def send_recv(tensor_list: list[Tensor]) -> None:
+def send_recv(send_list: list[Tensor], recv_list: list[Tensor]) -> None:
     ops = [
         dist.P2POp(
-            dist.isend if ProcessGroupManager.get_pipeline_parallel_rank() == 0 else dist.irecv,
+            dist.isend,
             tensor,
             ProcessGroupManager.get_global_rank(),
             ProcessGroupManager.get_pipeline_parallel_group(),
         )
-        for tensor in tensor_list
+        for tensor in send_list
     ]
+    ops.extend(
+        [
+            dist.P2POp(
+                dist.irecv,
+                tensor,
+                ProcessGroupManager.get_global_rank(),
+                ProcessGroupManager.get_pipeline_parallel_group(),
+            )
+            for tensor in recv_list
+        ]
+    )
+
     works = dist.batch_isend_irecv(ops)
 
     for work in works:
