@@ -303,6 +303,8 @@ def get_cuda_graphs_for_decode(
 
 def main(
     model_name: str,
+    tp_world_size: int,
+    pp_world_size: int,
     prompt_length: int = 1,
     num_samples: int = 5,
     max_new_tokens: int = 100,
@@ -318,7 +320,7 @@ def main(
     """Generates text samples based on a pre-trained Transformer model and tokenizer.
     """
 
-    ProcessGroupManager(tensor_parallel_world_size=8)
+    ProcessGroupManager(tensor_parallel_world_size=tp_world_size, pipeline_parallel_world_size=pp_world_size)
 
     print_rank_0(f"Using device={device}")
     precision = torch.float16
@@ -474,6 +476,8 @@ if __name__ == '__main__':
     parser.add_argument('--cuda_graph', action='store_true', help='Whether to use cuda graphs the model.')
     parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
     parser.add_argument('--use_flash_attention', action='store_true', help='Whether to flash decode with kv cache in attn (not compile generated one)')
+    parser.add_argument('--tensor_parallel_world_size', required=True, type=int, help='TP')
+    parser.add_argument('--pipeline_parallel_world_size', required=True, type=int, help='PP')
     parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
     parser.add_argument('--device', type=str, default=default_device, help='Device to use')
 
@@ -484,6 +488,6 @@ if __name__ == '__main__':
 
     with set_flash_attention(args.use_flash_attention):
         main(
-            args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
+            args.model_name, args.tensor_parallel_world_size, args.pipeline_parallel_world_size, args.pipeline_parallel_world_size, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
             args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph
         )
