@@ -4,19 +4,11 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 import os
-from typing import List, Optional
+from typing import Optional
 
 import torch
 import torch.distributed as dist
-from torch import nn
-if os.uname().sysname != "Darwin":
-    from torch.distributed import _functional_collectives as funcol
-else:
-    # Distributed is not supported on MacOS
-    funcol = None
 
-from model import Attention, FeedForward, Transformer
-from quantize import WeightOnlyInt4Linear
 from datetime import timedelta
 
 
