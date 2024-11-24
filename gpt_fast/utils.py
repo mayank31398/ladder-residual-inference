@@ -12,6 +12,8 @@ from flash_attn import flash_attn_varlen_func, flash_attn_with_kvcache
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 from torch import Tensor
 
+from .parallel import ProcessGroupManager
+
 _USE_FLASH_ATTENTION: bool = False
 
 
@@ -128,6 +130,8 @@ class FeedForward(nn.Module):
     def __init__(self, config) -> None:
         super().__init__()
 
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
+
         assert config.intermediate_size % tp_world_size == 0
         assert config.dim % tp_world_size == 0
 
@@ -147,6 +151,7 @@ class Attention(nn.Module):
         assert config.dim % config.n_head == 0
 
         total_head_dim = (config.n_head + 2 * config.n_local_heads) * config.head_dim
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
 
         assert total_head_dim % tp_world_size == 0
         assert config.dim % tp_world_size == 0
@@ -259,6 +264,7 @@ class FuseAttentionMLP(nn.Module):
         assert config.dim % config.n_head == 0
 
         total_head_dim = (config.n_head + 2 * config.n_local_heads) * config.head_dim
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
 
         assert total_head_dim % tp_world_size == 0
         assert config.dim % tp_world_size == 0
@@ -379,7 +385,7 @@ class FuseAttentionMLP(nn.Module):
 
 def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False) -> torch.Tensor:
     if torch.compiler.is_compiling() or clone:
-        x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
+        x = funcol.all_reduce(x, reduceOp="sum", group=ProcessGroupManager.get_tensor_parallel_group())
         handle = None
     else:
         handle = dist.all_reduce(x, async_op=async_op)
