@@ -192,7 +192,7 @@ class GPTDense(nn.Module):
         mask = self.causal_mask[None, None, input_pos]
         freqs_cis = self.freqs_cis[input_pos]
 
-        if ProcessGroupManager.get_pipeline_parallel_rank() == 0:
+        if self.pp_rank == 0:
             x = self.tok_embeddings(idx)
 
         for layer in self.layers:
