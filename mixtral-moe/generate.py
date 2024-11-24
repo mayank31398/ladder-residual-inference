@@ -34,10 +34,10 @@ torch._inductor.config.fx_graph_cache = (
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
+from model import Transformer
 from sentencepiece import SentencePieceProcessor
 
 from gpt_fast.tp import maybe_init_dist
-from model import Transformer
 
 
 def multinomial_sample_one_no_sync(probs_sort):  # Does multinomial sampling without a cuda synchronization

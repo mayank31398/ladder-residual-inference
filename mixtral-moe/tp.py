@@ -8,10 +8,9 @@ from typing import List, Optional
 
 import torch
 import torch.distributed as dist
+from model import Attention, MOEFeedForward, Transformer
 from torch import nn
 from torch.distributed import _functional_collectives as funcol
-
-from model import Attention, MOEFeedForward, Transformer
 
 
 def _get_rank() -> int:
