@@ -18,9 +18,6 @@ else:
 
 from datetime import timedelta
 
-from model import Attention, FeedForward, Transformer
-from quantize import WeightOnlyInt4Linear
-
 
 def _get_rank() -> int:
     return int(os.environ.get("LOCAL_RANK", "0"))
