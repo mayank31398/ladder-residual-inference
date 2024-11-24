@@ -194,12 +194,11 @@ class GPTDense(nn.Module):
         mask = self.causal_mask[None, None, input_pos]
         freqs_cis = self.freqs_cis[input_pos]
         x = self.tok_embeddings(idx)
-
-        for i, layer in enumerate(self.layers):
+        for layer in self.layers:
             x = layer(x, input_pos, freqs_cis, mask)
         x = self.norm(x)
-        logits = self.output(x)
-        return logits
+        x = self.output(x)
+        return x
 
     @classmethod
     def from_name(cls, name: str):
