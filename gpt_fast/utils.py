@@ -385,7 +385,7 @@ class FuseAttentionMLP(nn.Module):
 
 def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False) -> torch.Tensor:
     if torch.compiler.is_compiling() or clone:
-        x = funcol.all_reduce(x, reduceOp="sum", group=ProcessGroupManager.get_tensor_parallel_group())
+        x = funcol.all_reduce(x, reduceOp="sum", group=ProcessGroupManager.get_tensor_parallel_mesh())
         handle = None
     else:
         handle = dist.all_reduce(x, async_op=async_op)
