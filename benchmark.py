@@ -482,7 +482,6 @@ if __name__ == '__main__':
     if args.cuda_graph:
         assert not args.compile
 
-    print_rank_0(f"flash_kv_decode is set to {args.use_flash_attention}")
     with set_flash_attention(args.use_flash_attention):
         main(
             args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
