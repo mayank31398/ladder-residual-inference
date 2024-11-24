@@ -207,13 +207,13 @@ class DenseTransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(config.dim, config.norm_eps)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
-        self.tp_rank = ProcessGroupManager.get_tensor_parallel_rank()
+        is_tp_first_rank = ProcessGroupManager.is_tensor_parallel_first_rank()
 
         def _attn(x, residual, freqs_cis, mask, input_pos):
             x = self.attention_norm(x)
             x = self.attention(x, freqs_cis, mask, input_pos)
 
-            if self.tp_rank == 0:
+            if is_tp_first_rank:
                 x = x + residual
 
             return x
@@ -222,7 +222,7 @@ class DenseTransformerBlock(nn.Module):
             x = self.ffn_norm(x)
             x = self.feed_forward(x)
 
-            if self.tp_rank == 0:
+            if is_tp_first_rank:
                 x = x + residual
 
             return x

@@ -196,12 +196,12 @@ class ParallelTransformerBlock(nn.Module):
         # self.feed_forward = FeedForward(config)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
 
-        tp_rank = ProcessGroupManager.get_tensor_parallel_rank()
+        is_tp_first_rank = ProcessGroupManager.is_tensor_parallel_first_rank()
 
         def _attn_ffn(x, freqs_cis, mask, input_pos):
             y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
 
-            if tp_rank == 0:
+            if is_tp_first_rank:
                 y = y + x
 
             return y
