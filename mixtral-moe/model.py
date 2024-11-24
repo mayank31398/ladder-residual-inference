@@ -17,6 +17,7 @@ def find_multiple(n: int, k: int) -> int:
         return n
     return n + k - (n % k)
 
+
 @dataclass
 class ModelArgs:
     block_size: int = 2048
@@ -52,15 +53,26 @@ class ModelArgs:
 
 
 transformer_configs = {
-    "Mixtral-8x7B-v0.1": dict(block_size=32768, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, rope_base=1000000.0, num_experts=8, num_activated_experts=2),
+    "Mixtral-8x7B-v0.1": dict(
+        block_size=32768,
+        n_layer=32,
+        n_head=32,
+        n_local_heads=8,
+        dim=4096,
+        intermediate_size=14336,
+        rope_base=1000000.0,
+        num_experts=8,
+        num_activated_experts=2,
+    ),
 }
+
 
 class KVCache(nn.Module):
     def __init__(self, max_batch_size, max_seq_length, n_heads, head_dim, dtype=torch.bfloat16):
         super().__init__()
         cache_shape = (max_batch_size, n_heads, max_seq_length, head_dim)
-        self.register_buffer('k_cache', torch.zeros(cache_shape, dtype=dtype))
-        self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+        self.register_buffer("k_cache", torch.zeros(cache_shape, dtype=dtype))
+        self.register_buffer("v_cache", torch.zeros(cache_shape, dtype=dtype))
 
     def update(self, input_pos, k_val, v_val):
         # input_pos: [S], k_val: [B, H, S, D]
@@ -72,6 +84,7 @@ class KVCache(nn.Module):
         v_out[:, :, input_pos] = v_val
 
         return k_out, v_out
+
 
 class Transformer(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
@@ -98,7 +111,9 @@ class Transformer(nn.Module):
         for b in self.layers:
             b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads, head_dim)
 
-        self.freqs_cis = precompute_freqs_cis(self.config.block_size, self.config.dim // self.config.n_head, self.config.rope_base)
+        self.freqs_cis = precompute_freqs_cis(
+            self.config.block_size, self.config.dim // self.config.n_head, self.config.rope_base
+        )
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
 
     def forward(self, idx: Tensor, input_pos: Optional[Tensor] = None) -> Tensor:
@@ -192,12 +207,12 @@ class ConditionalFeedForward(nn.Module):
         self.w3 = nn.Parameter(torch.empty(config.num_experts, config.intermediate_size, config.dim))
 
     def forward(self, x: Tensor, expert_indices: Tensor) -> Tensor:
-        w1_weights = self.w1[expert_indices] # [T, A, D, D]
-        w3_weights = self.w3[expert_indices] # [T, A, D, D]
+        w1_weights = self.w1[expert_indices]  # [T, A, D, D]
+        w3_weights = self.w3[expert_indices]  # [T, A, D, D]
         w2_weights = self.w2[expert_indices]  # [T, A, D, D]
-        x1 = F.silu(torch.einsum('ti,taoi -> tao', x, w1_weights))
-        x3 = torch.einsum('ti, taoi -> tao', x, w3_weights)
-        expert_outs =  torch.einsum('tao, taio -> tai', (x1 * x3), w2_weights)
+        x1 = F.silu(torch.einsum("ti,taoi -> tao", x, w1_weights))
+        x3 = torch.einsum("ti, taoi -> tao", x, w3_weights)
+        expert_outs = torch.einsum("tao, taio -> tai", (x1 * x3), w2_weights)
         return expert_outs
 
 
@@ -208,16 +223,19 @@ class MOEFeedForward(nn.Module):
         self.cond_ffn = ConditionalFeedForward(config)
         self.dim = config.dim
         self.num_activated_experts = config.num_activated_experts
+
     def forward(self, x: Tensor) -> Tensor:
         x = x.view(-1, self.dim)
         # T = num_tokens, E = num_experts, D = hidden dim, A = activated experts
         # x: [T, D]
-        scores = self.gate(x) # [T, E]
+        scores = self.gate(x)  # [T, E]
         expert_weights = F.softmax(scores, dim=-1)
-        expert_weights, expert_indices = torch.topk(expert_weights, self.num_activated_experts, dim=-1) # [T, A], [T, A]
-        expert_weights /= expert_weights.sum(dim=-1, keepdim=True) # [T, A]
+        expert_weights, expert_indices = torch.topk(
+            expert_weights, self.num_activated_experts, dim=-1
+        )  # [T, A], [T, A]
+        expert_weights /= expert_weights.sum(dim=-1, keepdim=True)  # [T, A]
         expert_outs = self.cond_ffn(x, expert_indices)
-        return torch.einsum('tai,ta -> ti', expert_outs, expert_weights)
+        return torch.einsum("tai,ta -> ti", expert_outs, expert_weights)
 
 
 class RMSNorm(nn.Module):
@@ -234,9 +252,7 @@ class RMSNorm(nn.Module):
         return output * self.weight
 
 
-def precompute_freqs_cis(
-    seq_len: int, n_elem: int, base: int = 10000
-) -> Tensor:
+def precompute_freqs_cis(seq_len: int, n_elem: int, base: int = 10000) -> Tensor:
     freqs = 1.0 / (base ** (torch.arange(0, n_elem, 2)[: (n_elem // 2)].float() / n_elem))
     t = torch.arange(seq_len, device=freqs.device)
     freqs = torch.outer(t, freqs)

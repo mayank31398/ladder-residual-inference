@@ -12,31 +12,33 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 import torch.distributed as dist
-from gpt_fast.utils import set_flash_attention, _get_model_size
+
+from gpt_fast import ProcessGroupManager, _get_model_size, is_tracking_rank, set_flash_attention
+
 
 def print_rank_0(*args, **kwargs):
-    if dist.get_rank() == 0:
+    if is_tracking_rank():
         print(*args, **kwargs)
+
 
 import argparse
 
 torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
 # Experimental features to reduce compilation times, will be on by default in future
-torch._inductor.config.fx_graph_cache = True 
+torch._inductor.config.fx_graph_cache = True
 # torch._functorch.config.enable_autograd_cache = True
 
 # allows overlap
 torch._inductor.config.reorder_for_compute_comm_overlap = True
 
-default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
+default_device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # support running without installing as a package
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
-from gpt_fast import GPTDense, GPTEnsemble, GPTParallel, GPTLadder
-
+from gpt_fast import GPTDense, GPTEnsemble, GPTLadder, GPTParallel
 
 _MODELS = {
     "gpt_dense": GPTDense,
@@ -56,7 +58,7 @@ def device_sync(device):
         print_rank_0(f"device={device} is not yet suppported")
 
 
-def multinomial_sample_one_no_sync(probs_sort): # Does multinomial sampling without a cuda synchronization
+def multinomial_sample_one_no_sync(probs_sort):  # Does multinomial sampling without a cuda synchronization
     q = torch.empty_like(probs_sort).exponential_(1)
     return torch.argmax(probs_sort / q, dim=-1, keepdim=True).to(dtype=torch.int)
 
@@ -77,17 +79,22 @@ def sample(logits, temperature: float = 1.0, top_k: Optional[int] = None):
     idx_next = multinomial_sample_one_no_sync(probs)
     return idx_next, probs
 
+
 @torch.no_grad()
 def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> torch.Tensor:
     logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)[0]
 
-def decode_one_token(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+
+def decode_one_token(
+    model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs
+) -> Tuple[torch.Tensor, torch.Tensor]:
     # input_pos: [B, 1]
     assert input_pos.shape[-1] == 1
     logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)
-    
+
+
 @torch.no_grad()
 def decode_n_tokens(
     model: torch.nn.Module,
@@ -95,15 +102,13 @@ def decode_n_tokens(
     input_pos: torch.Tensor,
     num_new_tokens: int,
     callback=lambda _: _,
-    **sampling_kwargs
+    **sampling_kwargs,
 ):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
         # Actually better for Inductor to codegen attention here
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
-            next_token, next_prob = decode_one_token(
-                model, cur_token, input_pos, **sampling_kwargs
-            )
+            next_token, next_prob = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
             input_pos += 1
             new_tokens.append(next_token.clone())
             callback(new_tokens[-1])
@@ -111,6 +116,7 @@ def decode_n_tokens(
             cur_token = next_token.clone()
 
     return new_tokens, new_probs
+
 
 @torch.no_grad()
 def generate(
@@ -120,8 +126,8 @@ def generate(
     batch_size: int,
     empty: torch.Tensor,
     *,
-    callback = lambda x: x,
-    **sampling_kwargs
+    callback=lambda x: x,
+    **sampling_kwargs,
 ) -> torch.Tensor:
     """
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
@@ -149,12 +155,14 @@ def generate(
 
     device_sync(device)
     decode_start = time.perf_counter()
-    generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
+    generated_tokens, _ = decode_n_tokens(
+        model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs
+    )
     device_sync(device)
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
-    empty[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
+    empty[:, T + 1 :] = torch.cat(generated_tokens, dim=-1)
 
     return empty, decode_latency, prefill_latency
 
@@ -215,7 +223,7 @@ def generate_using_cuda_graphs(
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
-    empty[:, T + 1:] = torch.cat(new_tokens, dim=-1)
+    empty[:, T + 1 :] = torch.cat(new_tokens, dim=-1)
 
     return empty, decode_latency, prefill_latency
 
@@ -228,7 +236,7 @@ def encode_tokens(tokenizer, string, bos=True, device=default_device):
 
 
 def _load_model(model_name, device, precision):
-    with torch.device('meta'):
+    with torch.device("meta"):
         model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
 
     model = model.to(dtype=precision)
@@ -241,15 +249,12 @@ def _load_model(model_name, device, precision):
 
     return model.eval()
 
+
 B_INST, E_INST = "[INST]", "[/INST]"
 
+
 @torch.no_grad()
-def get_cuda_graphs_for_prefill(
-    model: torch.nn.Module,
-    prompt: torch.Tensor,
-    batch_size: int,
-    **sampling_kwargs
-):
+def get_cuda_graphs_for_prefill(model: torch.nn.Module, prompt: torch.Tensor, batch_size: int, **sampling_kwargs):
     T = prompt.size(-1)
     device = prompt.device
 
@@ -280,7 +285,7 @@ def get_cuda_graphs_for_decode(
     batch_size: int,
     max_new_tokens: int,
     cur_token: torch.Tensor,
-    **sampling_kwargs
+    **sampling_kwargs,
 ):
     T = prompt.size(-1)
     device = prompt.device
@@ -317,10 +322,10 @@ def main(
     device=default_device,
     use_cuda_graphs: bool = False,
 ) -> None:
-    """Generates text samples based on a pre-trained Transformer model and tokenizer.
-    """
+    """Generates text samples based on a pre-trained Transformer model and tokenizer."""
 
     from gpt_fast import maybe_init_dist
+
     rank = maybe_init_dist()
     use_tp = rank is not None
 
@@ -330,8 +335,8 @@ def main(
     print_rank_0("Loading model ...")
     t0 = time.time()
     model = _load_model(model_name, device, precision)
-    device_sync(device=device) # MKG
-    
+    device_sync(device=device)  # MKG
+
     print_rank_0(f"Time to load model: {time.time() - t0:.02f} seconds")
     # generate a fully synthetic prompt
     encoded = torch.randint(0, 1024, (prompt_length,), device=device, dtype=torch.int64)
@@ -339,7 +344,7 @@ def main(
     torch.manual_seed(1234)
     model_size, params = _get_model_size(model)
 
-    T_new = encoded.size(-1) + max_new_tokens # include encode sequence length
+    T_new = encoded.size(-1) + max_new_tokens  # include encode sequence length
     max_seq_length = min(T_new, model.config.block_size)
 
     with torch.device(device):
@@ -348,14 +353,14 @@ def main(
     if compile:
         global decode_one_token, decode_multi_token, prefill
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
-    
+
         if compile_prefill:
             dynamic = False
             print_rank_0(f"Compiling prefill with dynamic={dynamic}")
             prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
-            
+
     elif use_cuda_graphs:
-        print_rank_0('CUDA_GRAPH are activate')
+        print_rank_0("CUDA_GRAPH are activate")
         prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
             model,
             prompt=encoded,
@@ -374,16 +379,17 @@ def main(
             top_k=top_k,
         )
 
-    aggregate_metrics = {'tokens_per_sec': [], 'decode_latency': [], 'prefill_latency': []}
+    aggregate_metrics = {"tokens_per_sec": [], "decode_latency": [], "prefill_latency": []}
     start = -5
 
     for i in range(start, num_samples):
-        device_sync(device=device) # MKG
+        device_sync(device=device)  # MKG
 
-        callback = lambda x : x
+        callback = lambda x: x
         t0 = time.perf_counter()
 
         import contextlib
+
         if not profile or (use_tp and rank != 0) or i != num_samples - 1:
             prof = contextlib.nullcontext()
         else:
@@ -429,18 +435,18 @@ def main(
         if i == -5:
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
 
-        device_sync(device=device) # MKG
-        
+        device_sync(device=device)  # MKG
+
         if i < 0:
             continue
-        
+
         t = time.perf_counter() - t0
 
-        tokens_generated = (y.size(-1) - prompt_length)*y.size(0) # seq length * batch_size
+        tokens_generated = (y.size(-1) - prompt_length) * y.size(0)  # seq length * batch_size
         generated_tokens_sec = tokens_generated / t
-        aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
-        aggregate_metrics['decode_latency'].append(decode_latency)
-        aggregate_metrics['prefill_latency'].append(prefill_latency)
+        aggregate_metrics["tokens_per_sec"].append(generated_tokens_sec)
+        aggregate_metrics["decode_latency"].append(decode_latency)
+        aggregate_metrics["prefill_latency"].append(prefill_latency)
         print_rank_0(f"Time for inference {i + 1}: {t:.02f} sec total, {generated_tokens_sec:.02f} tokens/sec")
         print_rank_0(f"Decode latency: {decode_latency:.02f} sec")
         print_rank_0(f"Prefill latency: {prefill_latency:.02f} sec")
@@ -454,8 +460,12 @@ def main(
     print_rank_0(f"Batch Size: {batch_size}")
     print_rank_0(f"Prompt Length: {prompt_length}")
     print_rank_0(f"Generated tokens: {max_new_tokens}")
-    print_rank_0(f"Average decode latency: {torch.mean(torch.tensor(aggregate_metrics['decode_latency'])).item():.04f} sec")
-    print_rank_0(f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'])).item():.04f} sec")
+    print_rank_0(
+        f"Average decode latency: {torch.mean(torch.tensor(aggregate_metrics['decode_latency'])).item():.04f} sec"
+    )
+    print_rank_0(
+        f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'])).item():.04f} sec"
+    )
     print_rank_0(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'])).item():.2f}")
     print_rank_0(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
@@ -464,22 +474,30 @@ def main(
     exit()
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Your CLI description.')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Your CLI description.")
 
-    parser.add_argument('--model_name', type=str, required=True, help="model name")
-    parser.add_argument('--prompt_length', type=int, required=True, help="Input prompt length")
-    parser.add_argument('--num_samples', type=int, default=5, help='Number of samples.')
-    parser.add_argument('--max_new_tokens', type=int, default=200, help='Maximum number of new tokens.')
-    parser.add_argument('--batch_size', type=int, default=1, help='Batch size to benchmark with')
-    parser.add_argument('--top_k', type=int, default=200, help='Top-k for sampling.')
-    parser.add_argument('--temperature', type=float, default=0.8, help='Temperature for sampling.')
-    parser.add_argument('--compile', action='store_true', help='Whether to compile the model.')
-    parser.add_argument('--cuda_graph', action='store_true', help='Whether to use cuda graphs the model.')
-    parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
-    parser.add_argument('--use_flash_attention', action='store_true', help='Whether to flash decode with kv cache in attn (not compile generated one)')
-    parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
-    parser.add_argument('--device', type=str, default=default_device, help='Device to use')
+    parser.add_argument("--model_name", type=str, required=True, help="model name")
+    parser.add_argument("--prompt_length", type=int, required=True, help="Input prompt length")
+    parser.add_argument("--num_samples", type=int, default=5, help="Number of samples.")
+    parser.add_argument("--max_new_tokens", type=int, default=200, help="Maximum number of new tokens.")
+    parser.add_argument("--batch_size", type=int, default=1, help="Batch size to benchmark with")
+    parser.add_argument("--top_k", type=int, default=200, help="Top-k for sampling.")
+    parser.add_argument("--temperature", type=float, default=0.8, help="Temperature for sampling.")
+    parser.add_argument("--compile", action="store_true", help="Whether to compile the model.")
+    parser.add_argument("--cuda_graph", action="store_true", help="Whether to use cuda graphs the model.")
+    parser.add_argument(
+        "--compile_prefill",
+        action="store_true",
+        help="Whether to compile the prefill (improves prefill perf, but higher compile times)",
+    )
+    parser.add_argument(
+        "--use_flash_attention",
+        action="store_true",
+        help="Whether to flash decode with kv cache in attn (not compile generated one)",
+    )
+    parser.add_argument("--profile", type=Path, default=None, help="Profile path.")
+    parser.add_argument("--device", type=str, default=default_device, help="Device to use")
 
     args = parser.parse_args()
 
@@ -489,6 +507,16 @@ if __name__ == '__main__':
     print_rank_0(f"flash_kv_decode is set to {args.use_flash_attention}")
     with set_flash_attention(args.use_flash_attention):
         main(
-            args.model_name, args.prompt_length, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
-            args.temperature, args.compile, args.compile_prefill, args.profile, args.device, args.cuda_graph
+            args.model_name,
+            args.prompt_length,
+            args.num_samples,
+            args.max_new_tokens,
+            args.batch_size,
+            args.top_k,
+            args.temperature,
+            args.compile,
+            args.compile_prefill,
+            args.profile,
+            args.device,
+            args.cuda_graph,
         )

@@ -4,7 +4,6 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 import glob
-import json
 import re
 import sys
 from pathlib import Path
@@ -56,8 +55,8 @@ def convert_hf_checkpoint(
     final_result = {}
     for key, value in merged_result.items():
         if "layers" in key:
-            abstract_key = re.sub(r'.(\d+).', '.{}.', key)
-            layer_num = re.search(r'\d+', key).group(0)
+            abstract_key = re.sub(r".(\d+).", ".{}.", key)
+            layer_num = re.search(r"\d+", key).group(0)
             new_key = weight_map[abstract_key]
             if new_key is None:
                 continue
@@ -77,9 +76,16 @@ def convert_hf_checkpoint(
             del final_result[key.replace("wq", "wk")]
             del final_result[key.replace("wq", "wv")]
         elif "w1" in key or "w3" in key:
-            final_result[key] = final_result[key].reshape(config.num_experts, config.intermediate_size, config.dim).contiguous()
+            final_result[key] = (
+                final_result[key].reshape(config.num_experts, config.intermediate_size, config.dim).contiguous()
+            )
         elif "w2" in key:
-            final_result[key] = final_result[key].reshape(config.num_experts, config.intermediate_size, config.dim).permute(0, 2, 1).contiguous()
+            final_result[key] = (
+                final_result[key]
+                .reshape(config.num_experts, config.intermediate_size, config.dim)
+                .permute(0, 2, 1)
+                .contiguous()
+            )
         elif "gate" in key:
             final_result[key] = final_result[key].contiguous()
 
@@ -87,11 +93,12 @@ def convert_hf_checkpoint(
     torch.save(final_result, checkpoint_dir / "model.pth")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='Convert HuggingFace checkpoint.')
-    parser.add_argument('--checkpoint_dir', type=Path, default=Path("checkpoints/meta-llama/llama-2-7b-chat-hf"))
-    parser.add_argument('--model_name', type=str, default=None)
+
+    parser = argparse.ArgumentParser(description="Convert HuggingFace checkpoint.")
+    parser.add_argument("--checkpoint_dir", type=Path, default=Path("checkpoints/meta-llama/llama-2-7b-chat-hf"))
+    parser.add_argument("--model_name", type=str, default=None)
 
     args = parser.parse_args()
     convert_hf_checkpoint(

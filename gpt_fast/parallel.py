@@ -7,7 +7,6 @@ from torch.distributed import ProcessGroup
 from torch.distributed._symmetric_memory import enable_symm_mem_for_group
 from torch.distributed.device_mesh import DeviceMesh, init_device_mesh
 
-
 # general
 _MESH: DeviceMesh | None = None
 _GLOBAL_RANK: int | None = None
@@ -49,7 +48,9 @@ class ProcessGroupManager:
         assert tensor_parallel_world_size * pipeline_parallel_world_size == total_gpus
 
         global _MESH
-        _MESH = init_device_mesh("cuda", (pipeline_parallel_world_size, tensor_parallel_world_size), mesh_dim_names=("pp", "tp"))
+        _MESH = init_device_mesh(
+            "cuda", (pipeline_parallel_world_size, tensor_parallel_world_size), mesh_dim_names=("pp", "tp")
+        )
 
         local_rank = int(os.getenv("LOCAL_RANK", 0))
         torch.cuda.set_device(local_rank)

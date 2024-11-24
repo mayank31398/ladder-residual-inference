@@ -13,6 +13,7 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 
+
 def device_sync(device):
     if "cuda" in device:
         torch.cuda.synchronize(device)
@@ -25,21 +26,24 @@ def device_sync(device):
 torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
 # Experimental features to reduce compilation times, will be on by default in future
-torch._inductor.config.fx_graph_cache = True 
+torch._inductor.config.fx_graph_cache = True
 torch._functorch.config.enable_autograd_cache = True
 
-default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
+default_device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # support running without installing as a package
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
-from model import Transformer
 from tokenizer import get_tokenizer
 
-def multinomial_sample_one_no_sync(probs_sort): # Does multinomial sampling without a cuda synchronization
+from model import Transformer
+
+
+def multinomial_sample_one_no_sync(probs_sort):  # Does multinomial sampling without a cuda synchronization
     q = torch.empty_like(probs_sort).exponential_(1)
     return torch.argmax(probs_sort / q, dim=-1, keepdim=True).to(dtype=torch.int)
+
 
 def logits_to_probs(logits, temperature: float = 1.0, top_k: Optional[int] = None):
     logits = logits / max(temperature, 1e-5)
@@ -51,29 +55,42 @@ def logits_to_probs(logits, temperature: float = 1.0, top_k: Optional[int] = Non
     probs = torch.nn.functional.softmax(logits, dim=-1)
     return probs
 
+
 def sample(logits, temperature: float = 1.0, top_k: Optional[int] = None):
     probs = logits_to_probs(logits[:, -1], temperature, top_k)
     idx_next = multinomial_sample_one_no_sync(probs)
     return idx_next, probs
+
 
 def prefill(model: Transformer, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> torch.Tensor:
     # input_pos: [B, S]
     logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)[0]
 
-def decode_one_token(model: Transformer, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+
+def decode_one_token(
+    model: Transformer, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs
+) -> Tuple[torch.Tensor, torch.Tensor]:
     # input_pos: [B, 1]
     assert input_pos.shape[-1] == 1
     logits = model(x, input_pos)
     return sample(logits, **sampling_kwargs)
 
-def decode_n_tokens(model: Transformer, cur_token: torch.Tensor, input_pos: torch.Tensor, num_new_tokens: int, callback=lambda _: _, **sampling_kwargs):
+
+def decode_n_tokens(
+    model: Transformer,
+    cur_token: torch.Tensor,
+    input_pos: torch.Tensor,
+    num_new_tokens: int,
+    callback=lambda _: _,
+    **sampling_kwargs,
+):
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
-        with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True): # Actually better for Inductor to codegen attention here
-            next_token, next_prob = decode_one_token(
-                model, cur_token, input_pos, **sampling_kwargs
-            )
+        with torch.backends.cuda.sdp_kernel(
+            enable_flash=False, enable_mem_efficient=False, enable_math=True
+        ):  # Actually better for Inductor to codegen attention here
+            next_token, next_prob = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
             input_pos += 1
             new_tokens.append(next_token.clone())
             callback(new_tokens[-1])
@@ -86,25 +103,28 @@ def decode_n_tokens(model: Transformer, cur_token: torch.Tensor, input_pos: torc
 def model_forward(model, x, input_pos):
     return model(x, input_pos)
 
+
 def speculative_decode(
     model: Transformer,
     draft_model: Transformer,
     cur_token: torch.Tensor,
     input_pos: int,
     speculate_k: int,
-    **sampling_kwargs
+    **sampling_kwargs,
 ) -> torch.Tensor:
     # draft model inference sequentially
     device = cur_token.device
     orig_input_pos = torch.tensor([input_pos], dtype=torch.int64, device=cur_token.device)
-    draft_tokens, draft_probs = decode_n_tokens(draft_model, cur_token.view(1, -1), orig_input_pos.clone(), speculate_k, **sampling_kwargs)
+    draft_tokens, draft_probs = decode_n_tokens(
+        draft_model, cur_token.view(1, -1), orig_input_pos.clone(), speculate_k, **sampling_kwargs
+    )
 
     draft_tokens = torch.cat(draft_tokens)
     # parallel inference on target model using draft tokens
     target_logits = model_forward(
         model,
         torch.cat([cur_token.view(1), draft_tokens]).view(1, -1),
-        torch.arange(input_pos, input_pos + speculate_k + 1, device=cur_token.device)
+        torch.arange(input_pos, input_pos + speculate_k + 1, device=cur_token.device),
     )
     target_probs = logits_to_probs(target_logits[0], **sampling_kwargs)
     draft_probs = torch.stack(draft_probs)
@@ -113,10 +133,10 @@ def speculative_decode(
     # q < p: q/p prob to accept draft token
     p = draft_probs[torch.arange(0, speculate_k, device=device), draft_tokens]
     q = target_probs[torch.arange(0, speculate_k, device=device), draft_tokens]
-    accept_draft_prob = torch.minimum(torch.ones(()), q[:speculate_k]/ p)
+    accept_draft_prob = torch.minimum(torch.ones(()), q[:speculate_k] / p)
     rejected_locations = (torch.rand_like(accept_draft_prob) > accept_draft_prob).nonzero()
 
-    if rejected_locations.shape[0] == 0: # All draft tokens have been accepted
+    if rejected_locations.shape[0] == 0:  # All draft tokens have been accepted
         accept_length = speculate_k + 1
         last_token = multinomial_sample_one_no_sync(target_probs[-1])
         # fill last token into draft model
@@ -136,6 +156,7 @@ def speculative_decode(
         next_token = multinomial_sample_one_no_sync(new)
         return torch.cat([draft_tokens[:accept_length], next_token])
 
+
 @torch.no_grad()
 def generate(
     model: Transformer,
@@ -146,8 +167,8 @@ def generate(
     interactive: bool,
     draft_model: Transformer,
     speculate_k: Optional[int] = 8,
-    callback = lambda x: x,
-    **sampling_kwargs
+    callback=lambda x: x,
+    **sampling_kwargs,
 ) -> torch.Tensor:
     """
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
@@ -190,25 +211,24 @@ def generate(
         while input_pos < T_new - 1:
             cur_token = next_token.view(())
 
-            next_tokens = speculative_decode(
-                model, draft_model, cur_token, input_pos, speculate_k, **sampling_kwargs
-            )
+            next_tokens = speculative_decode(model, draft_model, cur_token, input_pos, speculate_k, **sampling_kwargs)
 
             accept_counts[len(next_tokens) - 1] += 1
             num_added = min(T_new - input_pos - 1, len(next_tokens))
-            seq[input_pos + 1 : input_pos + num_added + 1] = next_tokens[: num_added]
-            for i in next_tokens[: num_added,]:
+            seq[input_pos + 1 : input_pos + num_added + 1] = next_tokens[:num_added]
+            for i in next_tokens[:num_added,]:
                 callback(i)
             input_pos = input_pos + num_added
             next_token = next_tokens[-1]
     else:
-        generated_tokens, _ = decode_n_tokens(model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs)
-        seq[:, T + 1:] = torch.cat(generated_tokens, dim=-1)
+        generated_tokens, _ = decode_n_tokens(
+            model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs
+        )
+        seq[:, T + 1 :] = torch.cat(generated_tokens, dim=-1)
 
-    generate_stats = {
-        'accept_counts': accept_counts
-    }
+    generate_stats = {"accept_counts": accept_counts}
     return seq, generate_stats
+
 
 def encode_tokens(tokenizer, string, bos=True, device=default_device):
     tokens = tokenizer.encode(string)
@@ -216,14 +236,16 @@ def encode_tokens(tokenizer, string, bos=True, device=default_device):
         tokens = [tokenizer.bos_id()] + tokens
     return torch.tensor(tokens, dtype=torch.int, device=device)
 
+
 def _load_model(checkpoint_path, device, precision, use_tp):
-    use_cuda = 'cuda' in device
-    with torch.device('meta'):
+    use_cuda = "cuda" in device
+    with torch.device("meta"):
         model = Transformer.from_name(checkpoint_path.parent.name)
 
     if "int8" in str(checkpoint_path):
         print("Using int8 weight-only quantization!")
         from quantize import WeightOnlyInt8QuantHandler
+
         simple_quantizer = WeightOnlyInt8QuantHandler(model)
         model = simple_quantizer.convert_for_runtime()
 
@@ -232,6 +254,7 @@ def _load_model(checkpoint_path, device, precision, use_tp):
         path_comps = checkpoint_path.name.split(".")
         groupsize = int(path_comps[-2][1:])
         from quantize import WeightOnlyInt4QuantHandler
+
         simple_quantizer = WeightOnlyInt4QuantHandler(model, groupsize)
         model = simple_quantizer.convert_for_runtime()
 
@@ -242,11 +265,13 @@ def _load_model(checkpoint_path, device, precision, use_tp):
 
     if use_tp:
         from gpt_fast import apply_tp
+
         print("Applying tensor parallel to model ...")
         apply_tp(model)
 
     model = model.to(device=device, dtype=precision)
     return model.eval()
+
 
 def _get_model_size(model):
     model_size = 0
@@ -254,20 +279,14 @@ def _get_model_size(model):
     for name, child in model.named_children():
         if not isinstance(child, torch.nn.Embedding):
             model_size += sum(
-                [
-                    p.numel() * p.dtype.itemsize
-                    for p in itertools.chain(child.parameters(), child.buffers())
-                ]
+                [p.numel() * p.dtype.itemsize for p in itertools.chain(child.parameters(), child.buffers())]
             )
-            params += sum(
-                [
-                    p.numel()
-                    for p in itertools.chain(child.parameters(), child.buffers())
-                ]
-            )
+            params += sum([p.numel() for p in itertools.chain(child.parameters(), child.buffers())])
     return model_size, params
 
+
 B_INST, E_INST = "[INST]", "[/INST]"
+
 
 def main(
     prompt: Union[int, str] = "Hello, my name is",
@@ -285,8 +304,7 @@ def main(
     speculate_k: int = 5,
     device=default_device,
 ) -> None:
-    """Generates text samples based on a pre-trained Transformer model and tokenizer.
-    """
+    """Generates text samples based on a pre-trained Transformer model and tokenizer."""
     assert checkpoint_path.is_file(), checkpoint_path
 
     tokenizer_path = checkpoint_path.parent / "tokenizer.model"
@@ -294,6 +312,7 @@ def main(
 
     global print
     from gpt_fast import maybe_init_dist
+
     rank = maybe_init_dist()
     use_tp = rank is not None
     if use_tp:
@@ -315,7 +334,7 @@ def main(
     else:
         draft_model = None
 
-    device_sync(device=device) # MKG
+    device_sync(device=device)  # MKG
     print(f"Time to load model: {time.time() - t0:.02f} seconds")
 
     tokenizer = get_tokenizer(tokenizer_path, checkpoint_path)
@@ -330,8 +349,8 @@ def main(
     torch.manual_seed(1234)
     model_size, params = _get_model_size(model)
     if compile:
-        if is_speculative and use_tp: # and ("cuda" in device):
-            torch._inductor.config.triton.cudagraph_trees = False # Bug with cudagraph trees in this case
+        if is_speculative and use_tp:  # and ("cuda" in device):
+            torch._inductor.config.triton.cudagraph_trees = False  # Bug with cudagraph trees in this case
 
         if is_speculative:
             global model_forward, logits_to_prob
@@ -344,15 +363,14 @@ def main(
         if compile_prefill:
             prefill = torch.compile(prefill, fullgraph=True, dynamic=True)
 
-
     aggregate_metrics = {
-        'tokens_per_sec': [],
-        'accept_counts': [],
+        "tokens_per_sec": [],
+        "accept_counts": [],
     }
     start = -1 if compile else 0
 
     for i in range(start, num_samples):
-        device_sync(device=device) # MKG
+        device_sync(device=device)  # MKG
         if i >= 0 and interactive:
             prompt = input("What is your prompt? ")
             if is_chat:
@@ -361,8 +379,9 @@ def main(
 
         if interactive and i >= 0:
             buffer = []
-            period_id = tokenizer.encode('.')[0]
+            period_id = tokenizer.encode(".")[0]
             done_generating = False
+
             def callback(x):
                 nonlocal done_generating
                 if done_generating:
@@ -371,13 +390,15 @@ def main(
                 if x.item() == tokenizer.eos_id():
                     done_generating = True
                 if len(buffer) == 4 or done_generating:
-                    print(''.join(buffer), end='', flush=True)
+                    print("".join(buffer), end="", flush=True)
                     buffer.clear()
                 # print(, end='', flush=True)
+
         else:
-            callback = lambda x : x
+            callback = lambda x: x
         t0 = time.perf_counter()
         import contextlib
+
         if (i != num_samples - 1 or not profile) or (use_tp and rank != 0):
             prof = contextlib.nullcontext()
         else:
@@ -396,7 +417,7 @@ def main(
                 temperature=temperature,
                 top_k=top_k,
             )
-            aggregate_metrics['accept_counts'].append(metrics['accept_counts'])
+            aggregate_metrics["accept_counts"].append(metrics["accept_counts"])
         if i == -1:
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
             continue
@@ -405,7 +426,7 @@ def main(
                 prof.export_chrome_trace(f"{profile}_rank_{rank}.json")
             else:
                 prof.export_chrome_trace(f"{profile}.json")
-        device_sync(device=device) # MKG
+        device_sync(device=device)  # MKG
         t = time.perf_counter() - t0
 
         if not interactive:
@@ -417,7 +438,7 @@ def main(
             print()
         tokens_generated = y.size(-1) - prompt_length
         generated_tokens_sec = tokens_generated / t
-        aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
+        aggregate_metrics["tokens_per_sec"].append(generated_tokens_sec)
         print(f"Time for inference {i + 1}: {t:.02f} sec total, {generated_tokens_sec:.02f} tokens/sec")
         print(f"Bandwidth achieved: {model_size * generated_tokens_sec / 1e9:.02f} GB/s")
         total_tokens_sec = y.numel() / t
@@ -425,8 +446,8 @@ def main(
         print()
     print("==========")
     if is_speculative:
-        counts_aggregated = [sum(i) for i in zip(*aggregate_metrics['accept_counts'])]
-        acceptance_probs = [i/sum(counts_aggregated) for i in counts_aggregated]
+        counts_aggregated = [sum(i) for i in zip(*aggregate_metrics["accept_counts"])]
+        acceptance_probs = [i / sum(counts_aggregated) for i in counts_aggregated]
         print(f"Acceptance probs: {acceptance_probs}")
         print(f"Mean Accepted: {sum([idx * i for idx, i in enumerate(counts_aggregated)])/sum(counts_aggregated)}")
 
@@ -437,9 +458,10 @@ def main(
     print(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='Your CLI description.')
+
+    parser = argparse.ArgumentParser(description="Your CLI description.")
 
     def int_or_str(x):
         try:
@@ -447,24 +469,49 @@ if __name__ == '__main__':
         except:
             return x
 
-    parser.add_argument('--prompt', type=int_or_str, default="Hello, my name is", help="Input prompt. If it's an integer, will instead generate a synthetic prompt.")
-    parser.add_argument('--interactive', action='store_true', help='Whether to launch in interactive mode')
-    parser.add_argument('--num_samples', type=int, default=5, help='Number of samples.')
-    parser.add_argument('--max_new_tokens', type=int, default=200, help='Maximum number of new tokens.')
-    parser.add_argument('--batch_size', type=int, default=1, help='Batch size to benchmark with')
-    parser.add_argument('--top_k', type=int, default=200, help='Top-k for sampling.')
-    parser.add_argument('--temperature', type=float, default=0.8, help='Temperature for sampling.')
-    parser.add_argument('--checkpoint_path', type=Path, default=Path("checkpoints/meta-Transformer/Transformer-2-7b-chat-hf/model.pth"), help='Model checkpoint path.')
-    parser.add_argument('--compile', action='store_true', help='Whether to compile the model.')
-    parser.add_argument('--compile_prefill', action='store_true', help='Whether to compile the prefill (improves prefill perf, but higher compile times)')
-    parser.add_argument('--profile', type=Path, default=None, help='Profile path.')
-    parser.add_argument('--speculate_k', type=int, default=5, help='Speculative execution depth.')
-    parser.add_argument('--draft_checkpoint_path', type=Path, default=None, help='Draft checkpoint path.')
-    parser.add_argument('--device', type=str, default=default_device, help='Device to use')
+    parser.add_argument(
+        "--prompt",
+        type=int_or_str,
+        default="Hello, my name is",
+        help="Input prompt. If it's an integer, will instead generate a synthetic prompt.",
+    )
+    parser.add_argument("--interactive", action="store_true", help="Whether to launch in interactive mode")
+    parser.add_argument("--num_samples", type=int, default=5, help="Number of samples.")
+    parser.add_argument("--max_new_tokens", type=int, default=200, help="Maximum number of new tokens.")
+    parser.add_argument("--batch_size", type=int, default=1, help="Batch size to benchmark with")
+    parser.add_argument("--top_k", type=int, default=200, help="Top-k for sampling.")
+    parser.add_argument("--temperature", type=float, default=0.8, help="Temperature for sampling.")
+    parser.add_argument(
+        "--checkpoint_path",
+        type=Path,
+        default=Path("checkpoints/meta-Transformer/Transformer-2-7b-chat-hf/model.pth"),
+        help="Model checkpoint path.",
+    )
+    parser.add_argument("--compile", action="store_true", help="Whether to compile the model.")
+    parser.add_argument(
+        "--compile_prefill",
+        action="store_true",
+        help="Whether to compile the prefill (improves prefill perf, but higher compile times)",
+    )
+    parser.add_argument("--profile", type=Path, default=None, help="Profile path.")
+    parser.add_argument("--speculate_k", type=int, default=5, help="Speculative execution depth.")
+    parser.add_argument("--draft_checkpoint_path", type=Path, default=None, help="Draft checkpoint path.")
+    parser.add_argument("--device", type=str, default=default_device, help="Device to use")
 
     args = parser.parse_args()
     main(
-        args.prompt, args.interactive, args.num_samples, args.max_new_tokens, args.batch_size, args.top_k,
-        args.temperature, args.checkpoint_path, args.compile, args.compile_prefill, args.profile, args.draft_checkpoint_path,
-        args.speculate_k, args.device
+        args.prompt,
+        args.interactive,
+        args.num_samples,
+        args.max_new_tokens,
+        args.batch_size,
+        args.top_k,
+        args.temperature,
+        args.checkpoint_path,
+        args.compile,
+        args.compile_prefill,
+        args.profile,
+        args.draft_checkpoint_path,
+        args.speculate_k,
+        args.device,
     )

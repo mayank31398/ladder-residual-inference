@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import torch
-
 import torch.fx as fx
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,10 +12,7 @@ from torch.utils._pytree import tree_flatten, tree_unflatten
 
 aten = torch.ops.aten
 
-from eval import (
-    setup_cache_padded_seq_input_pos_max_seq_length_for_prefill,
-    GPTFastEvalWrapper
-)
+from eval import GPTFastEvalWrapper, setup_cache_padded_seq_input_pos_max_seq_length_for_prefill
 
 
 class InputRecorder(GPTFastEvalWrapper):
@@ -58,19 +54,14 @@ class InputRecorder(GPTFastEvalWrapper):
                 if isinstance(self._model.transformer.wte, nn.Embedding):
                     self.mod.transformer.wte.weight.data[0, :] *= 0
             except:
-                print(
-                    "Did not find embeddings in model.transformer.wte, disabling padding"
-                )
+                print("Did not find embeddings in model.transformer.wte, disabling padding")
                 self.pad_calibration_inputs = False
-
 
     def add_input(self, args):
         if self.inputs is None:
             self.inputs = [MultiInput([arg]) for arg in args]
         else:
-            self.inputs = [
-                multi.add_input(arg) for (multi, arg) in zip(self.inputs, args)
-            ]
+            self.inputs = [multi.add_input(arg) for (multi, arg) in zip(self.inputs, args)]
 
     def get_recorded_inputs(self):
         return self.inputs
@@ -86,9 +77,7 @@ class InputRecorder(GPTFastEvalWrapper):
             (self.pad_calibration_inputs and 0 in inps)
         ):
             # give random output
-            return torch.randn(
-                (1, T, self.vocab_size), dtype=torch.bfloat16, device=self._device
-            )
+            return torch.randn((1, T, self.vocab_size), dtype=torch.bfloat16, device=self._device)
 
         # pad or truncate to the right size
         if T >= self.calibration_seq_length:
@@ -108,10 +97,7 @@ class InputRecorder(GPTFastEvalWrapper):
         self.add_input((x, input_pos))
 
         # output `something` with correct shape to keep eval going
-        return torch.randn(
-            (1, T, self.vocab_size), dtype=torch.bfloat16, device=self._device
-        )
-
+        return torch.randn((1, T, self.vocab_size), dtype=torch.bfloat16, device=self._device)
 
 
 class MultiInput:
@@ -142,18 +128,14 @@ class GenericGPTQRunner(fx.Interpreter):
     class to define the specific type of quantization being done.
     """
 
-    def __init__(
-        self, model, inputs: MultiInput, blocksize=128, percdamp=0.01, groupsize=128
-    ):
-        self.id_to_name = {
-            id(value): name for name, value in dict(model.named_parameters()).items()
-        }
+    def __init__(self, model, inputs: MultiInput, blocksize=128, percdamp=0.01, groupsize=128):
+        self.id_to_name = {id(value): name for name, value in dict(model.named_parameters()).items()}
 
         # trace model for one input
         one_input = [multi.values[0].cpu() for multi in inputs]
-        exported_model = torch._dynamo.export(
-            model.cpu(), aten_graph=True, pre_dispatch=True, tracing_mode="fake"
-        )(*one_input)
+        exported_model = torch._dynamo.export(model.cpu(), aten_graph=True, pre_dispatch=True, tracing_mode="fake")(
+            *one_input
+        )
         super().__init__(exported_model.graph_module)
         self.new_state_dict = model.state_dict()
         self.blocksize = blocksize
@@ -173,11 +155,11 @@ class GenericGPTQRunner(fx.Interpreter):
         skip_layer_func,
     ):
         # these functions need to already be curried with all inputs other than weight, qparams
-        self.get_qparams_func = (
-            get_qparams_func  # accepts [2d weight tensor], outputs qparams.
-        )
+        self.get_qparams_func = get_qparams_func  # accepts [2d weight tensor], outputs qparams.
 
-        self.quantize_func = quantize_func  # accepts [2d weight tensor], [qparams], outputs a 2d quantized tensor of desired dtype
+        self.quantize_func = (
+            quantize_func  # accepts [2d weight tensor], [qparams], outputs a 2d quantized tensor of desired dtype
+        )
 
         self.dequantize_func = dequantize_func
         # accepts [quantized] tensor and [qparams], outputs a 2d dequantized tensor of type float,
@@ -187,23 +169,21 @@ class GenericGPTQRunner(fx.Interpreter):
         # accepts [`list` of qparams] from quantizing one group at a time,
         # outputs a qparams object that could be passed into quant/dequantize_func
 
-        self.skip_layer_func = skip_layer_func  # accepts [weight tensor], outputs a bool on whether or not to apply gptq to this layer
+        self.skip_layer_func = (
+            skip_layer_func  # accepts [weight tensor], outputs a bool on whether or not to apply gptq to this layer
+        )
 
         self.make_names_and_values_dict_func = make_names_and_values_dict_func  # accepts [2d quantized tensor], [qparams], returns a dict of names, values to put in state_dict
         # note any final packing for storage should happen here
         return self
 
     def run(self):
-        assert (
-            self.get_qparams_func is not None
-        ), "need to configure quantization mode before running"
+        assert self.get_qparams_func is not None, "need to configure quantization mode before running"
         self.gptq_done = True
         super().run(*self.inputs)
 
     def get_quantized_state_dict(self):
-        assert (
-            self.gptq_done
-        ), "need to run GPTQRunner before you can get_quantized_state_dict"
+        assert self.gptq_done, "need to run GPTQRunner before you can get_quantized_state_dict"
         quantized_state_dict = self.new_state_dict
         # Don't want to store/load the kv_cache so remove it from the state_dict
         del_list = []
@@ -230,13 +210,9 @@ class GenericGPTQRunner(fx.Interpreter):
         if has_multi_input:
             # Just some trickery to convert
             # [MultiInput[a, a, a], MultiInput(b, b, b)] => [a, b], [a, b], [a, b]
-            multi_input_count = max(
-                [len(x.values) if isinstance(x, MultiInput) else 1 for x in flat_args]
-            )
+            multi_input_count = max([len(x.values) if isinstance(x, MultiInput) else 1 for x in flat_args])
             transposed_args = list(
-                zip(
-                    *[x.values if isinstance(x, MultiInput) else [x] * multi_input_count for x in flat_args]
-                )
+                zip(*[x.values if isinstance(x, MultiInput) else [x] * multi_input_count for x in flat_args])
             )
         else:
             transposed_args = [flat_args]
@@ -244,8 +220,8 @@ class GenericGPTQRunner(fx.Interpreter):
 
         # check whether we apply GPTQ to this module
         quantize_linear = (
-            (target == aten.linear.default) # if its a linear
-            and id(args[1]) in self.id_to_name # and if we know the layer name
+            (target == aten.linear.default)  # if its a linear
+            and id(args[1]) in self.id_to_name  # and if we know the layer name
             and not skip_quant  # and if we weren't told to skip quantization
             # and if the skip_layer_func doesn't say we should skip
             and not (self.skip_layer_func is not None and self.skip_layer_func(args[1]))
@@ -259,17 +235,13 @@ class GenericGPTQRunner(fx.Interpreter):
             inp = tensors_to_cuda(inp)
             cur_args, cur_kwargs = tree_unflatten(inp, spec)
 
-            if (
-                quantize_linear
-            ):  # calculate H instead of output (will run the linear eventually with updated weight)
+            if quantize_linear:  # calculate H instead of output (will run the linear eventually with updated weight)
                 x = cur_args[0].float()
                 shape = x.shape
                 n = 1 if len(shape) == 2 else shape[0]
                 H *= total_batches / (total_batches + n)
                 total_batches += n
-                x = ((2 / total_batches) ** (1 / 2)) * x.reshape(
-                    -1, shape[-1]
-                ).t().float()
+                x = ((2 / total_batches) ** (1 / 2)) * x.reshape(-1, shape[-1]).t().float()
                 H += x.matmul(x.t())
             else:
                 # get output if its not a linear
@@ -296,26 +268,18 @@ class GenericGPTQRunner(fx.Interpreter):
                 self.new_state_dict[mod_fqn + "." + name] = value
 
             # run linear with new weight to get corrected output
-            new_out = self.call_function(
-                target, (args[0], DQ, *args[2:]), kwargs, skip_quant=True
-            )
+            new_out = self.call_function(target, (args[0], DQ, *args[2:]), kwargs, skip_quant=True)
 
             if self.debug:
-                old_out = self.call_function(
-                    target, (args[0][:2], args[1], *args[2:]), kwargs, skip_quant=True
-                )
+                old_out = self.call_function(target, (args[0][:2], args[1], *args[2:]), kwargs, skip_quant=True)
 
                 def SQNR(x, y):
                     return 20 * torch.log10(torch.norm(x) / torch.norm(x - y))
 
                 DQ_after = self.dequantize_func(Q, qparams).to(W.dtype)
-                print(
-                    "SQNR for QDQ (this should be inf)", SQNR(DQ, DQ_after)
-                )  # matches
+                print("SQNR for QDQ (this should be inf)", SQNR(DQ, DQ_after))  # matches
 
-                print(
-                    "SQNR for weight (can be low)", SQNR(W, DQ.cuda())
-                )  # fine to not match
+                print("SQNR for weight (can be low)", SQNR(W, DQ.cuda()))  # fine to not match
                 print(
                     "SQNR for output with GPTQ (hopefully 35+)",
                     torch.cat(
@@ -329,15 +293,16 @@ class GenericGPTQRunner(fx.Interpreter):
                 qparams2 = self.get_qparams_func(W)
                 Q2 = self.quantize_func(W, qparams2)
                 DQ2 = self.dequantize_func(Q2, qparams2).to(W.dtype)
-                old_q_out = self.call_function(
-                    target, (args[0][:2], DQ2, *args[2:]), kwargs, skip_quant=True
-                )
+                old_q_out = self.call_function(target, (args[0][:2], DQ2, *args[2:]), kwargs, skip_quant=True)
 
-                print("SQNR for output without GPTQ (should be less than above)",
-                    torch.cat([
+                print(
+                    "SQNR for output without GPTQ (should be less than above)",
+                    torch.cat(
+                        [
                             SQNR(old.cpu(), old_q.cpu()).unsqueeze(0)
                             for (old, old_q) in zip(old_out.values, old_q_out.values)
-                    ]).mean(),
+                        ]
+                    ).mean(),
                 )
             return new_out
 
@@ -383,9 +348,7 @@ class GenericGPTQRunner(fx.Interpreter):
                 d = Hinv1[i, i]
 
                 if groupsize != -1 and (i1 + i) % groupsize == 0:  # start of new group
-                    cur_qparams = self.get_qparams_func(
-                        W[:, (i1 + i) : (i1 + i + groupsize)]
-                    )
+                    cur_qparams = self.get_qparams_func(W[:, (i1 + i) : (i1 + i + groupsize)])
                     all_qparams.append(cur_qparams)
 
                 q = self.quantize_func(w.unsqueeze(1), cur_qparams).flatten()
@@ -395,9 +358,7 @@ class GenericGPTQRunner(fx.Interpreter):
                 Losses1[:, i] = (w - dq) ** 2 / d**2
 
                 err1 = (w - dq) / d
-                W1[:, i:] -= (
-                    err1.to(Hinv1.dtype).unsqueeze(1).matmul(Hinv1[i, i:].unsqueeze(0))
-                )
+                W1[:, i:] -= err1.to(Hinv1.dtype).unsqueeze(1).matmul(Hinv1[i, i:].unsqueeze(0))
                 Err1[:, i] = err1
 
             DQ[:, i1:i2] = DQ1

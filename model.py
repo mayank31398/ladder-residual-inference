@@ -18,6 +18,7 @@ def find_multiple(n: int, k: int) -> int:
         return n
     return n + k - (n % k)
 
+
 @dataclass
 class ModelArgs:
     block_size: int = 2048
@@ -52,35 +53,65 @@ class ModelArgs:
         # take longer name (as it have more symbols matched)
         if len(config) > 1:
             config.sort(key=len, reverse=True)
-            assert len(config[0]) != len(config[1]), name # make sure only one 'best' match
-            
+            assert len(config[0]) != len(config[1]), name  # make sure only one 'best' match
+
         return cls(**transformer_configs[config[0]])
 
 
 transformer_configs = {
-    "CodeLlama-7b-Python-hf": dict(block_size=16384, vocab_size=32000, n_layer=32, dim = 4096, rope_base=1000000),
+    "CodeLlama-7b-Python-hf": dict(block_size=16384, vocab_size=32000, n_layer=32, dim=4096, rope_base=1000000),
     "7B": dict(n_layer=32, n_head=32, dim=4096),
     "13B": dict(n_layer=40, n_head=40, dim=5120),
     "30B": dict(n_layer=60, n_head=52, dim=6656),
-    "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
+    "34B": dict(
+        n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000
+    ),  # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
-
-    "llama-3-8b": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000),
-    "llama-3-70b": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000),
-    "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=8, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
-        rope_scaling=dict(factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192),
+    "llama-3-8b": dict(
+        block_size=8192,
+        n_layer=32,
+        n_head=32,
+        n_local_heads=8,
+        dim=4096,
+        intermediate_size=14336,
+        vocab_size=128256,
+        rope_base=500000,
+    ),
+    "llama-3-70b": dict(
+        block_size=8192,
+        n_layer=80,
+        n_head=64,
+        n_local_heads=8,
+        dim=8192,
+        intermediate_size=28672,
+        vocab_size=128256,
+        rope_base=500000,
+    ),
+    "llama-3.1-405b": dict(
+        block_size=131072,
+        n_layer=126,
+        n_head=128,
+        n_local_heads=8,
+        dim=16384,
+        intermediate_size=53248,
+        vocab_size=128256,
+        rope_base=500000,
+        rope_scaling=dict(
+            factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192
+        ),
     ),
 }
+
 
 class KVCache(nn.Module):
     def __init__(self, max_batch_size, max_seq_length, n_heads, head_dim, dtype=torch.bfloat16):
         super().__init__()
         cache_shape = (max_batch_size, n_heads, max_seq_length, head_dim)
-        self.register_buffer('k_cache', torch.zeros(cache_shape, dtype=dtype))
-        self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+        self.register_buffer("k_cache", torch.zeros(cache_shape, dtype=dtype))
+        self.register_buffer("v_cache", torch.zeros(cache_shape, dtype=dtype))
 
     def update(self, input_pos, k_val, v_val):
         # input_pos: [S], k_val: [B, H, S, D]
@@ -92,6 +123,7 @@ class KVCache(nn.Module):
         v_out[:, :, input_pos] = v_val
 
         return k_out, v_out
+
 
 class Transformer(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
@@ -124,7 +156,13 @@ class Transformer(nn.Module):
         for b in self.layers:
             b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads, head_dim, dtype)
 
-        self.freqs_cis = precompute_freqs_cis(self.config.block_size, self.config.dim // self.config.n_head, self.config.rope_base, dtype, self.config.rope_scaling)
+        self.freqs_cis = precompute_freqs_cis(
+            self.config.block_size,
+            self.config.dim // self.config.n_head,
+            self.config.rope_base,
+            dtype,
+            self.config.rope_scaling,
+        )
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
 
     def forward(self, idx: Tensor, input_pos: Optional[Tensor] = None) -> Tensor:
@@ -258,7 +296,9 @@ def apply_rope_scaling(freqs: torch.Tensor, rope_scaling: Optional[dict] = None)
 
 
 def precompute_freqs_cis(
-    seq_len: int, n_elem: int, base: int = 10000,
+    seq_len: int,
+    n_elem: int,
+    base: int = 10000,
     dtype: torch.dtype = torch.bfloat16,
     rope_scaling: Optional[dict] = None,
 ) -> Tensor:
