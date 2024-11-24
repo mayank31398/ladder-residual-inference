@@ -142,7 +142,10 @@ class GPTDense(nn.Module):
         self.config = config
 
         self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-        self.layers = nn.ModuleList(DenseTransformerBlock(config) for _ in range(config.n_layer))
+        self.layers = nn.ModuleList(
+            DenseTransformerBlock(config)
+            for _ in range(config.n_layer / ProcessGroupManager.get_pipeline_parallel_world_size())
+        )
         self.norm = RMSNorm(config.dim, eps=config.norm_eps)
         self.output = nn.Linear(config.dim, config.vocab_size, bias=False)
 
@@ -182,17 +185,25 @@ class GPTDense(nn.Module):
         )
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
 
-    def forward(self, idx: Tensor, input_pos: Optional[Tensor] = None) -> Tensor:
+    def forward(self, idx: Tensor, x: Optional[Tensor] = None, input_pos: Optional[Tensor] = None) -> Tensor:
         assert self.freqs_cis is not None, "Caches must be initialized first"
         mask = self.causal_mask[None, None, input_pos]
         freqs_cis = self.freqs_cis[input_pos]
-        x = self.tok_embeddings(idx)
 
-        for i, layer in enumerate(self.layers):
+        if ProcessGroupManager.get_pipeline_parallel_rank() == 0:
+            x = self.tok_embeddings(idx)
+
+        for layer in self.layers:
             x = layer(x, input_pos, freqs_cis, mask)
-        x = self.norm(x)
-        logits = self.output(x)
-        return logits
+
+        if (
+            ProcessGroupManager.get_pipeline_parallel_rank()
+            == ProcessGroupManager.get_pipeline_parallel_world_size() - 1
+        ):
+            x = self.norm(x)
+            x = self.output(x)
+
+        return x
 
     @classmethod
     def from_name(cls, name: str):
