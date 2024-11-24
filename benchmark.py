@@ -500,6 +500,9 @@ if __name__ == "__main__":
     )
     parser.add_argument("--profile", type=Path, default=None, help="Profile path.")
     parser.add_argument("--device", type=str, default=default_device, help="Device to use")
+    parser.add_argument("--tensor-parallel-world-size", type=int, help="TP")
+    parser.add_argument("--pipeline-parallel-world-size", type=int, help="PP")
+    parser.add_argument("--device", type=str, default=default_device, help="Device to use")
 
     args = parser.parse_args()
 
@@ -510,6 +513,8 @@ if __name__ == "__main__":
     with set_flash_attention(args.use_flash_attention):
         main(
             args.model_name,
+            args.tensor_parallel_world_size,
+            args.pipeline_parallel_world_size,
             args.prompt_length,
             args.num_samples,
             args.max_new_tokens,
