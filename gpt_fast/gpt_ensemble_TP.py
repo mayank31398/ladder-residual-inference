@@ -7,11 +7,9 @@ from dataclasses import dataclass
 from typing import Optional
 
 import torch
-import torch.distributed as dist
 import torch.nn as nn
 from torch import Tensor
 
-from .tp import maybe_init_dist
 from .utils import Attention, FeedForward, KVCache, RMSNorm, all_reduce_func, precompute_freqs_cis
 
 
@@ -19,12 +17,6 @@ def find_multiple(n: int, k: int) -> int:
     if n % k == 0:
         return n
     return n + k - (n % k)
-
-
-maybe_init_dist()
-tp_rank = dist.get_rank()
-tp_world_size = dist.get_world_size()
-tp_group = list(range(tp_world_size))
 
 
 @dataclass

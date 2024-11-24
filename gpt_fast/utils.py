@@ -12,8 +12,6 @@ from flash_attn import flash_attn_varlen_func, flash_attn_with_kvcache
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 from torch import Tensor
 
-from .tp import maybe_init_dist
-
 _USE_FLASH_ATTENTION: bool = False
 
 
@@ -32,12 +30,6 @@ def set_flash_attention(enable: bool):
 def is_flash_attention_enabled() -> bool:
     global _USE_FLASH_ATTENTION
     return _USE_FLASH_ATTENTION
-
-
-maybe_init_dist()
-tp_rank = dist.get_rank()
-tp_world_size = dist.get_world_size()
-tp_group = list(range(tp_world_size))
 
 
 class KVCache(nn.Module):
