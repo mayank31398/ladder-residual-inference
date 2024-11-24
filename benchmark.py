@@ -502,7 +502,6 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default=default_device, help="Device to use")
     parser.add_argument("--tensor_parallel_world_size", type=int, help="TP")
     parser.add_argument("--pipeline_parallel_world_size", type=int, help="PP")
-    parser.add_argument("--device", type=str, default=default_device, help="Device to use")
 
     args = parser.parse_args()
 
