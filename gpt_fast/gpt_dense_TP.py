@@ -141,13 +141,13 @@ class GPTDense(nn.Module):
         super().__init__()
         self.config = config
 
-        assert config.n_layer % ProcessGroupManager.get_pipeline_parallel_world_size() == 0
+        self.pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
+        self.pp_world_size = ProcessGroupManager.get_pipeline_parallel_world_size()
+
+        assert config.n_layer % self.pp_world_size == 0
 
         self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-        self.layers = nn.ModuleList(
-            DenseTransformerBlock(config)
-            for _ in range(config.n_layer // ProcessGroupManager.get_pipeline_parallel_world_size())
-        )
+        self.layers = nn.ModuleList(DenseTransformerBlock(config) for _ in range(config.n_layer // self.pp_world_size))
         self.norm = RMSNorm(config.dim, eps=config.norm_eps)
         self.output = nn.Linear(config.dim, config.vocab_size, bias=False)
 
@@ -198,10 +198,7 @@ class GPTDense(nn.Module):
         for layer in self.layers:
             x = layer(x, input_pos, freqs_cis, mask)
 
-        if (
-            ProcessGroupManager.get_pipeline_parallel_rank()
-            == ProcessGroupManager.get_pipeline_parallel_world_size() - 1
-        ):
+        if self.pp_rank == self.pp_world_size - 1:
             x = self.norm(x)
             x = self.output(x)
 
