@@ -10,8 +10,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-import torch.distributed as dist
-from .tp import maybe_init_dist
+from .parallel import ProcessGroupManager
 
 from .utils import RMSNorm, precompute_freqs_cis, KVCache, all_reduce_func, FuseAttentionMLP
 
@@ -20,11 +19,6 @@ def find_multiple(n: int, k: int) -> int:
     if n % k == 0:
         return n
     return n + k - (n % k)
-
-maybe_init_dist()
-tp_rank = dist.get_rank()
-tp_world_size = dist.get_world_size()
-tp_group = list(range(tp_world_size))
 
 
 @dataclass
@@ -50,6 +44,8 @@ class ModelArgs:
             n_hidden = int(2 * hidden_dim / 3)
             self.intermediate_size = find_multiple(n_hidden, 256)
         self.head_dim = self.dim // self.n_head
+
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
 
         assert self.dim % tp_world_size == 0
         assert self.intermediate_size % tp_world_size == 0
@@ -110,7 +106,7 @@ class GPTParallel(nn.Module):
         elif hasattr(self.output, "scales_and_zeros"):
             dtype = self.output.scales_and_zeros.dtype
         for b in self.layers:
-            b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype)
+            b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // ProcessGroupManager.get_tensor_parallel_world_size(), head_dim, dtype)
 
         self.freqs_cis = precompute_freqs_cis(self.config.block_size, self.config.dim // self.config.n_head, self.config.rope_base, dtype, self.config.rope_scaling)
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
@@ -138,6 +134,8 @@ class ParallelTransformerBlock(nn.Module):
         self.attention = FuseAttentionMLP(config)
         # self.feed_forward = FeedForward(config)
         self.attention_norm = RMSNorm(config.dim, config.norm_eps)
+
+        tp_rank = ProcessGroupManager.get_tensor_parallel_rank()
 
         def _attn_ffn(x, freqs_cis, mask, input_pos):
             y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)

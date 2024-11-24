@@ -12,11 +12,7 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 import torch.distributed as dist
-from gpt_fast.utils import set_flash_attention, _get_model_size
-
-def print_rank_0(*args, **kwargs):
-    if dist.get_rank() == 0:
-        print(*args, **kwargs)
+from gpt_fast import set_flash_attention, _get_model_size, ProcessGroupManager, GPTDense, GPTEnsemble, GPTParallel, GPTLadder
 
 import argparse
 
@@ -29,13 +25,15 @@ torch._inductor.config.fx_graph_cache = True
 # allows overlap
 torch._inductor.config.reorder_for_compute_comm_overlap = True
 
+def print_rank_0(*args, **kwargs):
+    if dist.get_rank() == 0:
+        print(*args, **kwargs)
+
 default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # support running without installing as a package
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
-
-from gpt_fast import GPTDense, GPTEnsemble, GPTParallel, GPTLadder
 
 
 _MODELS = {
@@ -320,9 +318,7 @@ def main(
     """Generates text samples based on a pre-trained Transformer model and tokenizer.
     """
 
-    from gpt_fast import maybe_init_dist
-    rank = maybe_init_dist()
-    use_tp = rank is not None
+    ProcessGroupManager(tensor_parallel_world_size=8)
 
     print_rank_0(f"Using device={device}")
     precision = torch.float16
