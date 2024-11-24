@@ -12,6 +12,7 @@ import triton
 import triton.language as tl
 from torch import Tensor
 
+from .parallel import ProcessGroupManager
 from .utils import Attention, FeedForward, KVCache, RMSNorm, all_reduce_func, precompute_freqs_cis
 
 
@@ -44,6 +45,7 @@ class ModelArgs:
             n_hidden = int(2 * hidden_dim / 3)
             self.intermediate_size = find_multiple(n_hidden, 256)
         self.head_dim = self.dim // self.n_head
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
 
         assert self.dim % tp_world_size == 0
         assert self.intermediate_size % tp_world_size == 0
@@ -177,7 +179,11 @@ class GPTLadder(nn.Module):
             dtype = self.output.scales_and_zeros.dtype
         for b in self.layers:
             b.attention.kv_cache = KVCache(
-                max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype
+                max_batch_size,
+                max_seq_length,
+                self.config.n_local_heads // ProcessGroupManager.get_tensor_parallel_world_size(),
+                head_dim,
+                dtype,
             )
 
         self.freqs_cis = precompute_freqs_cis(

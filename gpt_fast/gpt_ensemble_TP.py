@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
+from .parallel import ProcessGroupManager
 from .utils import Attention, FeedForward, KVCache, RMSNorm, all_reduce_func, precompute_freqs_cis
 
 
@@ -44,6 +45,7 @@ class ModelArgs:
             n_hidden = int(2 * hidden_dim / 3)
             self.intermediate_size = find_multiple(n_hidden, 256)
         self.head_dim = self.dim // self.n_head
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
 
         assert self.dim % tp_world_size == 0
         assert self.intermediate_size % tp_world_size == 0
@@ -256,7 +258,11 @@ class GPTEnsemble(nn.Module):
             dtype = self.output.scales_and_zeros.dtype
         for b in self.layers:
             b.attention.kv_cache = KVCache(
-                max_batch_size, max_seq_length, self.config.n_local_heads // tp_world_size, head_dim, dtype
+                max_batch_size,
+                max_seq_length,
+                self.config.n_local_heads // ProcessGroupManager.get_tensor_parallel_world_size(),
+                head_dim,
+                dtype,
             )
 
         self.freqs_cis = precompute_freqs_cis(
@@ -298,6 +304,8 @@ class EnsembleTransformerBlock(nn.Module):
 
         if layer_idx == config.n_layer - 1 and config.force_disable_last_all_reduce:
             self.do_mlp_all_reduce = False
+
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
 
         def _attn(x, freqs_cis, mask, input_pos):
             y = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
@@ -342,6 +350,7 @@ class EnsembleTransformerBlock(nn.Module):
         else:
             residual = x
             x = self.attention(self.attention_norm(x), freqs_cis, mask, input_pos)
+            tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
 
             if self.do_attention_all_reduce:
                 x = x + residual / tp_world_size
