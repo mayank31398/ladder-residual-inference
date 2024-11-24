@@ -146,6 +146,9 @@ def generate(
     Takes a conditioning sequence (prompt) as input and continues to generate as many tokens as requested.
     """
 
+    pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
+    pp_world_size = ProcessGroupManager.get_pipeline_parallel_world_size()
+
     T = prompt.size(-1)
     device = prompt.device
     # We are just making the same prompt for every batch
@@ -153,10 +156,18 @@ def generate(
     empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
+    next_token = torch.empty()
+
     device_sync(device)
     prefill_start = time.perf_counter()
     with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
-        next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+        for p in range(pp_world_size):
+            if p > 0:
+                send_recv([next_token])
+            next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+            if p < pp_world_size and pp_world_size > 1:
+                send_recv([next_token])
+
     device_sync(device)
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
