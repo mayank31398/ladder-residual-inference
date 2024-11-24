@@ -12,7 +12,7 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 import torch.distributed as dist
-from gpt_fast import set_flash_attention, _get_model_size, ProcessGroupManager, GPTDense, GPTEnsemble, GPTParallel, GPTLadder
+from gpt_fast import set_flash_attention, _get_model_size, ProcessGroupManager, GPTDense, GPTEnsemble, GPTParallel, GPTLadder, is_tracking_rank
 
 import argparse
 
@@ -26,7 +26,7 @@ torch._inductor.config.fx_graph_cache = True
 torch._inductor.config.reorder_for_compute_comm_overlap = True
 
 def print_rank_0(*args, **kwargs):
-    if dist.get_rank() == 0:
+    if is_tracking_rank():
         print(*args, **kwargs)
 
 default_device = 'cuda' if torch.cuda.is_available() else 'cpu'
