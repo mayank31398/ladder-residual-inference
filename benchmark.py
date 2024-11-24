@@ -372,7 +372,7 @@ def main(
     max_seq_length = min(T_new, model.config.block_size)
 
     with torch.device(device):
-        model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length, precision)
+        model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length, dtype=precision)
 
     if compile:
         global decode_one_token, decode_multi_token, prefill
