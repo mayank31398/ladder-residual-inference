@@ -11,8 +11,7 @@ import torch.nn as nn
 from torch import Tensor
 
 from .parallel import ProcessGroupManager
-
-from .utils import RMSNorm, precompute_freqs_cis, KVCache, Attention, FeedForward, all_reduce_func
+from .utils import Attention, FeedForward, KVCache, RMSNorm, all_reduce_func, precompute_freqs_cis
 
 
 def find_multiple(n: int, k: int) -> int:
@@ -57,26 +56,85 @@ class ModelArgs:
 
 
 transformer_configs = {
-    "CodeLlama-7b-Python-hf": dict(block_size=16384, vocab_size=32000, n_layer=32, dim = 4096, rope_base=1000000),
-    "1b": dict(block_size=2048, n_layer=40, n_head=24, n_local_heads=24, dim=1536, intermediate_size=4096, vocab_size=49152, rope_base=10000),
-    "3b": dict(block_size=2048, n_layer=40, n_head=36, n_local_heads=36, dim=2304, intermediate_size=9216, vocab_size=49152, rope_base=10000),
+    "CodeLlama-7b-Python-hf": dict(block_size=16384, vocab_size=32000, n_layer=32, dim=4096, rope_base=1000000),
+    "1b": dict(
+        block_size=2048,
+        n_layer=40,
+        n_head=24,
+        n_local_heads=24,
+        dim=1536,
+        intermediate_size=4096,
+        vocab_size=49152,
+        rope_base=10000,
+    ),
+    "3b": dict(
+        block_size=2048,
+        n_layer=40,
+        n_head=36,
+        n_local_heads=36,
+        dim=2304,
+        intermediate_size=9216,
+        vocab_size=49152,
+        rope_base=10000,
+    ),
     "7B": dict(n_layer=32, n_head=32, dim=4096),
     "13B": dict(n_layer=40, n_head=40, dim=5120),
     "30B": dict(n_layer=60, n_head=52, dim=6656),
-    "34B": dict(n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000), # CodeLlama-34B-Python-hf
+    "34B": dict(
+        n_layer=48, n_head=64, dim=8192, vocab_size=32000, n_local_heads=8, intermediate_size=22016, rope_base=1000000
+    ),  # CodeLlama-34B-Python-hf
     "70B": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672),
-    "70B-semi-compiled": dict(n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, semi_compiled_model=True),
+    "70B-semi-compiled": dict(
+        n_layer=80, n_head=64, dim=8192, n_local_heads=8, intermediate_size=28672, semi_compiled_model=True
+    ),
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
-    "llama-3-8b-4layers": dict(block_size=8192, n_layer=4, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000),
-    "llama-3-8b": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000),
-    "llama-3-70b": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000),
-    "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=8, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
-        rope_scaling=dict(factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192),
+    "llama-3-8b-4layers": dict(
+        block_size=8192,
+        n_layer=4,
+        n_head=32,
+        n_local_heads=8,
+        dim=4096,
+        intermediate_size=14336,
+        vocab_size=128256,
+        rope_base=500000,
     ),
-    
+    "llama-3-8b": dict(
+        block_size=8192,
+        n_layer=32,
+        n_head=32,
+        n_local_heads=8,
+        dim=4096,
+        intermediate_size=14336,
+        vocab_size=128256,
+        rope_base=500000,
+    ),
+    "llama-3-70b": dict(
+        block_size=8192,
+        n_layer=80,
+        n_head=64,
+        n_local_heads=8,
+        dim=8192,
+        intermediate_size=28672,
+        vocab_size=128256,
+        rope_base=500000,
+    ),
+    "llama-3.1-405b": dict(
+        block_size=131072,
+        n_layer=126,
+        n_head=128,
+        n_local_heads=8,
+        dim=16384,
+        intermediate_size=53248,
+        vocab_size=128256,
+        rope_base=500000,
+        rope_scaling=dict(
+            factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192
+        ),
+    ),
 }
+
 
 class GPTDense(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
@@ -107,9 +165,21 @@ class GPTDense(nn.Module):
         elif hasattr(self.output, "scales_and_zeros"):
             dtype = self.output.scales_and_zeros.dtype
         for b in self.layers:
-            b.attention.kv_cache = KVCache(max_batch_size, max_seq_length, self.config.n_local_heads // ProcessGroupManager.get_tensor_parallel_world_size(), head_dim, dtype)
+            b.attention.kv_cache = KVCache(
+                max_batch_size,
+                max_seq_length,
+                self.config.n_local_heads // ProcessGroupManager.get_tensor_parallel_world_size(),
+                head_dim,
+                dtype,
+            )
 
-        self.freqs_cis = precompute_freqs_cis(self.config.block_size, self.config.dim // self.config.n_head, self.config.rope_base, dtype, self.config.rope_scaling)
+        self.freqs_cis = precompute_freqs_cis(
+            self.config.block_size,
+            self.config.dim // self.config.n_head,
+            self.config.rope_base,
+            dtype,
+            self.config.rope_scaling,
+        )
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
 
     def forward(self, idx: Tensor, input_pos: Optional[Tensor] = None) -> Tensor:
