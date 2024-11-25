@@ -131,10 +131,11 @@ def decode_n_tokens(
 
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
-        if pp_rank == 0:
-            send_recv(send_list=[], recv_list=[cur_token])
-        else:
-            send_recv(send_list=[cur_token], recv_list=[])
+        if pp_world_size > 1:
+            if pp_rank == 0:
+                send_recv(send_list=[], recv_list=[cur_token])
+            else:
+                send_recv(send_list=[cur_token], recv_list=[])
 
         # Actually better for Inductor to codegen attention here
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
