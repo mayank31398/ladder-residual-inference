@@ -390,7 +390,7 @@ def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False) -> torch.Tenso
         x = funcol.all_reduce(x, reduceOp="sum", group=ProcessGroupManager.get_tensor_parallel_mesh())
         handle = None
     else:
-        handle = dist.all_reduce(x, async_op=async_op)
+        handle = dist.all_reduce(x, group=ProcessGroupManager.get_tensor_parallel_group(), async_op=async_op)
 
     return x, handle
 
@@ -408,11 +408,15 @@ def _get_model_size(model):
 
 
 def send_recv(send_list: list[Tensor], recv_list: list[Tensor]) -> None:
+    peer = (
+        ProcessGroupManager.get_global_rank() + ProcessGroupManager.get_tensor_parallel_world_size()
+    ) % ProcessGroupManager.get_world_size()
+
     ops = [
         dist.P2POp(
             dist.isend,
             tensor,
-            ProcessGroupManager.get_global_rank(),
+            peer,
             ProcessGroupManager.get_pipeline_parallel_group(),
         )
         for tensor in send_list
@@ -422,7 +426,7 @@ def send_recv(send_list: list[Tensor], recv_list: list[Tensor]) -> None:
             dist.P2POp(
                 dist.irecv,
                 tensor,
-                ProcessGroupManager.get_global_rank(),
+                peer,
                 ProcessGroupManager.get_pipeline_parallel_group(),
             )
             for tensor in recv_list

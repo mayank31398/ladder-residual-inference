@@ -1,10 +1,8 @@
 import os
-from datetime import timedelta
 
 import torch
 import torch.distributed
 from torch.distributed import ProcessGroup
-from torch.distributed._symmetric_memory import enable_symm_mem_for_group
 from torch.distributed.device_mesh import DeviceMesh, init_device_mesh
 
 # general
@@ -28,20 +26,9 @@ _PIPELINE_PARALLEL_WORLD_SIZE: int | None = None
 
 
 class ProcessGroupManager:
-    def __init__(
-        self,
-        tensor_parallel_world_size: int = 1,
-        pipeline_parallel_world_size: int = 1,
-        timeout_minutes: int | None = None,
-        use_async_tensor_parallel: bool = False,
-    ) -> None:
-        if timeout_minutes is not None:
-            timeout_minutes = timedelta(timeout_minutes)
-
+    def __init__(self, tensor_parallel_world_size: int = 1, pipeline_parallel_world_size: int = 1) -> None:
         torch.distributed.init_process_group(
-            rank=ProcessGroupManager.get_global_rank(),
-            world_size=ProcessGroupManager.get_world_size(),
-            timeout=timeout_minutes,
+            rank=ProcessGroupManager.get_global_rank(), world_size=ProcessGroupManager.get_world_size()
         )
 
         total_gpus = int(os.getenv("WORLD_SIZE", 1))
@@ -54,10 +41,6 @@ class ProcessGroupManager:
 
         local_rank = int(os.getenv("LOCAL_RANK", 0))
         torch.cuda.set_device(local_rank)
-
-        if use_async_tensor_parallel:
-            enable_symm_mem_for_group(ProcessGroupManager.get_tensor_parallel_group().group_name)
-            torch._inductor.config._micro_pipeline_tp = True
 
         print(self)
 

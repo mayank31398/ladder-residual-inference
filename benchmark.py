@@ -157,16 +157,20 @@ def generate(
     empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
+    if pp_rank != 0:
+        next_token = torch.empty(
+            batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+        )
+
     device_sync(device)
     prefill_start = time.perf_counter()
     with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
         if pp_rank == 0:
             next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
             if pp_world_size > 1:
-                send_recv(send_list=[next_token])
+                send_recv(send_list=[next_token], recv_list=[])
         else:
-            next_token = torch.empty(batch_size, T, model.config.dim)
-            send_recv(recv_list=[next_token])
+            send_recv(send_list=[], recv_list=[next_token])
             next_token = prefill(model, next_token, input_pos, **sampling_kwargs)
 
     device_sync(device)
