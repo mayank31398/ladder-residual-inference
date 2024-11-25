@@ -124,7 +124,7 @@ def decode_n_tokens(
     pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
     pp_world_size = ProcessGroupManager.get_pipeline_parallel_world_size()
 
-    if pp_rank != 0:
+    if pp_world_size > 1 and pp_rank > 0:
         intermediate_hidden_states = torch.empty(
             cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
         )
@@ -138,17 +138,19 @@ def decode_n_tokens(
 
         # Actually better for Inductor to codegen attention here
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
-            if pp_rank == 0:
-                intermediate_hidden_states = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
-                if pp_world_size > 1:
+            if pp_world_size > 1:
+                if pp_rank == 0:
+                    intermediate_hidden_states = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
                     send_recv(send_list=[intermediate_hidden_states], recv_list=[])
+                else:
+                    send_recv(send_list=[], recv_list=[intermediate_hidden_states])
+                    next_token, next_prob = decode_one_token(
+                        model, intermediate_hidden_states, input_pos, **sampling_kwargs
+                    )
             else:
-                send_recv(send_list=[], recv_list=[intermediate_hidden_states])
-                next_token, next_prob = decode_one_token(
-                    model, intermediate_hidden_states, input_pos, **sampling_kwargs
-                )
+                next_token, next_prob = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
 
-            if (pp_world_size > 1 and pp_rank == pp_world_size - 1) and pp_rank == 0:
+            if (pp_world_size > 1 and pp_rank == pp_world_size - 1) or pp_world_size == 1:
                 input_pos += 1
                 new_tokens.append(next_token.clone())
                 callback(new_tokens[-1])
@@ -181,33 +183,38 @@ def generate(
     device = prompt.device
     # We are just making the same prompt for every batch
     prompt = prompt.view(1, -1).repeat(batch_size, 1)
-    empty[:, :T] = prompt
+    if pp_rank == pp_world_size - 1:
+        empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
-    if pp_rank == 0 and pp_world_size > 1:
-        next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
-    else:
-        prefill_intermediate = torch.empty(
-            batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
-        )
+    if pp_world_size > 1:
+        if pp_rank == 0:
+            next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
+        else:
+            prefill_intermediate = torch.empty(
+                batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+            )
 
     device_sync(device)
     prefill_start = time.perf_counter()
     with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
-        if pp_rank == 0:
-            prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
-            if pp_world_size > 1:
+        if pp_world_size > 1:
+            if pp_rank == 0:
+                prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
                 send_recv(send_list=[prefill_intermediate], recv_list=[])
+            else:
+                send_recv(send_list=[], recv_list=[prefill_intermediate])
+                next_token = prefill(model, prefill_intermediate, input_pos, **sampling_kwargs)
         else:
-            send_recv(send_list=[], recv_list=[prefill_intermediate])
-            next_token = prefill(model, prefill_intermediate, input_pos, **sampling_kwargs)
+            next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 
     device_sync(device)
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
 
     next_token = next_token.clone()
-    empty[:, T] = next_token.squeeze()
+    if pp_rank == pp_world_size - 1:
+        empty[:, T] = next_token.squeeze()
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
 
@@ -220,7 +227,8 @@ def generate(
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
-    empty[:, T + 1 :] = torch.cat(generated_tokens, dim=-1)
+    if pp_rank == pp_world_size - 1:
+        empty[:, T + 1 :] = torch.cat(generated_tokens, dim=-1)
 
     return empty, decode_latency, prefill_latency
 
