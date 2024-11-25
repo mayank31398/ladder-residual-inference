@@ -117,8 +117,15 @@ def decode_n_tokens(
     callback=lambda _: _,
     **sampling_kwargs,
 ):
+    pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
+
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
+        if pp_rank == 0:
+            send_recv(send_list=[], recv_list=[cur_token])
+        else:
+            send_recv(send_list=[cur_token], recv_list=[])
+
         # Actually better for Inductor to codegen attention here
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
             next_token, next_prob = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
@@ -157,8 +164,10 @@ def generate(
     empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
-    if pp_rank != 0:
-        next_token = torch.empty(
+    if pp_rank == 0:
+        next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.float16)
+    else:
+        prefill_intermediate = torch.empty(
             batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
         )
 
@@ -166,12 +175,12 @@ def generate(
     prefill_start = time.perf_counter()
     with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
         if pp_rank == 0:
-            next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+            prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
             if pp_world_size > 1:
-                send_recv(send_list=[next_token], recv_list=[])
+                send_recv(send_list=[prefill_intermediate], recv_list=[])
         else:
-            send_recv(send_list=[], recv_list=[next_token])
-            next_token = prefill(model, next_token, input_pos, **sampling_kwargs)
+            send_recv(send_list=[], recv_list=[prefill_intermediate])
+            next_token = prefill(model, prefill_intermediate, input_pos, **sampling_kwargs)
 
     device_sync(device)
     prefill_latency = time.perf_counter() - prefill_start
