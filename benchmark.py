@@ -104,8 +104,12 @@ def decode_one_token(
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     # input_pos: [B, 1]
     assert input_pos.shape[-1] == 1
-    logits = model(x, input_pos)
-    return sample(logits, **sampling_kwargs)
+
+    output = model(x, input_pos)
+    if ProcessGroupManager.get_pipeline_parallel_rank() == ProcessGroupManager.get_pipeline_parallel_world_size() - 1:
+        output = sample(output, **sampling_kwargs)
+
+    return output
 
 
 @torch.no_grad()
@@ -118,6 +122,12 @@ def decode_n_tokens(
     **sampling_kwargs,
 ):
     pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
+    pp_world_size = ProcessGroupManager.get_pipeline_parallel_world_size()
+
+    if pp_rank != 0:
+        intermediate_hidden_states = torch.empty(
+            cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+        )
 
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
@@ -128,12 +138,22 @@ def decode_n_tokens(
 
         # Actually better for Inductor to codegen attention here
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
-            next_token, next_prob = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
-            input_pos += 1
-            new_tokens.append(next_token.clone())
-            callback(new_tokens[-1])
-            new_probs.append(next_prob.clone())
-            cur_token = next_token.clone()
+            if pp_rank == 0:
+                intermediate_hidden_states = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
+                if pp_world_size > 1:
+                    send_recv(send_list=[intermediate_hidden_states], recv_list=[])
+            else:
+                send_recv(send_list=[], recv_list=[intermediate_hidden_states])
+                next_token, next_prob = decode_one_token(
+                    model, intermediate_hidden_states, input_pos, **sampling_kwargs
+                )
+
+            if (pp_world_size > 1 and pp_rank == pp_world_size - 1) and pp_rank == 0:
+                input_pos += 1
+                new_tokens.append(next_token.clone())
+                callback(new_tokens[-1])
+                new_probs.append(next_prob.clone())
+                cur_token = next_token.clone()
 
     return new_tokens, new_probs
 
@@ -164,8 +184,8 @@ def generate(
     empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
-    if pp_rank == 0:
-        next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.float16)
+    if pp_rank == 0 and pp_world_size > 1:
+        next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
     else:
         prefill_intermediate = torch.empty(
             batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
