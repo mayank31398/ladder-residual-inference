@@ -131,10 +131,22 @@ class GPTParallel(nn.Module):
         super().__init__()
         self.config = config
 
-        self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-        self.layers = nn.ModuleList(ParallelTransformerBlock(config) for _ in range(config.n_layer))
-        self.norm = RMSNorm(config.dim, eps=config.norm_eps)
-        self.output = nn.Linear(config.dim, config.vocab_size, bias=False)
+        if ProcessGroupManager.get_pipeline_parallel_rank() == 0:
+            self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+
+        assert config.n_layer % ProcessGroupManager.get_pipeline_parallel_world_size() == 0
+
+        self.layers = nn.ModuleList(
+            ParallelTransformerBlock(config)
+            for _ in range(config.n_layer // ProcessGroupManager.get_pipeline_parallel_world_size())
+        )
+
+        if (
+            ProcessGroupManager.get_pipeline_parallel_rank()
+            == ProcessGroupManager.get_pipeline_parallel_world_size() - 1
+        ):
+            self.norm = RMSNorm(config.dim, eps=config.norm_eps)
+            self.output = nn.Linear(config.dim, config.vocab_size, bias=False)
 
         self.freqs_cis: Optional[Tensor] = None
         self.mask_cache: Optional[Tensor] = None
