@@ -205,7 +205,11 @@ class GPTLadder(nn.Module):
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
 
     def forward(
-        self, x: Tensor, previous_attention_out: Tensor, previous_mlp_out: Tensor, input_pos: Optional[Tensor] = None
+        self,
+        x: Tensor,
+        previous_attention_out: Optional[Tensor] = None,
+        previous_mlp_out: Optional[Tensor] = None,
+        input_pos: Optional[Tensor] = None,
     ) -> tuple[Tensor]:
         assert self.freqs_cis is not None, "Caches must be initialized first"
         mask = self.causal_mask[None, None, input_pos]

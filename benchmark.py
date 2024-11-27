@@ -244,7 +244,9 @@ def generate(
                         send_list=[prefill_intermediate, prefill_intermediate1, prefill_intermediate2], recv_list=[]
                     )
                 else:
-                    prefill_intermediate = prefill_ladder_pp(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+                    prefill_intermediate = prefill_ladder_pp(
+                        model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs
+                    )
                     send_recv(send_list=[prefill_intermediate], recv_list=[])
             else:
                 if is_ladder:
