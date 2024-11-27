@@ -100,7 +100,7 @@ def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **
 
 
 @torch.no_grad()
-def prefill_ladder_pp(
+def prefill_ladder(
     model: torch.nn.Module,
     x: torch.Tensor,
     a: torch.Tensor,
@@ -237,14 +237,14 @@ def generate(
         if pp_world_size > 1:
             if pp_rank == 0:
                 if is_ladder:
-                    prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder_pp(
+                    prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder(
                         model, prompt.view(batch_size, -1), None, None, input_pos, **sampling_kwargs
                     )
                     send_recv(
                         send_list=[prefill_intermediate, prefill_intermediate1, prefill_intermediate2], recv_list=[]
                     )
                 else:
-                    prefill_intermediate = prefill_ladder_pp(
+                    prefill_intermediate = prefill_ladder(
                         model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs
                     )
                     send_recv(send_list=[prefill_intermediate], recv_list=[])
@@ -265,7 +265,10 @@ def generate(
                     send_recv(send_list=[], recv_list=[prefill_intermediate])
                     next_token = prefill(model, prefill_intermediate, input_pos, **sampling_kwargs)
         else:
-            next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+            if is_ladder:
+                next_token = prefill(model, prompt.view(batch_size, -1), None, None, input_pos, **sampling_kwargs)
+            else:
+                next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 
     device_sync(device)
     prefill_latency = time.perf_counter() - prefill_start
@@ -475,14 +478,14 @@ def main(
         model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length, dtype=precision)
 
     if compile:
-        global decode_one_token, prefill, prefill_ladder_pp
+        global decode_one_token, prefill, prefill_ladder
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
 
         if compile_prefill:
             dynamic = False
             print_rank_0(f"Compiling prefill with dynamic={dynamic}")
             prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
-            prefill_ladder_pp = torch.compile(prefill_ladder_pp, fullgraph=True, dynamic=dynamic)
+            prefill_ladder = torch.compile(prefill_ladder, fullgraph=True, dynamic=dynamic)
 
     elif use_cuda_graphs:
         print_rank_0("CUDA_GRAPH are activate")

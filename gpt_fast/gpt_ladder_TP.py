@@ -207,8 +207,8 @@ class GPTLadder(nn.Module):
     def forward(
         self,
         x: Tensor,
-        previous_attention_out: Optional[Tensor] = None,
-        previous_mlp_out: Optional[Tensor] = None,
+        previous_attention_out: Tensor,
+        previous_mlp_out: Tensor,
         input_pos: Optional[Tensor] = None,
     ) -> tuple[Tensor]:
         assert self.freqs_cis is not None, "Caches must be initialized first"
