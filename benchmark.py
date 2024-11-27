@@ -129,6 +129,24 @@ def decode_one_token(
     return output
 
 
+def decode_one_token_ladder(
+    model: torch.nn.Module,
+    x: torch.Tensor,
+    a: torch.Tensor,
+    m: torch.Tensor,
+    input_pos: torch.Tensor,
+    **sampling_kwargs,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    # input_pos: [B, 1]
+    assert input_pos.shape[-1] == 1
+
+    output = model(x, a, m, input_pos)
+    if ProcessGroupManager.get_pipeline_parallel_rank() == ProcessGroupManager.get_pipeline_parallel_world_size() - 1:
+        output = sample(output, **sampling_kwargs)
+
+    return output
+
+
 @torch.no_grad()
 def decode_n_tokens(
     model: torch.nn.Module,
@@ -138,13 +156,26 @@ def decode_n_tokens(
     callback=lambda _: _,
     **sampling_kwargs,
 ):
+    is_ladder = isinstance(model, GPTLadder)
+
     pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
     pp_world_size = ProcessGroupManager.get_pipeline_parallel_world_size()
 
     if pp_world_size > 1 and pp_rank > 0:
-        intermediate_hidden_states = torch.empty(
-            cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
-        )
+        if is_ladder:
+            intermediate_hidden_states = torch.empty(
+                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+            )
+            intermediate_hidden_states1 = torch.empty(
+                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+            )
+            intermediate_hidden_states2 = torch.empty(
+                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+            )
+        else:
+            intermediate_hidden_states = torch.empty(
+                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+            )
 
     new_tokens, new_probs = [], []
     for i in range(num_new_tokens):
@@ -158,8 +189,28 @@ def decode_n_tokens(
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
             if pp_world_size > 1:
                 if pp_rank == 0:
-                    intermediate_hidden_states = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
-                    send_recv(send_list=[intermediate_hidden_states], recv_list=[])
+                    if is_ladder:
+                        intermediate_hidden_states, intermediate_hidden_states1, intermediate_hidden_states2 = (
+                            decode_one_token_ladder(model, cur_token, None, None, input_pos, **sampling_kwargs)
+                        )
+                        send_recv(
+                            send_list=[
+                                intermediate_hidden_states,
+                                intermediate_hidden_states1,
+                                intermediate_hidden_states2,
+                            ],
+                            recv_list=[],
+                        )
+                    else:
+                        intermediate_hidden_states = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
+                        send_recv(
+                            send_list=[
+                                intermediate_hidden_states,
+                                intermediate_hidden_states1,
+                                intermediate_hidden_states2,
+                            ],
+                            recv_list=[],
+                        )
                 else:
                     send_recv(send_list=[], recv_list=[intermediate_hidden_states])
                     next_token, next_prob = decode_one_token(
@@ -209,12 +260,7 @@ def generate(
 
     if pp_world_size > 1:
         if pp_rank == 0:
-            if is_ladder:
-                next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
-                next_token1 = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
-                next_token2 = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
-            else:
-                next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
+            next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
         else:
             if is_ladder:
                 prefill_intermediate = torch.empty(
@@ -244,16 +290,14 @@ def generate(
                         send_list=[prefill_intermediate, prefill_intermediate1, prefill_intermediate2], recv_list=[]
                     )
                 else:
-                    prefill_intermediate = prefill_ladder(
-                        model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs
-                    )
+                    prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
                     send_recv(send_list=[prefill_intermediate], recv_list=[])
             else:
                 if is_ladder:
                     send_recv(
                         send_list=[], recv_list=[prefill_intermediate, prefill_intermediate1, prefill_intermediate2]
                     )
-                    next_token = prefill(
+                    next_token = prefill_ladder(
                         model,
                         prefill_intermediate,
                         prefill_intermediate1,
@@ -480,8 +524,9 @@ def main(
         model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length, dtype=precision)
 
     if compile:
-        global decode_one_token, prefill, prefill_ladder
+        global decode_one_token, decode_one_token_ladder, prefill, prefill_ladder
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
+        decode_one_token_ladder = torch.compile(decode_one_token_ladder, mode="reduce-overhead", fullgraph=True)
 
         if compile_prefill:
             dynamic = False
