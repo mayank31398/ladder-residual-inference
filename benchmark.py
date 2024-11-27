@@ -203,21 +203,37 @@ def decode_n_tokens(
                         )
                     else:
                         intermediate_hidden_states = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
+                        send_recv(send_list=[intermediate_hidden_states], recv_list=[])
+                else:
+                    if is_ladder:
                         send_recv(
-                            send_list=[
+                            send_list=[],
+                            recv_list=[
                                 intermediate_hidden_states,
                                 intermediate_hidden_states1,
                                 intermediate_hidden_states2,
                             ],
-                            recv_list=[],
                         )
-                else:
-                    send_recv(send_list=[], recv_list=[intermediate_hidden_states])
-                    next_token, next_prob = decode_one_token(
-                        model, intermediate_hidden_states, input_pos, **sampling_kwargs
-                    )
+                        next_token, next_prob = decode_one_token_ladder(
+                            model,
+                            intermediate_hidden_states,
+                            intermediate_hidden_states1,
+                            intermediate_hidden_states2,
+                            input_pos,
+                            **sampling_kwargs,
+                        )
+                    else:
+                        send_recv(send_list=[], recv_list=[intermediate_hidden_states])
+                        next_token, next_prob = decode_one_token(
+                            model, intermediate_hidden_states, input_pos, **sampling_kwargs
+                        )
             else:
-                next_token, next_prob = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
+                if is_ladder:
+                    next_token, next_prob = decode_one_token_ladder(
+                        model, cur_token, None, None, input_pos, **sampling_kwargs
+                    )
+                else:
+                    next_token, next_prob = decode_one_token(model, cur_token, input_pos, **sampling_kwargs)
 
             if (pp_world_size > 1 and pp_rank == pp_world_size - 1) or pp_world_size == 1:
                 input_pos += 1
