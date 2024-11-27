@@ -79,7 +79,7 @@ transformer_configs = {
     "llama-3-8b-semi-compiled": dict(block_size=8192, n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=128256, rope_base=500000, semi_compiled_model=True),
     "llama-3-70b": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000),
     "llama-3-70b-semi-compiled": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000, semi_compiled_model=True),
-    "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=8, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
+    "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=16, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
         rope_scaling=dict(factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192),
     ),
 }
@@ -196,8 +196,8 @@ class LadderTransformerBlock(nn.Module):
         grid = (triton.cdiv(numel, 1024),)
 
         output = torch.empty_like(residual)
-        with torch.device(residual.device):
-            add_tensor_forward_triton_kernel[grid](residual, previous_attention_out, output, numel, 1024)
+        # with torch.device(residual.device):
+        add_tensor_forward_triton_kernel[grid](residual, previous_attention_out, output, numel, 1024)
         residual = output
 
         if self.semi_compiled_model:
@@ -211,8 +211,8 @@ class LadderTransformerBlock(nn.Module):
             mlp_handle.wait()
 
         output = torch.empty_like(residual)
-        with torch.device(residual.device):
-            add_tensor_forward_triton_kernel[grid](residual, previous_mlp_out, output, numel, 1024)
+        # with torch.device(residual.device):
+        add_tensor_forward_triton_kernel[grid](residual, previous_mlp_out, output, numel, 1024)
         residual = output
 
         if self.semi_compiled_model:

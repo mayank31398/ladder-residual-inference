@@ -130,7 +130,7 @@ class FeedForward(nn.Module):
 
         assert config.intermediate_size % tp_world_size == 0
         assert config.dim % tp_world_size == 0
-
+        
         self.w1 = nn.Linear(config.dim, 2 * config.intermediate_size // tp_world_size, bias=False)
         self.w2 = nn.Linear(config.intermediate_size // tp_world_size, config.dim, bias=False)
 

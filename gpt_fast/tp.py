@@ -15,6 +15,15 @@ from datetime import timedelta
 def _get_rank() -> int:
     return int(os.environ.get("LOCAL_RANK", "0"))
 
+def __get_global_rank() -> int:
+    return int(os.environ.get("RANK", "0"))
+
+def _get_world_size() -> int:
+    return int(os.environ.get("LOCAL_WORLD_SIZE", "1"))
+
+def _get_global_world_size() -> int:
+    return int(os.environ.get("WORLD_SIZE", "1"))
+
 def is_local():
     return _get_rank() == 0
 
@@ -23,21 +32,23 @@ def local_break():
         breakpoint()
     dist.barrier()
 
-def _get_world_size() -> int:
-    return int(os.environ.get("LOCAL_WORLD_SIZE", "1"))
-
 def maybe_init_dist() -> Optional[int]:
     try:
         # provided by torchrun
         rank = _get_rank()
+        global_rank = __get_global_rank()
         world_size = _get_world_size()
-        
+        global_world_size = _get_global_world_size() 
+        print(f"rank: {rank}, global_rank: {global_rank}, world_size: {world_size}, global_world_size: {global_world_size}")
     except KeyError:
         # not run via torchrun, no-op
         return None
 
     if not dist.is_initialized():
         torch.cuda.set_device(rank)
-        dist.init_process_group(backend="nccl", rank=rank, world_size=world_size, timeout=timedelta(seconds=60))
+        if global_world_size > 1:
+            dist.init_process_group(backend="nccl", rank=global_rank, world_size=global_world_size, timeout=timedelta(seconds=60))
+        else:
+            dist.init_process_group(backend="nccl", rank=rank, world_size=world_size, timeout=timedelta(seconds=60))
 
     return rank

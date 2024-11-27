@@ -90,8 +90,11 @@ transformer_configs = {
     "llama-3-70b-4x": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000, reduce_pattern=[{"attention": False, "mlp": False}, {"attention": False, "mlp": True}] * 40),
     "llama-3-70b": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000),
     "llama-3-70b-upper-bound": dict(block_size=8192, n_layer=80, n_head=64, n_local_heads=8, dim=8192, intermediate_size=28672, vocab_size=128256, rope_base=500000, reduce_pattern=[{"attention": False, "mlp": False} for _ in range(80)], force_disable_last_all_reduce=True),
-    "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=8, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
+    "llama-3.1-405b": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=16, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000,
         rope_scaling=dict(factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192),
+    ),  
+    "llama-3.1-405b-upper-bound": dict(block_size=131072, n_layer=126, n_head=128, n_local_heads=16, dim=16384, intermediate_size=53248, vocab_size=128256, rope_base=500000, reduce_pattern=[{"attention": False, "mlp": False} for _ in range(126)], force_disable_last_all_reduce=True,
+    rope_scaling=dict(factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192),
     ),
 }
 

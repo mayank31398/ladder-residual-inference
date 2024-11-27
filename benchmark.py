@@ -230,7 +230,7 @@ def encode_tokens(tokenizer, string, bos=True, device=default_device):
 def _load_model(model_name, device, precision):
     with torch.device('meta'):
         model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
-
+    
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)
 
@@ -324,6 +324,7 @@ def main(
     rank = maybe_init_dist()
     use_tp = rank is not None
 
+    print_rank_0(f'our world size={dist.get_world_size()}')
     print_rank_0(f"Using device={device}")
     precision = torch.float16
 

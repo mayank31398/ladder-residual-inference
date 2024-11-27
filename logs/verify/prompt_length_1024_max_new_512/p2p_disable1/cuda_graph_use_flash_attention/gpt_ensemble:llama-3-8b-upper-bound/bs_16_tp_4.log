@@ -1,0 +1,162 @@
+W1119 16:07:28.185000 2987505 site-packages/torch/distributed/run.py:793] 
+W1119 16:07:28.185000 2987505 site-packages/torch/distributed/run.py:793] *****************************************
+W1119 16:07:28.185000 2987505 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1119 16:07:28.185000 2987505 site-packages/torch/distributed/run.py:793] *****************************************
+rank: 0, global_rank: 0, world_size: 4, global_world_size: 4
+rank: 3, global_rank: 3, world_size: 4, global_world_size: 4
+rank: 1, global_rank: 1, world_size: 4, global_world_size: 4
+rank: 2, global_rank: 2, world_size: 4, global_world_size: 4
+rank: 0, global_rank: 0, world_size: 4, global_world_size: 4
+rank: 0, global_rank: 0, world_size: 4, global_world_size: 4
+rank: 0, global_rank: 0, world_size: 4, global_world_size: 4
+rank: 0, global_rank: 0, world_size: 4, global_world_size: 4
+flash_kv_decode is set to True
+rank: 0, global_rank: 0, world_size: 4, global_world_size: 4
+our world size=4
+Using device=cuda
+Loading model ...
+rank: 1, global_rank: 1, world_size: 4, global_world_size: 4
+rank: 3, global_rank: 3, world_size: 4, global_world_size: 4
+rank: 1, global_rank: 1, world_size: 4, global_world_size: 4
+rank: 3, global_rank: 3, world_size: 4, global_world_size: 4
+rank: 1, global_rank: 1, world_size: 4, global_world_size: 4
+rank: 1, global_rank: 1, world_size: 4, global_world_size: 4
+rank: 3, global_rank: 3, world_size: 4, global_world_size: 4
+rank: 1, global_rank: 1, world_size: 4, global_world_size: 4
+rank: 3, global_rank: 3, world_size: 4, global_world_size: 4
+rank: 3, global_rank: 3, world_size: 4, global_world_size: 4rank: 2, global_rank: 2, world_size: 4, global_world_size: 4
+
+rank: 2, global_rank: 2, world_size: 4, global_world_size: 4
+rank: 2, global_rank: 2, world_size: 4, global_world_size: 4
+rank: 2, global_rank: 2, world_size: 4, global_world_size: 4
+rank: 2, global_rank: 2, world_size: 4, global_world_size: 4
+GPTEnsemble(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=1536, bias=False)
+        (wo): Linear(in_features=1024, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 1.20 seconds
+CUDA_GRAPH are activate
+Prefill latency: 0.16579439816996455 sec
+Compilation time: 2.98 seconds
+Decode latency: 2.8023277220781893 sec
+Compilation time: 2.97 seconds
+Compilation time: 2.93 seconds
+Prefill latency: 0.16601421008817852 sec
+Compilation time: 3.05 seconds
+Decode latency: 2.780403859913349 sec
+Prefill latency: 0.16727606602944434 sec
+Decode latency: 2.7439372618682683 sec
+Prefill latency: 0.16739149019122124 sec
+Decode latency: 2.883106891065836 sec
+Prefill latency: 0.16577281313948333 sec
+Decode latency: 2.8274834509938955 sec
+Prefill latency: 0.1673832719679922 sec
+Decode latency: 2.705880699912086 sec
+Time for inference 1: 2.87 sec total, 2850.22 tokens/sec
+Decode latency: 2.71 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12942.48 GB/s
+FLOPS achieved: 38.83 TF/s
+
+Prefill latency: 0.16670870408415794 sec
+Decode latency: 2.8049475180450827 sec
+Time for inference 2: 2.97 sec total, 2755.85 tokens/sec
+Decode latency: 2.80 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12513.93 GB/s
+FLOPS achieved: 37.54 TF/s
+
+Prefill latency: 0.16591725498437881 sec
+Decode latency: 2.7980305990204215 sec
+Time for inference 3: 2.96 sec total, 2763.05 tokens/sec
+Decode latency: 2.80 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12546.63 GB/s
+FLOPS achieved: 37.64 TF/s
+
+Prefill latency: 0.16746924701146781 sec
+Decode latency: 2.8430592890363187 sec
+Time for inference 4: 3.01 sec total, 2720.28 tokens/sec
+Decode latency: 2.84 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12352.42 GB/s
+FLOPS achieved: 37.06 TF/s
+
+Prefill latency: 0.16844670800492167 sec
+Decode latency: 2.747579530114308 sec
+Time for inference 5: 2.92 sec total, 2808.46 tokens/sec
+Decode latency: 2.75 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12752.86 GB/s
+FLOPS achieved: 38.26 TF/s
+
+Prefill latency: 0.1674595819786191 sec
+Decode latency: 2.6929930299520493 sec
+Time for inference 6: 2.86 sec total, 2862.80 tokens/sec
+Decode latency: 2.69 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12999.58 GB/s
+FLOPS achieved: 39.00 TF/s
+
+Prefill latency: 0.16758339502848685 sec
+Decode latency: 2.8724755321163684 sec
+Time for inference 7: 3.04 sec total, 2693.80 tokens/sec
+Decode latency: 2.87 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12232.20 GB/s
+FLOPS achieved: 36.70 TF/s
+
+Prefill latency: 0.16834810306318104 sec
+Decode latency: 2.8273633329663426 sec
+Time for inference 8: 3.00 sec total, 2733.73 tokens/sec
+Decode latency: 2.83 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12413.51 GB/s
+FLOPS achieved: 37.24 TF/s
+
+Prefill latency: 0.16744580399245024 sec
+Decode latency: 2.760398897109553 sec
+Time for inference 9: 2.93 sec total, 2797.13 tokens/sec
+Decode latency: 2.76 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12701.38 GB/s
+FLOPS achieved: 38.10 TF/s
+
+Prefill latency: 0.1659443809185177 sec
+Decode latency: 2.713312125997618 sec
+Time for inference 10: 2.88 sec total, 2844.33 tokens/sec
+Decode latency: 2.71 sec
+Prefill latency: 0.17 sec
+Bandwidth achieved: 12915.73 GB/s
+FLOPS achieved: 38.75 TF/s
+
+==========
+Batch Size: 16
+Prompt Length: 1024
+Generated tokens: 512
+Average decode latency: 2.7766 sec
+Average prefill latency: 0.1673 sec
+Average tokens/sec: 2782.97
+Memory used: 12.10 GB
+[rank0]:[W1119 16:08:20.708876908 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank1]:[W1119 16:08:20.072199827 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank3]:[W1119 16:08:20.236939850 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+[rank2]:[W1119 16:08:21.864849758 ProcessGroupNCCL.cpp:4393] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+Done. we are killing the process
+[rank0]:[W1119 16:08:23.176701780 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())

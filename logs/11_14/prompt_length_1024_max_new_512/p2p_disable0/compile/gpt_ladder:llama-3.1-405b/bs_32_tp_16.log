@@ -1,0 +1,1319 @@
+W1118 13:42:54.165000 2467990 site-packages/torch/distributed/run.py:793] 
+W1118 13:42:54.165000 2467990 site-packages/torch/distributed/run.py:793] *****************************************
+W1118 13:42:54.165000 2467990 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1118 13:42:54.165000 2467990 site-packages/torch/distributed/run.py:793] *****************************************
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 16
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 16
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 16
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 16
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 16
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 16
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 16
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 16
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 16
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 16
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 16
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 16
+flash_kv_decode is set to False
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 16
+our world size=16
+Using device=cuda
+Loading model ...
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 16
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 16
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 16
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 16
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 16
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 16
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 16
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 16
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 16
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 16
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 16
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 16
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 16
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 16
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 16
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 16
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 16
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 16
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 16
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 16
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 16
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 16
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 16
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 16
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 16
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 16
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 16
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 16
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 16
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 16
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 16
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 16
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 16
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 16
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 16
+GPTLadder(
+  (tok_embeddings): Embedding(128256, 16384)
+  (layers): ModuleList(
+    (0-125): 126 x LadderTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=16384, out_features=1280, bias=False)
+        (wo): Linear(in_features=1024, out_features=16384, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=16384, out_features=6656, bias=False)
+        (w2): Linear(in_features=3328, out_features=16384, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=16384, out_features=128256, bias=False)
+)
+Time to load model: 0.84 seconds
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank0]:     y, decode_latency, prefill_latency = generate(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank0]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank0]:     return self._torchdynamo_orig_callable(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank0]:     return _compile(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank0]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank0]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank0]:     return function(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank0]:     out_code = transform_code_object(code, transform)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank0]:     transformations(instructions, code_options)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank0]:     tracer.run()
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank0]:     super().run()
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank0]:     while self.step():
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank0]:     self.dispatch_table[inst.opcode](self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank0]:     return inner_fn(self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank0]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank0]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank0]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank0]:     return super().call_function(tx, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank0]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank0]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank0]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank0]:     tracer.run()
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank0]:     while self.step():
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank0]:     self.dispatch_table[inst.opcode](self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank0]:     return inner_fn(self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank0]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank0]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank0]:     return super().call_function(tx, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank0]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank0]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank0]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank0]:     tracer.run()
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank0]:     while self.step():
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank0]:     self.dispatch_table[inst.opcode](self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank0]:     return inner_fn(self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank0]:     self.call_function(fn, args, {})
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank0]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank0]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank0]:     return super().call_function(tx, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank0]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank0]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank0]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank0]:     tracer.run()
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank0]:     while self.step():
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank0]:     self.dispatch_table[inst.opcode](self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank0]:     return inner_fn(self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank0]:     self.call_function(fn, args, {})
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank0]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank0]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank0]:     return super().call_function(tx, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank0]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank0]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank0]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank0]:     tracer.run()
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank0]:     while self.step():
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank0]:     self.dispatch_table[inst.opcode](self, inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank0]:     self.setup_or_before_with(inst)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank0]:     unimplemented(f"{inst.opname} {ctx}")
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank0]:     raise Unsupported(msg, case_name=case_name)
+[rank0]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=0))
+
+[rank0]: from user code:
+[rank0]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank0]:     logits = model(x, input_pos)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank0]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank0]:     with torch.device(residual.device):
+
+[rank0]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank0]: You can suppress this exception and fall back to eager by setting:
+[rank0]:     import torch._dynamo
+[rank0]:     torch._dynamo.config.suppress_errors = True
+
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank3]:     y, decode_latency, prefill_latency = generate(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank3]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank3]:     return self._torchdynamo_orig_callable(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank3]:     return _compile(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank3]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank3]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank3]:     return function(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank3]:     out_code = transform_code_object(code, transform)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank3]:     transformations(instructions, code_options)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank3]:     tracer.run()
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank3]:     super().run()
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank3]:     while self.step():
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank3]:     self.dispatch_table[inst.opcode](self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank3]:     return inner_fn(self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank3]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank3]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank3]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank3]:     return super().call_function(tx, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank3]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank3]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank3]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank3]:     tracer.run()
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank3]:     while self.step():
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank3]:     self.dispatch_table[inst.opcode](self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank3]:     return inner_fn(self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank3]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank3]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank3]:     return super().call_function(tx, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank3]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank3]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank3]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank3]:     tracer.run()
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank3]:     while self.step():
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank3]:     self.dispatch_table[inst.opcode](self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank3]:     return inner_fn(self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank3]:     self.call_function(fn, args, {})
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank3]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank3]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank3]:     return super().call_function(tx, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank3]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank3]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank3]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank3]:     tracer.run()
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank3]:     while self.step():
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank3]:     self.dispatch_table[inst.opcode](self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank3]:     return inner_fn(self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank3]:     self.call_function(fn, args, {})
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank3]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank3]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank3]:     return super().call_function(tx, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank3]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank3]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank3]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank3]:     tracer.run()
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank3]:     while self.step():
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank3]:     self.dispatch_table[inst.opcode](self, inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank3]:     self.setup_or_before_with(inst)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank3]:     unimplemented(f"{inst.opname} {ctx}")
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank3]:     raise Unsupported(msg, case_name=case_name)
+[rank3]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=3))
+
+[rank3]: from user code:
+[rank3]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank3]:     logits = model(x, input_pos)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank3]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank3]:     with torch.device(residual.device):
+
+[rank3]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank3]: You can suppress this exception and fall back to eager by setting:
+[rank3]:     import torch._dynamo
+[rank3]:     torch._dynamo.config.suppress_errors = True
+
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank4]:     main(
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank4]:     y, decode_latency, prefill_latency = generate(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank4]:     return func(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank4]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank4]:     return fn(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank4]:     return self._torchdynamo_orig_callable(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank4]:     return _compile(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank4]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank4]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank4]:     return function(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank4]:     out_code = transform_code_object(code, transform)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank4]:     transformations(instructions, code_options)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank4]:     return fn(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank4]:     tracer.run()
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank4]:     super().run()
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank4]:     while self.step():
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank4]:     self.dispatch_table[inst.opcode](self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank4]:     return inner_fn(self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank4]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank4]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank4]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank4]:     return super().call_function(tx, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank4]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank4]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank4]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank4]:     tracer.run()
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank4]:     while self.step():
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank4]:     self.dispatch_table[inst.opcode](self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank4]:     return inner_fn(self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank4]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank4]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank4]:     return super().call_function(tx, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank4]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank4]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank4]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank4]:     tracer.run()
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank4]:     while self.step():
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank4]:     self.dispatch_table[inst.opcode](self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank4]:     return inner_fn(self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank4]:     self.call_function(fn, args, {})
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank4]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank4]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank4]:     return super().call_function(tx, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank4]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank4]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank4]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank4]:     tracer.run()
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank4]:     while self.step():
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank4]:     self.dispatch_table[inst.opcode](self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank4]:     return inner_fn(self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank4]:     self.call_function(fn, args, {})
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank4]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank4]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank4]:     return super().call_function(tx, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank4]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank4]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank4]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank4]:     tracer.run()
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank4]:     while self.step():
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank4]:     self.dispatch_table[inst.opcode](self, inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank4]:     self.setup_or_before_with(inst)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank4]:     unimplemented(f"{inst.opname} {ctx}")
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank4]:     raise Unsupported(msg, case_name=case_name)
+[rank4]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=4))
+
+[rank4]: from user code:
+[rank4]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank4]:     return fn(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank4]:     return func(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank4]:     logits = model(x, input_pos)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank4]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank4]:     with torch.device(residual.device):
+
+[rank4]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank4]: You can suppress this exception and fall back to eager by setting:
+[rank4]:     import torch._dynamo
+[rank4]:     torch._dynamo.config.suppress_errors = True
+
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank7]:     main(
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank7]:     y, decode_latency, prefill_latency = generate(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank7]:     return func(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank7]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank7]:     return fn(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank7]:     return self._torchdynamo_orig_callable(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank7]:     return _compile(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank7]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank7]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank7]:     return function(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank7]:     out_code = transform_code_object(code, transform)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank7]:     transformations(instructions, code_options)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank7]:     return fn(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank7]:     tracer.run()
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank7]:     super().run()
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank7]:     while self.step():
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank7]:     self.dispatch_table[inst.opcode](self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank7]:     return inner_fn(self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank7]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank7]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank7]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank7]:     return super().call_function(tx, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank7]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank7]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank7]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank7]:     tracer.run()
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank7]:     while self.step():
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank7]:     self.dispatch_table[inst.opcode](self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank7]:     return inner_fn(self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank7]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank7]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank7]:     return super().call_function(tx, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank7]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank7]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank7]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank7]:     tracer.run()
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank7]:     while self.step():
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank7]:     self.dispatch_table[inst.opcode](self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank7]:     return inner_fn(self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank7]:     self.call_function(fn, args, {})
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank7]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank7]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank7]:     return super().call_function(tx, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank7]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank7]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank7]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank7]:     tracer.run()
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank7]:     while self.step():
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank7]:     self.dispatch_table[inst.opcode](self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank7]:     return inner_fn(self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank7]:     self.call_function(fn, args, {})
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank7]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank7]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank7]:     return super().call_function(tx, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank7]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank7]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank7]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank7]:     tracer.run()
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank7]:     while self.step():
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank7]:     self.dispatch_table[inst.opcode](self, inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank7]:     self.setup_or_before_with(inst)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank7]:     unimplemented(f"{inst.opname} {ctx}")
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank7]:     raise Unsupported(msg, case_name=case_name)
+[rank7]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=7))
+
+[rank7]: from user code:
+[rank7]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank7]:     return fn(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank7]:     return func(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank7]:     logits = model(x, input_pos)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank7]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank7]:     with torch.device(residual.device):
+
+[rank7]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank7]: You can suppress this exception and fall back to eager by setting:
+[rank7]:     import torch._dynamo
+[rank7]:     torch._dynamo.config.suppress_errors = True
+
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank2]:     main(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank2]:     y, decode_latency, prefill_latency = generate(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank2]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank2]:     return fn(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank2]:     return self._torchdynamo_orig_callable(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank2]:     return _compile(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank2]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank2]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank2]:     return function(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank2]:     out_code = transform_code_object(code, transform)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank2]:     transformations(instructions, code_options)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank2]:     return fn(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank2]:     tracer.run()
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank2]:     super().run()
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank2]:     while self.step():
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank2]:     self.dispatch_table[inst.opcode](self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank2]:     return inner_fn(self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank2]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank2]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank2]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank2]:     return super().call_function(tx, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank2]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank2]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank2]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank2]:     tracer.run()
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank2]:     while self.step():
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank2]:     self.dispatch_table[inst.opcode](self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank2]:     return inner_fn(self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank2]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank2]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank2]:     return super().call_function(tx, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank2]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank2]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank2]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank2]:     tracer.run()
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank2]:     while self.step():
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank2]:     self.dispatch_table[inst.opcode](self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank2]:     return inner_fn(self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank2]:     self.call_function(fn, args, {})
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank2]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank2]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank2]:     return super().call_function(tx, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank2]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank2]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank2]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank2]:     tracer.run()
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank2]:     while self.step():
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank2]:     self.dispatch_table[inst.opcode](self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank2]:     return inner_fn(self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank2]:     self.call_function(fn, args, {})
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank2]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank2]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank2]:     return super().call_function(tx, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank2]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank2]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank2]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank2]:     tracer.run()
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank2]:     while self.step():
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank2]:     self.dispatch_table[inst.opcode](self, inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank2]:     self.setup_or_before_with(inst)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank2]:     unimplemented(f"{inst.opname} {ctx}")
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank2]:     raise Unsupported(msg, case_name=case_name)
+[rank2]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=2))
+
+[rank2]: from user code:
+[rank2]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank2]:     return fn(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank2]:     logits = model(x, input_pos)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank2]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank2]:     with torch.device(residual.device):
+
+[rank2]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank2]: You can suppress this exception and fall back to eager by setting:
+[rank2]:     import torch._dynamo
+[rank2]:     torch._dynamo.config.suppress_errors = True
+
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank5]:     main(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank5]:     y, decode_latency, prefill_latency = generate(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank5]:     return func(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank5]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank5]:     return fn(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank5]:     return self._torchdynamo_orig_callable(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank5]:     return _compile(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank5]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank5]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank5]:     return function(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank5]:     out_code = transform_code_object(code, transform)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank5]:     transformations(instructions, code_options)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank5]:     return fn(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank5]:     tracer.run()
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank5]:     super().run()
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank5]:     while self.step():
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank5]:     self.dispatch_table[inst.opcode](self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank5]:     return inner_fn(self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank5]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank5]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank5]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank5]:     return super().call_function(tx, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank5]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank5]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank5]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank5]:     tracer.run()
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank5]:     while self.step():
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank5]:     self.dispatch_table[inst.opcode](self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank5]:     return inner_fn(self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank5]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank5]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank5]:     return super().call_function(tx, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank5]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank5]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank5]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank5]:     tracer.run()
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank5]:     while self.step():
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank5]:     self.dispatch_table[inst.opcode](self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank5]:     return inner_fn(self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank5]:     self.call_function(fn, args, {})
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank5]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank5]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank5]:     return super().call_function(tx, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank5]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank5]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank5]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank5]:     tracer.run()
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank5]:     while self.step():
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank5]:     self.dispatch_table[inst.opcode](self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank5]:     return inner_fn(self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank5]:     self.call_function(fn, args, {})
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank5]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank5]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank5]:     return super().call_function(tx, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank5]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank5]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank5]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank5]:     tracer.run()
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank5]:     while self.step():
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank5]:     self.dispatch_table[inst.opcode](self, inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank5]:     self.setup_or_before_with(inst)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank5]:     unimplemented(f"{inst.opname} {ctx}")
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank5]:     raise Unsupported(msg, case_name=case_name)
+[rank5]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=5))
+
+[rank5]: from user code:
+[rank5]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank5]:     return fn(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank5]:     return func(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank5]:     logits = model(x, input_pos)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank5]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank5]:     with torch.device(residual.device):
+
+[rank5]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank5]: You can suppress this exception and fall back to eager by setting:
+[rank5]:     import torch._dynamo
+[rank5]:     torch._dynamo.config.suppress_errors = True
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank1]:     y, decode_latency, prefill_latency = generate(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank1]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank1]:     return self._torchdynamo_orig_callable(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank1]:     return _compile(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank1]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank1]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank1]:     return function(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank1]:     out_code = transform_code_object(code, transform)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank1]:     transformations(instructions, code_options)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank1]:     tracer.run()
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank1]:     super().run()
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank1]:     while self.step():
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank1]:     self.dispatch_table[inst.opcode](self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank1]:     return inner_fn(self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank1]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank1]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank1]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank1]:     return super().call_function(tx, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank1]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank1]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank1]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank1]:     tracer.run()
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank1]:     while self.step():
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank1]:     self.dispatch_table[inst.opcode](self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank1]:     return inner_fn(self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank1]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank1]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank1]:     return super().call_function(tx, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank1]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank1]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank1]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank1]:     tracer.run()
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank1]:     while self.step():
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank1]:     self.dispatch_table[inst.opcode](self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank1]:     return inner_fn(self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank1]:     self.call_function(fn, args, {})
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank1]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank1]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank1]:     return super().call_function(tx, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank1]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank1]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank1]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank1]:     tracer.run()
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank1]:     while self.step():
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank1]:     self.dispatch_table[inst.opcode](self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank1]:     return inner_fn(self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank1]:     self.call_function(fn, args, {})
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank1]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank1]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank1]:     return super().call_function(tx, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank1]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank1]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank1]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank1]:     tracer.run()
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank1]:     while self.step():
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank1]:     self.dispatch_table[inst.opcode](self, inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank1]:     self.setup_or_before_with(inst)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank1]:     unimplemented(f"{inst.opname} {ctx}")
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank1]:     raise Unsupported(msg, case_name=case_name)
+[rank1]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=1))
+
+[rank1]: from user code:
+[rank1]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank1]:     logits = model(x, input_pos)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank1]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank1]:     with torch.device(residual.device):
+
+[rank1]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank1]: You can suppress this exception and fall back to eager by setting:
+[rank1]:     import torch._dynamo
+[rank1]:     torch._dynamo.config.suppress_errors = True
+
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 492, in <module>
+[rank6]:     main(
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 419, in main
+[rank6]:     y, decode_latency, prefill_latency = generate(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank6]:     return func(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 140, in generate
+[rank6]:     next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank6]:     return fn(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
+[rank6]:     return self._torchdynamo_orig_callable(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
+[rank6]:     return _compile(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
+[rank6]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
+[rank6]:     return _compile_inner(code, one_graph, hooks, transform)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
+[rank6]:     return function(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
+[rank6]:     out_code = transform_code_object(code, transform)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
+[rank6]:     transformations(instructions, code_options)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
+[rank6]:     return fn(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
+[rank6]:     tracer.run()
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
+[rank6]:     super().run()
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank6]:     while self.step():
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank6]:     self.dispatch_table[inst.opcode](self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank6]:     return inner_fn(self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank6]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank6]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/lazy.py", line 170, in realize_and_forward
+[rank6]:     return getattr(self.realize(), name)(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank6]:     return super().call_function(tx, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank6]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank6]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank6]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank6]:     tracer.run()
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank6]:     while self.step():
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank6]:     self.dispatch_table[inst.opcode](self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank6]:     return inner_fn(self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1816, in CALL_FUNCTION_EX
+[rank6]:     self.call_function(fn, argsvars.items, kwargsvars)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank6]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank6]:     return super().call_function(tx, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank6]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank6]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank6]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank6]:     tracer.run()
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank6]:     while self.step():
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank6]:     self.dispatch_table[inst.opcode](self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank6]:     return inner_fn(self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank6]:     self.call_function(fn, args, {})
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank6]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank6]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank6]:     return super().call_function(tx, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank6]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank6]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank6]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank6]:     tracer.run()
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank6]:     while self.step():
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank6]:     self.dispatch_table[inst.opcode](self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 640, in wrapper
+[rank6]:     return inner_fn(self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1738, in CALL_FUNCTION
+[rank6]:     self.call_function(fn, args, {})
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 967, in call_function
+[rank6]:     self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 913, in call_function
+[rank6]:     return variables.UserFunctionVariable(fn, source=source).call_function(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 349, in call_function
+[rank6]:     return super().call_function(tx, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 125, in call_function
+[rank6]:     return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 973, in inline_user_function_return
+[rank6]:     return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3127, in inline_call
+[rank6]:     return cls.inline_call_(parent, func, args, kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3255, in inline_call_
+[rank6]:     tracer.run()
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
+[rank6]:     while self.step():
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
+[rank6]:     self.dispatch_table[inst.opcode](self, inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1432, in SETUP_WITH
+[rank6]:     self.setup_or_before_with(inst)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2445, in setup_or_before_with
+[rank6]:     unimplemented(f"{inst.opname} {ctx}")
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/exc.py", line 313, in unimplemented
+[rank6]:     raise Unsupported(msg, case_name=case_name)
+[rank6]: torch._dynamo.exc.Unsupported: SETUP_WITH ConstantVariable(device: device(type='cuda', index=6))
+
+[rank6]: from user code:
+[rank6]:    File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 31, in inner
+[rank6]:     return fn(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank6]:     return func(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 82, in prefill
+[rank6]:     logits = model(x, input_pos)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 132, in forward
+[rank6]:     previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_ladder_TP.py", line 199, in forward
+[rank6]:     with torch.device(residual.device):
+
+[rank6]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+[rank6]: You can suppress this exception and fall back to eager by setting:
+[rank6]:     import torch._dynamo
+[rank6]:     torch._dynamo.config.suppress_errors = True
+
+[rank0]:[W1118 13:43:00.649213493 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has oger by setting:
+[rank11]:     import torch._dynamo
+[rank11]:     torch._dynamo.config.suppress_errors = True
+
+W1118 13:42:59.903000 2688510 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2688581 closing signal SIGTERM
+W1118 13:42:59.904000 2688510 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2688582 closing signal SIGTERM
+W1118 13:42:59.904000 2688510 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2688583 closing signal SIGTERM
+W1118 13:42:59.904000 2688510 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2688584 closing signal SIGTERM
+W1118 13:42:59.904000 2688510 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2688585 closing signal SIGTERM
+W1118 13:42:59.905000 2688510 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2688586 closing signal SIGTERM
+W1118 13:42:59.905000 2688510 site-packages/torch/distributed/elastic/multiprocessing/api.E1118 13:43:01.634000 2467990 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 2468059) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-11-18_13:43:00
+  host      : mk-xii-15.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 2468059)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+======================================================
