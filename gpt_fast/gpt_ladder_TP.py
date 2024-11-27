@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from dataclasses import dataclass
 from typing import Optional
+from torch.distributed._functional_collectives import AsyncCollectiveTensor
 
 import torch
 import torch.nn as nn
@@ -155,29 +156,36 @@ class GPTLadder(nn.Module):
         super().__init__()
         self.config = config
 
-        self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-        self.layers = nn.ModuleList(LadderTransformerBlock(config) for _ in range(config.n_layer))
-        self.norm = RMSNorm(config.dim, eps=config.norm_eps)
-        self.output = nn.Linear(config.dim, config.vocab_size, bias=False)
+        if ProcessGroupManager.get_pipeline_parallel_rank() == 0:
+            self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+
+        assert config.n_layer % ProcessGroupManager.get_pipeline_parallel_world_size() == 0
+
+        self.layers = nn.ModuleList(
+            LadderTransformerBlock(config)
+            for _ in range(config.n_layer // ProcessGroupManager.get_pipeline_parallel_world_size())
+        )
+
+        if (
+            ProcessGroupManager.get_pipeline_parallel_rank()
+            == ProcessGroupManager.get_pipeline_parallel_world_size() - 1
+        ):
+            self.norm = RMSNorm(config.dim, eps=config.norm_eps)
+            self.output = nn.Linear(config.dim, config.vocab_size, bias=False)
 
         self.freqs_cis: Optional[Tensor] = None
         self.mask_cache: Optional[Tensor] = None
         self.max_batch_size = -1
         self.max_seq_length = -1
 
-    def setup_caches(self, max_batch_size, max_seq_length):
+    def setup_caches(self, max_batch_size, max_seq_length, dtype):
         if self.max_seq_length >= max_seq_length and self.max_batch_size >= max_batch_size:
             return
         head_dim = self.config.dim // self.config.n_head
         max_seq_length = find_multiple(max_seq_length, 8)
         self.max_seq_length = max_seq_length
         self.max_batch_size = max_batch_size
-        dtype = self.output.weight.dtype
-        # For quantized layers, dtype is encoded in scales
-        if hasattr(self.output, "scales"):
-            dtype = self.output.scales.dtype
-        elif hasattr(self.output, "scales_and_zeros"):
-            dtype = self.output.scales_and_zeros.dtype
+
         for b in self.layers:
             b.attention.kv_cache = KVCache(
                 max_batch_size,
@@ -196,17 +204,25 @@ class GPTLadder(nn.Module):
         )
         self.causal_mask = torch.tril(torch.ones(self.max_seq_length, self.max_seq_length, dtype=torch.bool))
 
-    def forward(self, idx: Tensor, input_pos: Optional[Tensor] = None) -> Tensor:
+    def forward(
+        self, x: Tensor, previous_attention_out: Tensor, previous_mlp_out: Tensor, input_pos: Optional[Tensor] = None
+    ) -> tuple[Tensor]:
         assert self.freqs_cis is not None, "Caches must be initialized first"
         mask = self.causal_mask[None, None, input_pos]
         freqs_cis = self.freqs_cis[input_pos]
-        x = self.tok_embeddings(idx)
 
-        previous_attention_out = torch.zeros_like(x)
-        previous_mlp_out = torch.zeros_like(x)
+        pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
+
+        if pp_rank == 0:
+            x = self.tok_embeddings(x)
+
+            previous_attention_out = torch.zeros_like(x)
+            previous_mlp_out = torch.zeros_like(x)
+
         attention_handle = None
         mlp_handle = None
-        for i, layer in enumerate(self.layers):
+
+        for layer in self.layers:
             previous_attention_out, previous_mlp_out, x, attention_handle, mlp_handle = layer(
                 previous_attention_out,
                 previous_mlp_out,
@@ -224,11 +240,19 @@ class GPTLadder(nn.Module):
         if mlp_handle is not None:
             mlp_handle.wait()
 
-        x = x + previous_attention_out + previous_mlp_out
+        if pp_rank == ProcessGroupManager.get_pipeline_parallel_world_size() - 1:
+            x = x + previous_attention_out + previous_mlp_out
+            x = self.norm(x)
+            x = self.output(x)
+            return x
+        else:
+            if isinstance(previous_attention_out, AsyncCollectiveTensor):
+                previous_attention_out.wait()
 
-        x = self.norm(x)
-        logits = self.output(x)
-        return logits
+            if isinstance(previous_mlp_out, AsyncCollectiveTensor):
+                previous_mlp_out.wait()
+
+            return x, previous_attention_out, previous_attention_out
 
     @classmethod
     def from_name(cls, name: str):
