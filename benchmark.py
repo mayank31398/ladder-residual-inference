@@ -237,14 +237,14 @@ def generate(
         if pp_world_size > 1:
             if pp_rank == 0:
                 if is_ladder:
-                    prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder_pp(
+                    prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill(
                         model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs
                     )
                     send_recv(
                         send_list=[prefill_intermediate, prefill_intermediate1, prefill_intermediate2], recv_list=[]
                     )
                 else:
-                    prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+                    prefill_intermediate = prefill_ladder_pp(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
                     send_recv(send_list=[prefill_intermediate], recv_list=[])
             else:
                 if is_ladder:
