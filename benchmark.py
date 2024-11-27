@@ -581,7 +581,7 @@ def main(
 
         import contextlib
 
-        if not profile or (use_tp and rank != 0) or i != num_samples - 1:
+        if not profile or ProcessGroupManager.get_global_rank() != 0 or i != num_samples - 1:
             prof = contextlib.nullcontext()
         else:
             torch.profiler._utils._init_for_cuda_graphs()
