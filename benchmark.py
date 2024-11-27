@@ -99,6 +99,23 @@ def prefill(model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **
     return output
 
 
+@torch.no_grad()
+def prefill_ladder_pp(
+    model: torch.nn.Module,
+    x: torch.Tensor,
+    a: torch.Tensor,
+    m: torch.Tensor,
+    input_pos: torch.Tensor,
+    **sampling_kwargs,
+) -> torch.Tensor:
+    output = model(x, a, m, input_pos)
+
+    if ProcessGroupManager.get_pipeline_parallel_rank() == ProcessGroupManager.get_pipeline_parallel_world_size() - 1:
+        output = sample(output, **sampling_kwargs)[0]
+
+    return output
+
+
 def decode_one_token(
     model: torch.nn.Module, x: torch.Tensor, input_pos: torch.Tensor, **sampling_kwargs
 ) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -188,24 +205,63 @@ def generate(
         empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
+    is_ladder = isinstance(model, GPTLadder)
+
     if pp_world_size > 1:
         if pp_rank == 0:
-            next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
+            if is_ladder:
+                next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
+                next_token1 = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
+                next_token2 = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
+            else:
+                next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
         else:
-            prefill_intermediate = torch.empty(
-                batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
-            )
+            if is_ladder:
+                prefill_intermediate = torch.empty(
+                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                )
+                prefill_intermediate1 = torch.empty(
+                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                )
+                prefill_intermediate2 = torch.empty(
+                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                )
+            else:
+                prefill_intermediate = torch.empty(
+                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                )
 
     device_sync(device)
     prefill_start = time.perf_counter()
     with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
         if pp_world_size > 1:
             if pp_rank == 0:
-                prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
-                send_recv(send_list=[prefill_intermediate], recv_list=[])
+                if is_ladder:
+                    prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder_pp(
+                        model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs
+                    )
+                    send_recv(
+                        send_list=[prefill_intermediate, prefill_intermediate1, prefill_intermediate2], recv_list=[]
+                    )
+                else:
+                    prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+                    send_recv(send_list=[prefill_intermediate], recv_list=[])
             else:
-                send_recv(send_list=[], recv_list=[prefill_intermediate])
-                next_token = prefill(model, prefill_intermediate, input_pos, **sampling_kwargs)
+                if is_ladder:
+                    send_recv(
+                        send_list=[], recv_list=[prefill_intermediate, prefill_intermediate1, prefill_intermediate2]
+                    )
+                    next_token = prefill(
+                        model,
+                        prefill_intermediate,
+                        prefill_intermediate1,
+                        prefill_intermediate2,
+                        input_pos,
+                        **sampling_kwargs,
+                    )
+                else:
+                    send_recv(send_list=[], recv_list=[prefill_intermediate])
+                    next_token = prefill(model, prefill_intermediate, input_pos, **sampling_kwargs)
         else:
             next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 
@@ -417,13 +473,14 @@ def main(
         model.setup_caches(max_batch_size=batch_size, max_seq_length=max_seq_length, dtype=precision)
 
     if compile:
-        global decode_one_token, decode_multi_token, prefill
+        global decode_one_token, prefill, prefill_ladder_pp
         decode_one_token = torch.compile(decode_one_token, mode="reduce-overhead", fullgraph=True)
 
         if compile_prefill:
             dynamic = False
             print_rank_0(f"Compiling prefill with dynamic={dynamic}")
             prefill = torch.compile(prefill, fullgraph=True, dynamic=dynamic)
+            prefill_ladder_pp = torch.compile(prefill_ladder_pp, fullgraph=True, dynamic=dynamic)
 
     elif use_cuda_graphs:
         print_rank_0("CUDA_GRAPH are activate")

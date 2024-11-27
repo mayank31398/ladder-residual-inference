@@ -5,13 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 from dataclasses import dataclass
 from typing import Optional
-from torch.distributed._functional_collectives import AsyncCollectiveTensor
 
 import torch
 import torch.nn as nn
 import triton
 import triton.language as tl
 from torch import Tensor
+from torch.distributed._functional_collectives import AsyncCollectiveTensor
 
 from .parallel import ProcessGroupManager
 from .utils import Attention, FeedForward, KVCache, RMSNorm, all_reduce_func, precompute_freqs_cis
