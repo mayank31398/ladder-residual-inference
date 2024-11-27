@@ -266,7 +266,9 @@ def generate(
                     next_token = prefill(model, prefill_intermediate, input_pos, **sampling_kwargs)
         else:
             if is_ladder:
-                next_token = prefill_ladder(model, prompt.view(batch_size, -1), None, None, input_pos, **sampling_kwargs)
+                next_token = prefill_ladder(
+                    model, prompt.view(batch_size, -1), None, None, input_pos, **sampling_kwargs
+                )
             else:
                 next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 
