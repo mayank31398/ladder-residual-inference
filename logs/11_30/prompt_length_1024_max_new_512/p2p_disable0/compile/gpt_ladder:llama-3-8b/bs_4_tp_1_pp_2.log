@@ -1,0 +1,139 @@
+W1130 12:20:42.609000 3316452 site-packages/torch/distributed/run.py:793] 
+W1130 12:20:42.609000 3316452 site-packages/torch/distributed/run.py:793] *****************************************
+W1130 12:20:42.609000 3316452 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1130 12:20:42.609000 3316452 site-packages/torch/distributed/run.py:793] *****************************************
+DeviceMesh('cuda', [[0], [1]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0], [1]], mesh_dim_names=('pp', 'tp'))
+Using device=cuda
+Loading model ...
+GPTLadder(
+  (layers): ModuleList(
+    (0-15): 16 x LadderTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=6144, bias=False)
+        (wo): Linear(in_features=4096, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=28672, bias=False)
+        (w2): Linear(in_features=14336, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 0.03 seconds
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+Prefill latency: 52.58372463611886 sec
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+[rank0]:[E1130 12:51:38.496396404 ProcessGroupNCCL.cpp:627] [Rank 0] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=2, OpType=COALESCED, NumelIn=18446744073709551615, NumelOut=18446744073709551615, Timeout(ms)=1800000) ran for 1800025 milliseconds before timing out.
+[rank0]:[E1130 12:51:38.496607155 ProcessGroupNCCL.cpp:2007] [PG ID 1 PG GUID 1(mesh_pp) Rank 0]  failure detected by watchdog at work sequence id: 2 PG status: last enqueued work: 2, last completed work: 1
+[rank0]:[E1130 12:51:38.496617169 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank1]:[E1130 12:51:38.640777605 ProcessGroupNCCL.cpp:627] [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=3, OpType=COALESCED, NumelIn=18446744073709551615, NumelOut=18446744073709551615, Timeout(ms)=1800000) ran for 1800077 milliseconds before timing out.
+[rank1]:[E1130 12:51:38.641018759 ProcessGroupNCCL.cpp:2007] [PG ID 1 PG GUID 1(mesh_pp) Rank 1]  failure detected by watchdog at work sequence id: 3 PG status: last enqueued work: 3, last completed work: 2
+[rank1]:[E1130 12:51:38.641028813 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank0]:[E1130 12:51:39.052621562 ProcessGroupNCCL.cpp:679] [Rank 0] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank0]:[E1130 12:51:39.052683303 ProcessGroupNCCL.cpp:693] [Rank 0] To avoid data inconsistency, we are taking the entire process down.
+[rank0]:[E1130 12:51:39.053797657 ProcessGroupNCCL.cpp:1737] [PG ID 1 PG GUID 1(mesh_pp) Rank 0] Process group watchdog thread terminated with exception: [Rank 0] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=2, OpType=COALESCED, NumelIn=18446744073709551615, NumelOut=18446744073709551615, Timeout(ms)=1800000) ran for 1800025 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:630 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x15062676c106 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2b4 (0x1505db9dfa54 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x890 (0x1505db9e15b0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x1505db9e24cd in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x150626c1f5c0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94ac3 (0x15062777bac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126850 (0x15062780d850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 1 PG GUID 1(mesh_pp) Rank 0] Process group watchdog thread terminated with exception: [Rank 0] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=2, OpType=COALESCED, NumelIn=18446744073709551615, NumelOut=18446744073709551615, Timeout(ms)=1800000) ran for 1800025 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:630 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x15062676c106 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2b4 (0x1505db9dfa54 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x890 (0x1505db9e15b0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x1505db9e24cd in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x150626c1f5c0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94ac3 (0x15062777bac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126850 (0x15062780d850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1743 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x15062676c106 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xebe69e (0x1505db64b69e in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x150626c1f5c0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94ac3 (0x15062777bac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x15062780d850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[E1130 12:51:39.190033946 ProcessGroupNCCL.cpp:679] [Rank 1] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank1]:[E1130 12:51:39.190092057 ProcessGroupNCCL.cpp:693] [Rank 1] To avoid data inconsistency, we are taking the entire process down.
+[rank1]:[E1130 12:51:39.191261540 ProcessGroupNCCL.cpp:1737] [PG ID 1 PG GUID 1(mesh_pp) Rank 1] Process group watchdog thread terminated with exception: [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=3, OpType=COALESCED, NumelIn=18446744073709551615, NumelOut=18446744073709551615, Timeout(ms)=1800000) ran for 1800077 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:630 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14df340f9106 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2b4 (0x14df353dfa54 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x890 (0x14df353e15b0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x14df353e24cd in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x14df805425c0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94ac3 (0x14df8109eac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126850 (0x14df81130850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 1 PG GUID 1(mesh_pp) Rank 1] Process group watchdog thread terminated with exception: [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=3, OpType=COALESCED, NumelIn=18446744073709551615, NumelOut=18446744073709551615, Timeout(ms)=1800000) ran for 1800077 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:630 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14df340f9106 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2b4 (0x14df353dfa54 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x890 (0x14df353e15b0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x14df353e24cd in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x14df805425c0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94ac3 (0x14df8109eac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126850 (0x14df81130850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1743 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x14df340f9106 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xebe69e (0x14df3504b69e in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x14df805425c0 in /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94ac3 (0x14df8109eac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126850 (0x14df81130850 in /lib/x86_64-linux-gnu/libc.so.6)
+
+W1130 12:51:39.460000 3316452 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3316523 closing signal SIGTERM
+E1130 12:51:39.624000 3316452 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: -6) local_rank: 0 (pid: 3316522) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+========================================================
+benchmark.py FAILED
+--------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+--------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-11-30_12:51:39
+  host      : mk-xii-27.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : -6 (pid: 3316522)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 3316522
+========================================================

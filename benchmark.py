@@ -294,6 +294,7 @@ def generate(
                 )
 
     device_sync(device)
+    
     prefill_start = time.perf_counter()
     with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
         if pp_world_size > 1:
@@ -333,6 +334,8 @@ def generate(
                 next_token = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 
     device_sync(device)
+    dist.barrier()
+    
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
 
@@ -341,13 +344,16 @@ def generate(
         empty[:, T] = next_token.squeeze()
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
-
+    print_rank_0(f"Starting decode with input")
     device_sync(device)
     decode_start = time.perf_counter()
     generated_tokens, _ = decode_n_tokens(
         model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs
     )
+    
     device_sync(device)
+    dist.barrier()
+    
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
@@ -627,7 +633,7 @@ def main(
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
 
         device_sync(device=device)  # MKG
-
+        
         if i < 0:
             continue
 
@@ -676,12 +682,12 @@ if __name__ == "__main__":
     parser.add_argument("--top_k", type=int, default=200, help="Top-k for sampling.")
     parser.add_argument("--temperature", type=float, default=0.8, help="Temperature for sampling.")
     parser.add_argument("--compile", action="store_true", help="Whether to compile the model.")
-    parser.add_argument("--cuda_graph", action="store_true", help="Whether to use cuda graphs the model.")
     parser.add_argument(
         "--compile_prefill",
         action="store_true",
         help="Whether to compile the prefill (improves prefill perf, but higher compile times)",
     )
+    parser.add_argument("--cuda_graph", action="store_true", help="Whether to use cuda graphs the model.")
     parser.add_argument(
         "--use_flash_attention",
         action="store_true",
