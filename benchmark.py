@@ -164,17 +164,17 @@ def decode_n_tokens(
     if pp_world_size > 1 and pp_rank > 0:
         if is_ladder:
             intermediate_hidden_states = torch.empty(
-                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                cur_token.size(0), 1, model.config.dim, device=default_device, dtype=torch.float16
             )
             intermediate_hidden_states1 = torch.empty(
-                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                cur_token.size(0), 1, model.config.dim, device=default_device, dtype=torch.float16
             )
             intermediate_hidden_states2 = torch.empty(
-                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                cur_token.size(0), 1, model.config.dim, device=default_device, dtype=torch.float16
             )
         else:
             intermediate_hidden_states = torch.empty(
-                cur_token.size(0), 1, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                cur_token.size(0), 1, model.config.dim, device=default_device, dtype=torch.float16
             )
 
     new_tokens, new_probs = [], []
@@ -276,21 +276,21 @@ def generate(
 
     if pp_world_size > 1:
         if pp_rank == 0:
-            next_token = torch.empty(batch_size, 1, device=torch.cuda.current_device(), dtype=torch.long)
+            next_token = torch.zeros(batch_size, 1, device=default_device, dtype=torch.long)
         else:
             if is_ladder:
                 prefill_intermediate = torch.empty(
-                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                    batch_size, T, model.config.dim, device=default_device, dtype=torch.float16
                 )
                 prefill_intermediate1 = torch.empty(
-                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                    batch_size, T, model.config.dim, device=default_device, dtype=torch.float16
                 )
                 prefill_intermediate2 = torch.empty(
-                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                    batch_size, T, model.config.dim, device=default_device, dtype=torch.float16
                 )
             else:
                 prefill_intermediate = torch.empty(
-                    batch_size, T, model.config.dim, device=torch.cuda.current_device(), dtype=torch.float16
+                    batch_size, T, model.config.dim, device=default_device, dtype=torch.float16
                 )
 
     device_sync(device)

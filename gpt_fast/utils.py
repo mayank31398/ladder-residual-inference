@@ -415,7 +415,7 @@ def send_recv(send_list: list[Tensor], recv_list: list[Tensor]) -> None:
     ops = [
         dist.P2POp(
             dist.isend,
-            tensor,
+            tensor.to(torch.long) if tensor.dtype == torch.int32 else tensor,
             peer,
             ProcessGroupManager.get_pipeline_parallel_group(),
         )
@@ -425,7 +425,7 @@ def send_recv(send_list: list[Tensor], recv_list: list[Tensor]) -> None:
         [
             dist.P2POp(
                 dist.irecv,
-                tensor,
+                tensor.to(torch.long) if tensor.dtype == torch.int32 else tensor,
                 peer,
                 ProcessGroupManager.get_pipeline_parallel_group(),
             )
