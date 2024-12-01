@@ -4,12 +4,12 @@ prompt_length=1024
 max_new_tokens=512
 # master_address=192.169.71.2
 # --master_addr=${master_address} --node_rank=$1
-for P2P_DISABLE in 0
+for P2P_DISABLE in 0 1
 do
     export NCCL_P2P_DISABLE=${P2P_DISABLE}
-    for model_name in "gpt_dense:llama-3-70b" # "gpt_dense:llama-3-70b" "gpt_ladder:llama-3-70b" "gpt_ensemble:llama-3-70b-upper-bound"  "gpt_parallel:llama-3-70b"
+    for model_name in "gpt_dense:llama-3-70b" "gpt_ladder:llama-3-70b" "gpt_ensemble:llama-3-70b-upper-bound"  "gpt_parallel:llama-3-70b"
     do
-        folder=./logs/11_30/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
+        folder=./logs/final/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
         mkdir -p ${folder}
         for bssize in 1
         do
@@ -40,7 +40,7 @@ do
                                                 --tensor_parallel_world_size ${tpsize} \
                                                 --pipeline_parallel_world_size ${ppsize} \
                                                 --device cuda 2>&1 | tee ${folder}/bs_${bssize}_tp_${tpsize}_pp_${ppsize}.log
-                echo "Finished running with bs=${bssize} tp=${tpsize}" 
+                echo "Finished running with bs=${bssize} tp=${tpsize} pp=${ppsize}"
             done
         done
     done

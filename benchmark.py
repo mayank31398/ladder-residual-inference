@@ -178,17 +178,19 @@ def decode_n_tokens(
             )
 
     new_tokens, new_probs = [], []
+    
     for i in range(num_new_tokens):
         if pp_world_size > 1:
             if pp_rank == 0:
                 send_recv(send_list=[], recv_list=[cur_token])
             else:
                 send_recv(send_list=[cur_token], recv_list=[])
-
+        # print(f'pp_rank: {pp_rank}, pp_world_size: {pp_world_size}')
         # Actually better for Inductor to codegen attention here
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
             if pp_world_size > 1:
                 if pp_rank == 0:
+                    # print_rank_0(f"Starting decode with input of 0")                
                     if is_ladder:
                         intermediate_hidden_states, intermediate_hidden_states1, intermediate_hidden_states2 = (
                             decode_one_token_ladder(model, cur_token, None, None, input_pos, **sampling_kwargs)
@@ -344,7 +346,6 @@ def generate(
         empty[:, T] = next_token.squeeze()
 
     input_pos = torch.tensor([T], device=device, dtype=torch.int)
-    print_rank_0(f"Starting decode with input")
     device_sync(device)
     decode_start = time.perf_counter()
     generated_tokens, _ = decode_n_tokens(
