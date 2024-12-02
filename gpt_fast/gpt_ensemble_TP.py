@@ -226,6 +226,21 @@ transformer_configs = {
             factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192
         ),
     ),
+    "llama-3-70b-upper-bound": dict(
+        block_size=131072,
+        n_layer=126,
+        n_head=128,
+        n_local_heads=8,
+        dim=16384,
+        intermediate_size=53248,
+        vocab_size=128256,
+        rope_base=500000,
+        rope_scaling=dict(
+            factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192
+        ),
+        reduce_pattern=[{"attention": False, "mlp": False} for _ in range(80)],
+        force_disable_last_all_reduce=True,
+    ),
 }
 
 

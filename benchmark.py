@@ -522,7 +522,7 @@ def main(
     use_cuda_graphs: bool = False,
 ) -> None:
     """Generates text samples based on a pre-trained Transformer model and tokenizer."""
-
+    
     ProcessGroupManager(tensor_parallel_world_size=tp_world_size, pipeline_parallel_world_size=pp_world_size)
 
     print_rank_0(f"Using device={device}")

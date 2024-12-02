@@ -4,10 +4,11 @@ prompt_length=1024
 max_new_tokens=512
 # master_address=192.169.71.2
 # --master_addr=${master_address} --node_rank=$1
-for P2P_DISABLE in 0 1
+for P2P_DISABLE in 1
 do
     export NCCL_P2P_DISABLE=${P2P_DISABLE}
-    for model_name in "gpt_dense:llama-3-70b" "gpt_ladder:llama-3-70b" "gpt_ensemble:llama-3-70b-upper-bound"  "gpt_parallel:llama-3-70b"
+    export NCCL_NVLS_ENABLE=1
+    for model_name in "gpt_ensemble:llama-3-70b-upper-bound"  "gpt_parallel:llama-3-70b" "gpt_dense:llama-3-70b" "gpt_ladder:llama-3-70b" 
     do
         folder=./logs/final/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
         mkdir -p ${folder}
@@ -29,9 +30,8 @@ do
                 # Split the combination into tpsize and ppsize
                 tpsize=$(echo $combo | awk '{print $1}')
                 ppsize=$(echo $combo | awk '{print $2}')
-                echo "Running with bs=${bssize} tp=${tpsize} pp=${ppsize}"
-                # NCCL_NVLS_ENABLE=1 NCCL_P2P_DISABLE=${P2P_DISABLE} 
-                torchrun --standalone --nproc_per_node=$((tpsize*ppsize/nodenum)) --nnodes=${nodenum} --master_port=15328 benchmark.py \
+                echo "Running with bs=${bssize} tp=${tpsize} pp=${ppsize}" 
+                NCCL_NVLS_ENABLE=1 NCCL_P2P_DISABLE=${P2P_DISABLE} torchrun --standalone --nproc_per_node=$((tpsize*ppsize/nodenum)) --nnodes=${nodenum} --master_port=15328 benchmark.py \
                                                 --model_name ${model_name} \
                                                 --num_samples 10 \
                                                 --batch_size ${bssize} \
