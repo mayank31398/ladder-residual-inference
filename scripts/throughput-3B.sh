@@ -1,4 +1,4 @@
-mode=cuda_graph_use_flash_attention
+mode=compile
 nodenum=1
 prompt_length=1024
 max_new_tokens=512

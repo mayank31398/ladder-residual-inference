@@ -1,0 +1,146 @@
+W1201 16:09:24.416000 530786 site-packages/torch/distributed/run.py:793] 
+W1201 16:09:24.416000 530786 site-packages/torch/distributed/run.py:793] *****************************************
+W1201 16:09:24.416000 530786 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1201 16:09:24.416000 530786 site-packages/torch/distributed/run.py:793] *****************************************
+rank: 1, global_rank: 1, world_size: 2, global_world_size: 2
+rank: 0, global_rank: 0, world_size: 2, global_world_size: 2
+rank: 0, global_rank: 0, world_size: 2, global_world_size: 2
+rank: 0, global_rank: 0, world_size: 2, global_world_size: 2
+rank: 0, global_rank: 0, world_size: 2, global_world_size: 2
+rank: 0, global_rank: 0, world_size: 2, global_world_size: 2
+flash_kv_decode is set to True
+rank: 0, global_rank: 0, world_size: 2, global_world_size: 2
+our world size=2
+Using device=cuda
+Loading model ...
+rank: 1, global_rank: 1, world_size: 2, global_world_size: 2
+rank: 1, global_rank: 1, world_size: 2, global_world_size: 2
+rank: 1, global_rank: 1, world_size: 2, global_world_size: 2
+rank: 1, global_rank: 1, world_size: 2, global_world_size: 2
+rank: 1, global_rank: 1, world_size: 2, global_world_size: 2
+GPTLadder(
+  (tok_embeddings): Embedding(128256, 4096)
+  (layers): ModuleList(
+    (0-31): 32 x LadderTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=4096, out_features=3072, bias=False)
+        (wo): Linear(in_features=2048, out_features=4096, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=4096, out_features=14336, bias=False)
+        (w2): Linear(in_features=7168, out_features=4096, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Time to load model: 0.18 seconds
+CUDA_GRAPH are activate
+[rank1]:[W1201 16:09:31.760399888 CUDAGraph.cpp:133] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
+[rank0]:[W1201 16:09:31.762573880 CUDAGraph.cpp:133] Warning: Waiting for pending NCCL work to finish before starting graph capture. (function operator())
+Prefill latency: 0.29562811832875013 sec
+Decode latency: 3.873614689335227 sec
+Compilation time: 4.17 seconds
+Compilation time: 4.21 seconds
+Prefill latency: 0.297356606926769 sec
+Decode latency: 3.8733012001030147 sec
+Prefill latency: 0.29783920571208 sec
+Decode latency: 3.8735409579239786 sec
+Prefill latency: 0.29698884626850486 sec
+Decode latency: 3.8730192403309047 sec
+Prefill latency: 0.2979757930152118 sec
+Decode latency: 3.8737339549697936 sec
+Prefill latency: 0.2982886601239443 sec
+Decode latency: 3.8724573077633977 sec
+Time for inference 1: 4.17 sec total, 1963.69 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15769.49 GB/s
+FLOPS achieved: 47.31 TF/s
+
+Prefill latency: 0.2993494011461735 sec
+Decode latency: 3.87262876983732 sec
+Time for inference 2: 4.17 sec total, 1963.04 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15764.26 GB/s
+FLOPS achieved: 47.29 TF/s
+
+Prefill latency: 0.297838119789958 sec
+Decode latency: 3.872827833984047 sec
+Time for inference 3: 4.17 sec total, 1963.68 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15769.41 GB/s
+FLOPS achieved: 47.31 TF/s
+
+Prefill latency: 0.2979178000241518 sec
+Decode latency: 3.872238628100604 sec
+Time for inference 4: 4.17 sec total, 1963.95 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15771.58 GB/s
+FLOPS achieved: 47.31 TF/s
+
+Prefill latency: 0.2964516282081604 sec
+Decode latency: 3.873535629827529 sec
+Time for inference 5: 4.17 sec total, 1964.03 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15772.18 GB/s
+FLOPS achieved: 47.32 TF/s
+
+Prefill latency: 0.298544904217124 sec
+Decode latency: 3.8733490160666406 sec
+Time for inference 6: 4.17 sec total, 1963.06 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15764.43 GB/s
+FLOPS achieved: 47.29 TF/s
+
+Prefill latency: 0.299032814335078 sec
+Decode latency: 3.8743623858317733 sec
+Time for inference 7: 4.17 sec total, 1962.36 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15758.77 GB/s
+FLOPS achieved: 47.28 TF/s
+
+Prefill latency: 0.2986148977652192 sec
+Decode latency: 3.8739689411595464 sec
+Time for inference 8: 4.17 sec total, 1962.80 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15762.32 GB/s
+FLOPS achieved: 47.29 TF/s
+
+Prefill latency: 0.2999278432689607 sec
+Decode latency: 3.8747972128912807 sec
+Time for inference 9: 4.18 sec total, 1961.66 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15753.13 GB/s
+FLOPS achieved: 47.26 TF/s
+
+Prefill latency: 0.29860981833189726 sec
+Decode latency: 3.8745777113363147 sec
+Time for inference 10: 4.17 sec total, 1962.43 tokens/sec
+Decode latency: 3.87 sec
+Prefill latency: 0.30 sec
+Bandwidth achieved: 15759.33 GB/s
+FLOPS achieved: 47.28 TF/s
+
+==========
+Batch Size: 16
+Prompt Length: 1024
+Generated tokens: 512
+Average decode latency: 3.8735 sec
+Average prefill latency: 0.2985 sec
+Average tokens/sec: 1963.07
+Memory used: 31.18 GB
+Done. we are killing the process
+[rank0]:[W1201 16:10:34.747703960 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
