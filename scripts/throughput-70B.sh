@@ -11,7 +11,7 @@ do
     do
         folder=./logs/final/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
         mkdir -p ${folder}
-        for bssize in 1
+        for bssize in 1 4 16 64
         do
             # combinations=(
             #     "4 2"
@@ -20,7 +20,9 @@ do
             #     "16 1"
             # )
             combinations=(
+                "2 2"
                 "4 2"
+                "8 1"
             )
             for combo in "${combinations[@]}"
             do

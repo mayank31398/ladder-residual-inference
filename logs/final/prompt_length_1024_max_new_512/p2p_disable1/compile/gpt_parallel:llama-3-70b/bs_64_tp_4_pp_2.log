@@ -1,37 +1,41 @@
-W1201 11:16:28.791000 451944 site-packages/torch/distributed/run.py:793] 
-W1201 11:16:28.791000 451944 site-packages/torch/distributed/run.py:793] *****************************************
-W1201 11:16:28.791000 451944 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W1201 11:16:28.791000 451944 site-packages/torch/distributed/run.py:793] *****************************************
+W1201 11:47:03.149000 486274 site-packages/torch/distributed/run.py:793] 
+W1201 11:47:03.149000 486274 site-packages/torch/distributed/run.py:793] *****************************************
+W1201 11:47:03.149000 486274 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1201 11:47:03.149000 486274 site-packages/torch/distributed/run.py:793] *****************************************
 DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
 DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
 DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
+
 Using device=cuda
 Loading model ...
-DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
-DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
-DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
-DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
-DeviceMesh('cuda', [[0, 1, 2, 3], [4, 5, 6, 7]], mesh_dim_names=('pp', 'tp'))
-GPTLadder(
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+GPTParallel(
   (layers): ModuleList(
-    (0-39): 40 x LadderTransformerBlock(
+    (0-39): 40 x ParallelTransformerBlock(
       semi_compiled = False
-      (attention): Attention(
-        (wqkv): Linear(in_features=8192, out_features=2560, bias=False)
+      (attention): FuseAttentionMLP(
+        (wqkv1): Linear(in_features=8192, out_features=16896, bias=False)
         (wo): Linear(in_features=2048, out_features=8192, bias=False)
-      )
-      (feed_forward): FeedForward(
-        (w1): Linear(in_features=8192, out_features=14336, bias=False)
         (w2): Linear(in_features=7168, out_features=8192, bias=False)
       )
-      (ffn_norm): RMSNorm()
       (attention_norm): RMSNorm()
     )
   )
   (norm): RMSNorm()
   (output): Linear(in_features=8192, out_features=128256, bias=False)
 )
-Time to load model: 0.13 seconds
+Time to load model: 1.17 seconds
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
 Compiling prefill with dynamic=False
@@ -41,14 +45,6 @@ Compiling prefill with dynamic=False
   self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
   warnings.warn(
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
@@ -57,75 +53,23 @@ Compiling prefill with dynamic=False
   warnings.warn(
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
   warnings.warn(
-/home/charlie/skip-residual/gpt-fast/tmpvpsfppcv/main.c:422:1: fatal error: error writing to /tmp/ccBGiWca.s: No space left on device
-  422 | }
-      | ^
-/home/charlie/skip-residual/gpt-fast/tmp9pk7mk3e/main.c:422:1: fatal error: error writing to /tmp/cc4DQY0s.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpyv3y2m2c/main.c:422:1: fatal error: error writing to /tmp/cc00lcNn.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp7xbczdso/main.c:422:1: fatal error: error writing to /tmp/cch7d3nA.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpywnm_go8/main.c:422:1: fatal error: error writing to /tmp/ccIHAtIo.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmph4f0tkb2/main.c:422:1: fatal error: error writing to /tmp/ccxcnZbQ.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmp1h71iw6z/main.c:422:1: fatal error: error writing to /tmp/cc2YydcL.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp0ktox2yk/main.c:422:1: fatal error: error writing to /tmp/cciItt3K.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpguwv__8_/main.c:422:1: fatal error: error writing to /tmp/ccUAKygB.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpfmejufl8/main.c:422:1: fatal error: error writing to /tmp/ccKpTIJ9.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpqa63rb1z/main.c:422:1: fatal error: error writing to /tmp/cckLZlCO.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp42ado3m8/main.c:422:1: fatal error: error writing to /tmp/ccZYTrQ1.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpl903cz5f/main.c:422:1: fatal error: error writing to /tmp/ccDthLcl.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpp5r8efwz/main.c:422:1: fatal error: error writing to /tmp/ccmnnfzC.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpzo4_nrl_/main.c:422:1: fatal error: error writing to /tmp/cc37ks6t.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpi3mz94kd/main.c:422:1: fatal error: error writing to /tmp/ccPSNtvr.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpb0lw2esw/main.c:422:1: fatal error: error writing to /tmp/ccEtfi3a.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpij8235d2/main.c:422:1: fatal error: error writing to /tmp/ccL8yEbk.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp8_b1mo0z/main.c:422:1: fatal error: error writing to /tmp/ccsXo6KT.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp8vxv21w2/main.c:422:1: fatal error: error writing to /tmp/cc1xwSAI.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpqi62yu9h/main.c:422:1: fatal error: error writing to /tmp/ccW6E7wK.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmprvn5k9_v/main.c:422:1: fatal error: error writing to /tmp/cctprLrH.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpipjqr6i5/main.c:422:1: fatal error: error writing to /tmp/ccqFU0Um.s: No space left on device
   422 | }
       | ^
 compilation terminated.
@@ -136,8 +80,8 @@ compilation terminated.
 [rank0]:     y, decode_latency, prefill_latency = generate(
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
 [rank0]:     return func(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 305, in generate
-[rank0]:     prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 312, in generate
+[rank0]:     prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
 [rank0]:     return fn(*args, **kwargs)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
@@ -168,8 +112,8 @@ compilation terminated.
 [rank0]:     self._return(inst)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3088, in _return
 [rank0]:     self.output.compile_subgraph(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1110, in compile_subgraph
-[rank0]:     self.compile_and_call_fx_graph(tx, pass2.graph_output_vars(), root)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1077, in compile_subgraph
+[rank0]:     self.compile_and_call_fx_graph(tx, list(reversed(stack_values)), root)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1346, in compile_and_call_fx_graph
 [rank0]:     compiled_fn = self.call_user_compiler(gm)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1396, in call_user_compiler
@@ -208,7 +152,7 @@ compilation terminated.
 [rank0]:     inner_compiled_fn = compiler_fn(gm, example_inputs)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 744, in _compile_fx_inner
 [rank0]:     compiled_graph = FxGraphCache.load(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1504, in load
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1515, in load
 [rank0]:     compiled_graph = compile_fx_fn(
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 651, in codegen_and_compile
 [rank0]:     compiled_graph = fx_codegen_and_compile(gm, example_inputs, **fx_kwargs)
@@ -224,7 +168,7 @@ compilation terminated.
 [rank0]:     mod = _reload_python_module(key, path)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank0]:     exec(code, mod.__dict__, mod.__dict__)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/ea/ceatiyck2rqnhhlnnu52oz4b2fyirsdjuvauuevmrlhagifo2kvt.py", line 708, in <module>
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/wv/cwvxp3ih44chlsqpackjxubulz6u23m6i5si7ytwq6aiuateppfx.py", line 1349, in <module>
 [rank0]:     async_compile.wait(globals())
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/async_compile.py", line 319, in wait
 [rank0]:     scope[key] = result.result()
@@ -250,7 +194,7 @@ compilation terminated.
 [rank0]:     mod = _reload_python_module(key, path)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank0]:     exec(code, mod.__dict__, mod.__dict__)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/cc/cccf5wjf6lt2nhz7hfww7oti7zzg3ooaartlop7xkviqq3yikoxy.py", line 9, in <module>
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/bf/cbf6zt7fqft2rxogpon5un5mzm6renvzt6d74j7yhnmn7xr7boje.py", line 9, in <module>
 [rank0]:     triton_helpers.set_driver_to_gpu()
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_helpers.py", line 57, in set_driver_to_gpu
 [rank0]:     driver.set_active(backend.driver())
@@ -264,7 +208,7 @@ compilation terminated.
 [rank0]:     ret = subprocess.check_call(cc_cmd)
 [rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 369, in check_call
 [rank0]:     raise CalledProcessError(retcode, cmd)
-[rank0]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpi3mz94kd/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpi3mz94kd/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpi3mz94kd', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
+[rank0]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpyv3y2m2c/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpyv3y2m2c/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpyv3y2m2c', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
 
 
 [rank0]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
@@ -274,7 +218,63 @@ compilation terminated.
 [rank0]:     import torch._dynamo
 [rank0]:     torch._dynamo.config.suppress_errors = True
 
-/home/charlie/skip-residual/gpt-fast/tmpugaysvjk/main.c:422:1: fatal error: error writing to /tmp/ccPKcI35.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpt9jdbrbq/main.c:422:1: fatal error: error writing to /tmp/ccQrbNBT.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpiexqd9uz/main.c:422:1: fatal error: error writing to /tmp/ccIlTW7r.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp87l6lx80/main.c:422:1: fatal error: error writing to /tmp/ccEO0Zcm.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmphdo8ivao/main.c:422:1: fatal error: error writing to /tmp/ccWlGeN8.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp5mjp6mgs/main.c:422:1: fatal error: error writing to /tmp/cckLYDm2.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp2ebb_itl/main.c:422:1: fatal error: error writing to /tmp/cc9izN7l.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpvcs9anl9/main.c:422:1: fatal error: error writing to /tmp/ccxdE18z.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp_zzg2v_8/main.c:422:1: fatal error: error writing to /tmp/ccPRSzLX.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmplzua767w/main.c:422:1: fatal error: error writing to /tmp/ccGGaW8S.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpunudfzix/main.c:422:1: fatal error: error writing to /tmp/ccQbEZmP.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmppmgmatod/main.c:422:1: fatal error: error writing to /tmp/ccjwV2NG.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpzxbc81c6/main.c:422:1: fatal error: error writing to /tmp/ccbbfsIh.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpxdb7f1jv/main.c:422:1: fatal error: error writing to /tmp/cc4h8k2y.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp3c3ip0ms/main.c:422:1: fatal error: error writing to /tmp/cchyzam5.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp7l44ln6e/main.c:422:1: fatal error: error writing to /tmp/cc6xxjj8.s: No space left on device
   422 | }
       | ^
 compilation terminated.
@@ -285,8 +285,8 @@ compilation terminated.
 [rank1]:     y, decode_latency, prefill_latency = generate(
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
 [rank1]:     return func(*args, **kwargs)
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 305, in generate
-[rank1]:     prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 312, in generate
+[rank1]:     prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
 [rank1]:     return fn(*args, **kwargs)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
@@ -317,8 +317,8 @@ compilation terminated.
 [rank1]:     self._return(inst)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3088, in _return
 [rank1]:     self.output.compile_subgraph(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1110, in compile_subgraph
-[rank1]:     self.compile_and_call_fx_graph(tx, pass2.graph_output_vars(), root)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1077, in compile_subgraph
+[rank1]:     self.compile_and_call_fx_graph(tx, list(reversed(stack_values)), root)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1346, in compile_and_call_fx_graph
 [rank1]:     compiled_fn = self.call_user_compiler(gm)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1396, in call_user_compiler
@@ -357,7 +357,7 @@ compilation terminated.
 [rank1]:     inner_compiled_fn = compiler_fn(gm, example_inputs)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 744, in _compile_fx_inner
 [rank1]:     compiled_graph = FxGraphCache.load(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1504, in load
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1515, in load
 [rank1]:     compiled_graph = compile_fx_fn(
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 651, in codegen_and_compile
 [rank1]:     compiled_graph = fx_codegen_and_compile(gm, example_inputs, **fx_kwargs)
@@ -373,7 +373,7 @@ compilation terminated.
 [rank1]:     mod = _reload_python_module(key, path)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank1]:     exec(code, mod.__dict__, mod.__dict__)
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/3s/c3srlq55hkbqwa6iohjwf2scecfoo7lhaqnkhbifqheyyr573tcr.py", line 708, in <module>
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/co/ccohyx7ce4qrh6yqfcucmg5kq4x44uplfsj2nb46rkdsookmiand.py", line 1349, in <module>
 [rank1]:     async_compile.wait(globals())
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/async_compile.py", line 319, in wait
 [rank1]:     scope[key] = result.result()
@@ -399,7 +399,7 @@ compilation terminated.
 [rank1]:     mod = _reload_python_module(key, path)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank1]:     exec(code, mod.__dict__, mod.__dict__)
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/cb/ccbonzqt2pkw6n6m446s722v2uye7rdrnqigckv3uekhzir4fjvg.py", line 9, in <module>
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/pf/cpfufnyiu7xs7ydtwci5musv2tugkbvywb3gifynwxkzpbwynmxl.py", line 9, in <module>
 [rank1]:     triton_helpers.set_driver_to_gpu()
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_helpers.py", line 57, in set_driver_to_gpu
 [rank1]:     driver.set_active(backend.driver())
@@ -413,7 +413,7 @@ compilation terminated.
 [rank1]:     ret = subprocess.check_call(cc_cmd)
 [rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 369, in check_call
 [rank1]:     raise CalledProcessError(retcode, cmd)
-[rank1]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmp8_b1mo0z/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmp8_b1mo0z/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmp8_b1mo0z', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
+[rank1]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpxdb7f1jv/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpxdb7f1jv/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpxdb7f1jv', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
 
 
 [rank1]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
@@ -423,31 +423,63 @@ compilation terminated.
 [rank1]:     import torch._dynamo
 [rank1]:     torch._dynamo.config.suppress_errors = True
 
-/home/charlie/skip-residual/gpt-fast/tmp_veqandg/main.c:422:1: fatal error: error writing to /tmp/ccMSt0jV.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpq4t9mssd/main.c:422:1: fatal error: error writing to /tmp/ccH0U1Os.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpq69e_x6w/main.c:422:1: fatal error: error writing to /tmp/cc1crr6l.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpcxmfvs3i/main.c:422:1: fatal error: error writing to /tmp/ccgYlNR6.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp3nnds3ky/main.c:422:1: fatal error: error writing to /tmp/cckqc7zP.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmp5xovsnjj/main.c:422:1: fatal error: error writing to /tmp/ccXO77kq.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmppzy7cwtn/main.c:422:1: fatal error: error writing to /tmp/ccMF0rbS.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpsitd2in1/main.c:422:1: fatal error: error writing to /tmp/cc76b5uy.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpak1r4b15/main.c:422:1: fatal error: error writing to /tmp/ccoBhntk.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmp8lwtqm1y/main.c:422:1: fatal error: error writing to /tmp/ccle1QU3.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpd7fniv0k/main.c:422:1: fatal error: error writing to /tmp/cc8mGIgu.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmp1uacrwsv/main.c:422:1: fatal error: error writing to /tmp/cc1tv7xL.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpzvxtdy0o/main.c:422:1: fatal error: error writing to /tmp/ccZOOJ1x.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpti1kkth3/main.c:422:1: fatal error: error writing to /tmp/ccmTezlh.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp5ds1nbu7/main.c:422:1: fatal error: error writing to /tmp/cc1U7cew.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpd843kuyn/main.c:422:1: fatal error: error writing to /tmp/cc4GK1x8.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpla8rvlvu/main.c:422:1: fatal error: error writing to /tmp/cc7iiQ9r.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp6euqn0au/main.c:422:1: fatal error: error writing to /tmp/ccR9gJ4s.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmphbk5qom4/main.c:422:1: fatal error: error writing to /tmp/ccBnGayB.s: No space left on device
+  422 | }
+      | ^
+/home/charlie/skip-residual/gpt-fast/tmpabklxq_3/main.c:422:1: fatal error: error writing to /tmp/ccTcb3PF.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpv_pc1mc3/main.c:422:1: fatal error: error writing to /tmp/ccbfTfaB.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp8lah5rxi/main.c:422:1: fatal error: error writing to /tmp/ccpdB170.s: No space left on device
   422 | }
       | ^
 compilation terminated.
@@ -458,8 +490,8 @@ compilation terminated.
 [rank2]:     y, decode_latency, prefill_latency = generate(
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
 [rank2]:     return func(*args, **kwargs)
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 305, in generate
-[rank2]:     prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 312, in generate
+[rank2]:     prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
 [rank2]:     return fn(*args, **kwargs)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
@@ -490,8 +522,8 @@ compilation terminated.
 [rank2]:     self._return(inst)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3088, in _return
 [rank2]:     self.output.compile_subgraph(
-[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1110, in compile_subgraph
-[rank2]:     self.compile_and_call_fx_graph(tx, pass2.graph_output_vars(), root)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1077, in compile_subgraph
+[rank2]:     self.compile_and_call_fx_graph(tx, list(reversed(stack_values)), root)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1346, in compile_and_call_fx_graph
 [rank2]:     compiled_fn = self.call_user_compiler(gm)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1396, in call_user_compiler
@@ -530,7 +562,7 @@ compilation terminated.
 [rank2]:     inner_compiled_fn = compiler_fn(gm, example_inputs)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 744, in _compile_fx_inner
 [rank2]:     compiled_graph = FxGraphCache.load(
-[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1504, in load
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1515, in load
 [rank2]:     compiled_graph = compile_fx_fn(
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 651, in codegen_and_compile
 [rank2]:     compiled_graph = fx_codegen_and_compile(gm, example_inputs, **fx_kwargs)
@@ -546,7 +578,7 @@ compilation terminated.
 [rank2]:     mod = _reload_python_module(key, path)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank2]:     exec(code, mod.__dict__, mod.__dict__)
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/77/c77fu26pzvmnjychbeej5vodddcltgodyxvmcbzfr32gekonfs3t.py", line 708, in <module>
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/bd/cbdhgqzcz5hypejtadjv2vyuhum3dcmvostnqrsjdganm5h73d3e.py", line 1349, in <module>
 [rank2]:     async_compile.wait(globals())
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/async_compile.py", line 319, in wait
 [rank2]:     scope[key] = result.result()
@@ -572,7 +604,7 @@ compilation terminated.
 [rank2]:     mod = _reload_python_module(key, path)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank2]:     exec(code, mod.__dict__, mod.__dict__)
-[rank2]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/ds/cdsq4qeps6mptx2xv5cpegdjaimawkieztglhqnkleumavtuzqen.py", line 9, in <module>
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/ry/cry2v3jp2mfocbuvl63otpypqfcdvwucjckojc5d2v6h4bpmk66c.py", line 9, in <module>
 [rank2]:     triton_helpers.set_driver_to_gpu()
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_helpers.py", line 57, in set_driver_to_gpu
 [rank2]:     driver.set_active(backend.driver())
@@ -586,7 +618,7 @@ compilation terminated.
 [rank2]:     ret = subprocess.check_call(cc_cmd)
 [rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 369, in check_call
 [rank2]:     raise CalledProcessError(retcode, cmd)
-[rank2]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpak1r4b15/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpak1r4b15/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpak1r4b15', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
+[rank2]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpti1kkth3/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpti1kkth3/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpti1kkth3', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
 
 
 [rank2]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
@@ -596,39 +628,111 @@ compilation terminated.
 [rank2]:     import torch._dynamo
 [rank2]:     torch._dynamo.config.suppress_errors = True
 
-/home/charlie/skip-residual/gpt-fast/tmpp2nxn46u/main.c:422:1: fatal error: error writing to /tmp/ccjRVnwJ.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpr3zq9bva/main.c:422:1: fatal error: error writing to /tmp/ccEv8yGE.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp8n4ogpz1/main.c:422:1: fatal error: error writing to /tmp/ccfY1Paf.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpzabjiltu/main.c:422:1: fatal error: error writing to /tmp/ccmjqCSz.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpe6_ff265/main.c:422:1: fatal error: error writing to /tmp/ccfAI4Bc.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmps5_ny118/main.c:422:1: fatal error: error writing to /tmp/cccjZVil.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp45du8ii4/main.c:422:1: fatal error: error writing to /tmp/ccuRMark.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmp34kn4cwj/main.c:422:1: fatal error: error writing to /tmp/cccFOFa3.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpl0ri98xf/main.c:422:1: fatal error: error writing to /tmp/cceI7t8k.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpyvog3flh/main.c:422:1: fatal error: error writing to /tmp/cclOzz3r.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpl1k4iv74/main.c:422:1: fatal error: error writing to /tmp/ccEGF2aN.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpxj5rrpif/main.c:422:1: fatal error: error writing to /tmp/cc2qUfuf.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpbx4m_ypd/main.c:422:1: fatal error: error writing to /tmp/ccN7Eq8R.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmps88oyvh1/main.c:422:1: fatal error: error writing to /tmp/ccb5UUxX.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpa56k__7q/main.c:422:1: fatal error: error writing to /tmp/ccl6EYj6.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpiv3q45o2/main.c:422:1: fatal error: error writing to /tmp/cc5FrrE4.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpns12261q/main.c:422:1: fatal error: error writing to /tmp/ccHRraku.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpjha16rc4/main.c:422:1: fatal error: error writing to /tmp/ccM0XBIM.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpxm076cv5/main.c:422:1: fatal error: error writing to /tmp/cc3pCsjx.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpoi97zj9o/main.c:422:1: fatal error: error writing to /tmp/ccNQ6L13.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmplnj1bdaz/main.c:422:1: fatal error: error writing to /tmp/ccewwbyQ.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpxoy8h31b/main.c:422:1: fatal error: error writing to /tmp/ccb3GRDg.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp4t9w9i4d/main.c:422:1: fatal error: error writing to /tmp/ccL47HpU.s: No space left on device
+  422 | }
+      | ^
+/home/charlie/skip-residual/gpt-fast/tmpn87705an/main.c:422:1: fatal error: error writing to /tmp/cc7EBKuA.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpfq6vn4e7/main.c:422:1: fatal error: error writing to /tmp/ccJ7Puto.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp59_d3mnt/main.c:422:1: fatal error: error writing to /tmp/ccEGsac5.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpfg4njaxs/main.c:422:1: fatal error: error writing to /tmp/ccX9Dqy1.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmped1e1juj/main.c:422:1: fatal error: error writing to /tmp/ccSWOb0G.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpl9m3mru4/main.c:422:1: fatal error: error writing to /tmp/cc8eMDi7.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmp4y3q_4op/main.c:422:1: fatal error: error writing to /tmp/ccwUi7eA.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpauzj4j5o/main.c:422:1: fatal error: error writing to /tmp/cccDKyhv.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpmge__dd4/main.c:422:1: fatal error: error writing to /tmp/ccm5w4ba.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpqu7dw2mr/main.c:422:1: fatal error: error writing to /tmp/ccK3rGww.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpdivchc_f/main.c:422:1: fatal error: error writing to /tmp/ccDyWHPx.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpsh1b8atb/main.c:422:1: fatal error: error writing to /tmp/ccvF6GLw.s: No space left on device
+  422 | }
+      | ^
+compilation terminated.
+/home/charlie/skip-residual/gpt-fast/tmpb8o0z1rc/main.c:422:1: fatal error: error writing to /tmp/ccyAm4B8.s: No space left on device
   422 | }
       | ^
 compilation terminated.
@@ -639,8 +743,8 @@ compilation terminated.
 [rank3]:     y, decode_latency, prefill_latency = generate(
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
 [rank3]:     return func(*args, **kwargs)
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 305, in generate
-[rank3]:     prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 312, in generate
+[rank3]:     prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
 [rank3]:     return fn(*args, **kwargs)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
@@ -671,8 +775,8 @@ compilation terminated.
 [rank3]:     self._return(inst)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3088, in _return
 [rank3]:     self.output.compile_subgraph(
-[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1110, in compile_subgraph
-[rank3]:     self.compile_and_call_fx_graph(tx, pass2.graph_output_vars(), root)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1077, in compile_subgraph
+[rank3]:     self.compile_and_call_fx_graph(tx, list(reversed(stack_values)), root)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1346, in compile_and_call_fx_graph
 [rank3]:     compiled_fn = self.call_user_compiler(gm)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1396, in call_user_compiler
@@ -711,7 +815,7 @@ compilation terminated.
 [rank3]:     inner_compiled_fn = compiler_fn(gm, example_inputs)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 744, in _compile_fx_inner
 [rank3]:     compiled_graph = FxGraphCache.load(
-[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1504, in load
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1515, in load
 [rank3]:     compiled_graph = compile_fx_fn(
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 651, in codegen_and_compile
 [rank3]:     compiled_graph = fx_codegen_and_compile(gm, example_inputs, **fx_kwargs)
@@ -727,7 +831,7 @@ compilation terminated.
 [rank3]:     mod = _reload_python_module(key, path)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank3]:     exec(code, mod.__dict__, mod.__dict__)
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/fh/cfhwbsu4lcifumvbpo5dkvus7zb5mjkazjf7ysj26giftj6n6pcp.py", line 708, in <module>
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/6y/c6y3zibc7jg7rzdhl5ykqt4zp7f3ciutwssibgbqadpf7hxb7gg7.py", line 1349, in <module>
 [rank3]:     async_compile.wait(globals())
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/async_compile.py", line 319, in wait
 [rank3]:     scope[key] = result.result()
@@ -753,7 +857,7 @@ compilation terminated.
 [rank3]:     mod = _reload_python_module(key, path)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
 [rank3]:     exec(code, mod.__dict__, mod.__dict__)
-[rank3]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/yd/cydikhst4v2xohcompmyvy4phe4f6ygvcahnrrs7uqq7wz5g2zuk.py", line 9, in <module>
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/ra/cra2kmxtmqxllyub67ynzrwpcj4ltywvfx3v33iduwmbxd55obhq.py", line 9, in <module>
 [rank3]:     triton_helpers.set_driver_to_gpu()
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_helpers.py", line 57, in set_driver_to_gpu
 [rank3]:     driver.set_active(backend.driver())
@@ -767,7 +871,7 @@ compilation terminated.
 [rank3]:     ret = subprocess.check_call(cc_cmd)
 [rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 369, in check_call
 [rank3]:     raise CalledProcessError(retcode, cmd)
-[rank3]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpa56k__7q/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpa56k__7q/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpa56k__7q', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
+[rank3]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpfg4njaxs/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpfg4njaxs/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpfg4njaxs', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
 
 
 [rank3]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
@@ -777,53 +881,41 @@ compilation terminated.
 [rank3]:     import torch._dynamo
 [rank3]:     torch._dynamo.config.suppress_errors = True
 
-/home/charlie/skip-residual/gpt-fast/tmp4e76fhfg/main.c:422:1: fatal error: error writing to /tmp/ccOsXNlz.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmp_wp2w0pr/main.c:422:1: fatal error: error writing to /tmp/ccgBQ86f.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp2oy_bmvq/main.c:422:1: fatal error: error writing to /tmp/cct6asin.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpfnxd3sgt/main.c:422:1: fatal error: error writing to /tmp/ccboeMMB.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpiknqihk2/main.c:422:1: fatal error: error writing to /tmp/ccaMxr6g.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpfrrz6kx5/main.c:422:1: fatal error: error writing to /tmp/ccMjZ91K.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpuvh0hntc/main.c:422:1: fatal error: error writing to /tmp/ccp0epFR.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpf7uhbvik/main.c:422:1: fatal error: error writing to /tmp/ccYDegcO.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpcabnjrua/main.c:422:1: fatal error: error writing to /tmp/ccGpruek.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmp3i9pewpy/main.c:422:1: fatal error: error writing to /tmp/ccEfdPPZ.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpgimd9d4g/main.c:422:1: fatal error: error writing to /tmp/cceC1eDZ.s: No space left on device
+/home/charlie/skip-residual/gpt-fast/tmpz1sol2x5/main.c:422:1: fatal error: error writing to /tmp/ccHwqW2D.s: No space left on device
   422 | }
       | ^
 compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp269p6h0f/main.c:422:1: fatal error: error writing to /tmp/ccffaWYs.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpml8g6ilu/main.c:422:1: fatal error: error writing to /tmp/ccPRiCDe.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp7mlprc54/main.c:422:1: fatal error: error writing to /tmp/ccfjj1iN.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-[rank0]:[W1201 11:17:09.848032408 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-[rank1]:[W1201 11:17:09.856614164 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-[rank2]:[W1201 11:17:10.233574637 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-[rank3]:[W1201 11:17:10.454903151 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-W1201 11:17:11.034000 451944 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 452019 closing signal SIGTERM
-W1201 11:17:11.038000 451944 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 452020 closing signal SIGTERM
-W1201 11:17:11.042000 451944 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 452021 closing signal SIGTERM
-W1201 11:17:11.043000 451944 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 452022 closing signal SIGTERM
-W1201 11:17:11.043000 451944 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 452023 closing signal SIGTERM
-W1201 11:17:11.043000 451944 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 452024 closing signal SIGTERM
-E1201 11:17:11.458000 451944 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 452017) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+[rank0]:[W1201 11:47:39.043563940 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank1]:[W1201 11:47:40.923853048 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W1201 11:47:41.209298430 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W1201 11:47:41.054000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 486345 closing signal SIGTERM
+W1201 11:47:41.058000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 486346 closing signal SIGTERM
+W1201 11:47:41.062000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 486347 closing signal SIGTERM
+W1201 11:47:41.072000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 486348 closing signal SIGTERM
+W1201 11:47:41.078000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 486349 closing signal SIGTERM
+W1201 11:47:41.080000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 486350 closing signal SIGTERM
+W1201 11:47:41.083000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 486351 closing signal SIGTERM
+E1201 11:47:41.734000 486274 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 486344) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
 Traceback (most recent call last):
   File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
     sys.exit(main())
@@ -842,20 +934,14 @@ torch.distributed.elastic.multiprocessing.errors.ChildFailedError:
 benchmark.py FAILED
 ------------------------------------------------------------
 Failures:
-[1]:
-  time      : 2024-12-01_11:17:11
-  host      : mk-xii-22.cloud.together.ai
-  rank      : 1 (local_rank: 1)
-  exitcode  : 1 (pid: 452018)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+  <NO_OTHER_FAILURES>
 ------------------------------------------------------------
 Root Cause (first observed failure):
 [0]:
-  time      : 2024-12-01_11:17:11
+  time      : 2024-12-01_11:47:41
   host      : mk-xii-22.cloud.together.ai
   rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 452017)
+  exitcode  : 1 (pid: 486344)
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ============================================================

@@ -1,0 +1,886 @@
+W1201 10:43:51.105000 413114 site-packages/torch/distributed/run.py:793] 
+W1201 10:43:51.105000 413114 site-packages/torch/distributed/run.py:793] *****************************************
+W1201 10:43:51.105000 413114 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1201 10:43:51.105000 413114 site-packages/torch/distributed/run.py:793] *****************************************
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+Using device=cuda
+Loading model ...
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+GPTEnsemble(
+  (layers): ModuleList(
+    (0-39): 40 x EnsembleTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=8192, out_features=5120, bias=False)
+        (wo): Linear(in_features=4096, out_features=8192, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=8192, out_features=28672, bias=False)
+        (w2): Linear(in_features=14336, out_features=8192, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=8192, out_features=128256, bias=False)
+)
+Time to load model: 1.21 seconds
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 0, 'constants': {'XBLOCK': 1, 'RBLOCK': 1024}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 16, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] During handling of the above exception, another exception occurred:
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 284, in compile
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     metadata_group[ir_filename] = fn_cache_manager.put(next_module, ir_filename)
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 122, in put
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     with open(temp_path, mode) as f:
+[rank0]:E1201 10:44:34.452000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 0, 'constants': {'XBLOCK': 1, 'RBLOCK': 4096}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 32, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank0]:E1201 10:44:34.456000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/0/e84858241efd4cdb7dbb4b8390aace0f6809899aa32d09cd556c8a1e32b4b81c'
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 0, 'constants': {'XBLOCK': 1, 'RBLOCK': 4096}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 8, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank0]:E1201 10:44:34.458000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/0/cf44ef5d31e86a05bfa096a5605947d3c0ddbab171f89a73d1311f77004fbd50'
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 0, 'constants': {'XBLOCK': 2, 'RBLOCK': 4096}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 16, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank0]:E1201 10:44:34.459000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/0/f1555eea3e60282fdaaaf6fe9e58d04452abd94d260d068ce0fa8bc2f407d401'
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 0, 'constants': {'XBLOCK': 1, 'RBLOCK': 8192}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 16, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/0/259fd546b8362849a6c1471939c9e7488634926144714c9023adfe59aa42d83a'
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 0, 'constants': {'XBLOCK': 1, 'RBLOCK': 4096}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 32, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/0/e84858241efd4cdb7dbb4b8390aace0f6809899aa32d09cd556c8a1e32b4b81c'
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 0, 'constants': {'XBLOCK': 1, 'RBLOCK': 4096}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 8, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank0]:E1201 10:44:34.460000 413185 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/0/cf44ef5d31e86a05bfa096a5605947d3c0ddbab171f89a73d1311f77004fbd50'
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 622, in main
+[rank0]:     y, decode_latency, prefill_latency = generate(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 312, in generate
+[rank0]:     prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 29, in inner
+[rank0]:     @functools.wraps(fn)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 721, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1132, in forward
+[rank0]:     return compiled_fn(full_args)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 324, in runtime_wrapper
+[rank0]:     all_outs = call_func_at_runtime_with_args(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/utils.py", line 126, in call_func_at_runtime_with_args
+[rank0]:     out = normalize_as_list(f(args))
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 673, in inner_fn
+[rank0]:     outs = compiled_fn(args)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 491, in wrapper
+[rank0]:     return compiled_fn(runtime_args)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1686, in __call__
+[rank0]:     return self.current_callable(inputs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/utils.py", line 2065, in run
+[rank0]:     return model(new_inputs)
+[rank0]:   File "/tmp/torchinductor_charlie/at/catuuikxkv2th3rwgjpxjdtutr5yn5qsyjslzckwvump4bpqhupv.py", line 1782, in call
+[rank0]:     triton_red_fused__to_copy_add_mean_mul_rsqrt_12.run(buf58, buf42, buf37, arg26_1, buf60, 1024, 8192, grid=grid(1024), stream=stream0)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 992, in run
+[rank0]:     self.coordinate_descent_tuning(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 970, in coordinate_descent_tuning
+[rank0]:     self.save_cache_hook(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/autotune_cache.py", line 167, in save
+[rank0]:     cache.put(key, data)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 182, in put
+[rank0]:     self._put(key, value, sample)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/autotune_cache.py", line 479, in _put
+[rank0]:     super()._put(key, value, sample)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 214, in _put
+[rank0]:     self._backend_put(key, data)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 220, in _backend_put
+[rank0]:     self.backend.put(key, data)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 87, in put
+[rank0]:     self._put(key, data)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/autotune_cache.py", line 453, in _put
+[rank0]:     with open(key, "wb") as fd:
+[rank0]: OSError: [Errno 28] No space left on device
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 1, 'constants': {'XBLOCK': 2, 'RBLOCK': 2048}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 16, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] During handling of the above exception, another exception occurred:
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 284, in compile
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     metadata_group[ir_filename] = fn_cache_manager.put(next_module, ir_filename)
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 122, in put
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     with open(temp_path, mode) as f:
+[rank1]:E1201 10:44:34.501000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 1, 'constants': {'XBLOCK': 1, 'RBLOCK': 4096}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 16, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/1/03566890389fcb7001660a084dc61d59fd7216990c6c05fbedb4c48f92b33bab'
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 1, 'constants': {'XBLOCK': 1, 'RBLOCK': 1024}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 16, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank1]:E1201 10:44:34.503000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/1/113b20934fa74eb2d2e4515591d2e4163711b9e3d8a3e18ead6a04649e6dfed8'
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 1, 'constants': {'XBLOCK': 1, 'RBLOCK': 2048}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 32, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/1/201c3a0b27d416cd78b0c885bb0808822de5f99206e49443a67cabcd6a3c1873'
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Triton compilation failed: triton_red_fused__to_copy_add_mean_mul_rsqrt_12
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] def triton_red_fused__to_copy_add_mean_mul_rsqrt_12(in_ptr0, in_ptr1, in_ptr2, in_ptr3, out_ptr1, xnumel, rnumel, XBLOCK : tl.constexpr, RBLOCK : tl.constexpr):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xnumel = 1024
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rnumel = 8192
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xoffset = tl.program_id(0) * XBLOCK
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xindex = xoffset + tl.arange(0, XBLOCK)[:, None]
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     xmask = xindex < xnumel
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     rbase = tl.arange(0, RBLOCK)[None, :]
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     x0 = xindex
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     _tmp8 = tl.full([XBLOCK, RBLOCK], 0, tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp0 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp1 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp2 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp3 = tmp1 + tmp2
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp4 = tmp0 + tmp3
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp5 = tmp4.to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp6 = tmp5 * tmp5
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp7 = tl.broadcast_to(tmp6, [XBLOCK, RBLOCK])
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp9 = _tmp8 + tmp7
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         _tmp8 = tl.where(rmask & xmask, tmp9, _tmp8)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     tmp8 = tl.sum(_tmp8, 1)[:, None]
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     for roffset in range(0, rnumel, RBLOCK):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rindex = roffset + rbase
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         rmask = rindex < rnumel
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         r1 = rindex
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp10 = tl.load(in_ptr0 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp11 = tl.load(in_ptr1 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp12 = tl.load(in_ptr2 + (r1 + (8192*x0)), rmask & xmask, eviction_policy='evict_first', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp23 = tl.load(in_ptr3 + (r1), rmask, eviction_policy='evict_last', other=0.0).to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp13 = tmp11 + tmp12
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp14 = tmp10 + tmp13
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp15 = tmp14.to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp16 = 8192.0
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp17 = tmp8 / tmp16
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp18 = 1e-05
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp19 = tmp17 + tmp18
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp20 = libdevice.rsqrt(tmp19)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp21 = tmp15 * tmp20
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp22 = tmp21.to(tl.float32)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tmp24 = tmp22 * tmp23
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]         tl.store(out_ptr1 + (r1 + (8192*x0)), tmp24, rmask & xmask)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] 
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] metadata: {'signature': {'in_ptr0': '*fp16', 'in_ptr1': '*fp16', 'in_ptr2': '*fp16', 'in_ptr3': '*fp16', 'out_ptr1': '*fp16', 'xnumel': 'i32', 'rnumel': 'i32'}, 'device': 1, 'constants': {'XBLOCK': 1, 'RBLOCK': 2048}, 'configs': [AttrsDescriptor(divisible_by_16=(0, 1, 2, 3, 4, 5, 6), equal_to_1=())], 'device_type': 'cuda', 'num_warps': 8, 'num_stages': 1, 'debug': True, 'cc': 90}
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] Traceback (most recent call last):
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 492, in _precompile_config
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     binary = triton.compile(*compile_args, **compile_kwargs)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/compiler/compiler.py", line 242, in compile
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     fn_cache_manager = get_cache_manager(hash)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 263, in get_cache_manager
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     return __cache_cls(key)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/cache.py", line 64, in __init__
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     os.makedirs(self.cache_dir, exist_ok=True)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/os.py", line 225, in makedirs
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494]     mkdir(name, mode)
+[rank1]:E1201 10:44:34.504000 413186 site-packages/torch/_inductor/runtime/triton_heuristics.py:494] OSError: [Errno 28] No space left on device: '/tmp/torchinductor_charlie/triton/1/c5de7bec39e389a7ea0748ccd8d14397f6254d99cb81ae7547baa20c693b4eb7'
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 622, in main
+[rank1]:     y, decode_latency, prefill_latency = generate(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 312, in generate
+[rank1]:     prefill_intermediate = prefill(model, prompt.view(batch_size, -1), input_pos, **sampling_kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/external_utils.py", line 29, in inner
+[rank1]:     @functools.wraps(fn)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 721, in _fn
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1132, in forward
+[rank1]:     return compiled_fn(full_args)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 324, in runtime_wrapper
+[rank1]:     all_outs = call_func_at_runtime_with_args(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/utils.py", line 126, in call_func_at_runtime_with_args
+[rank1]:     out = normalize_as_list(f(args))
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 673, in inner_fn
+[rank1]:     outs = compiled_fn(args)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 491, in wrapper
+[rank1]:     return compiled_fn(runtime_args)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1686, in __call__
+[rank1]:     return self.current_callable(inputs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/utils.py", line 2065, in run
+[rank1]:     return model(new_inputs)
+[rank1]:   File "/tmp/torchinductor_charlie/jc/cjcpijeszbienw5o3rkqkuvpvmkupofw44vyigtjjm567uhlvapc.py", line 1782, in call
+[rank1]:     triton_red_fused__to_copy_add_mean_mul_rsqrt_12.run(buf58, buf42, buf37, arg26_1, buf60, 1024, 8192, grid=grid(1024), stream=stream1)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 992, in run
+[rank1]:     self.coordinate_descent_tuning(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_heuristics.py", line 970, in coordinate_descent_tuning
+[rank1]:     self.save_cache_hook(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/autotune_cache.py", line 167, in save
+[rank1]:     cache.put(key, data)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 182, in put
+[rank1]:     self._put(key, value, sample)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/autotune_cache.py", line 479, in _put
+[rank1]:     super()._put(key, value, sample)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 214, in _put
+[rank1]:     self._backend_put(key, data)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 220, in _backend_put
+[rank1]:     self.backend.put(key, data)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/remote_cache.py", line 87, in put
+[rank1]:     self._put(key, data)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/autotune_cache.py", line 453, in _put
+[rank1]:     with open(key, "wb") as fd:
+[rank1]: OSError: [Errno 28] No space left on device
+[rank0]:[W1201 10:44:35.487707625 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank1]:[W1201 10:44:35.726026455 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W1201 10:44:36.325000 413114 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 413186 closing signal SIGTERM
+W1201 10:44:36.330000 413114 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 413187 closing signal SIGTERM
+W1201 10:44:36.333000 413114 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 413188 closing signal SIGTERM
+E1201 10:44:36.602000 413114 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 413185) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-12-01_10:44:36
+  host      : mk-xii-22.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 413185)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
