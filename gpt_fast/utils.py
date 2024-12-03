@@ -8,6 +8,7 @@ import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 import torch.nn as nn
 import torch.nn.functional as F
+from cute_kernels.kernels.scattermoe.triton_implementation import contiguous_count_cute, scattered_experts
 from flash_attn import flash_attn_varlen_func, flash_attn_with_kvcache
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 from torch import Tensor
@@ -143,6 +144,97 @@ class FeedForward(nn.Module):
         u, g = x.chunk(2, dim=-1)
         y = self.w2(F.silu(g) * u)
         return y
+
+
+class Experts_Triton(nn.Module):
+    def __init__(self, num_experts: int, in_features: int, out_features: int) -> None:
+        super().__init__()
+
+        self.weight = nn.Parameter(torch.empty(num_experts, out_features, in_features))
+
+        self.num_experts = num_experts
+        self.in_features = in_features
+        self.out_features = out_features
+
+    def forward(
+        self,
+        inputs,
+        k,
+        sorted_expert_idxs,
+        sorted_scattered_idxs,
+        expert_offsets,
+        gates=None,
+        grouped_in=False,
+        grouped_out=False,
+    ):
+        return scattered_experts(
+            inputs,
+            self.weight.permute(0, 2, 1),
+            k,
+            sorted_expert_idxs,
+            sorted_scattered_idxs,
+            expert_offsets,
+            gates,
+            grouped_in,
+            grouped_out,
+        )
+
+
+class MoE_Triton(nn.Module):
+    def __init__(self, config) -> None:
+        super().__init__()
+
+        tp_world_size = ProcessGroupManager.get_tensor_parallel_world_size()
+
+        assert config.intermediate_size % tp_world_size == 0
+        assert config.dim % tp_world_size == 0
+
+        self.num_experts = config.num_experts
+        self.top_k = config.num_experts_per_tok
+
+        self.gate = nn.Linear(in_features=config.dim, out_features=self.num_experts, bias=False)
+
+        self.c_fc = Experts_Triton(
+            num_experts=self.num_experts,
+            in_features=config.dim,
+            out_features=2 * config.intermediate_size // tp_world_size,
+        )
+
+        self.c_proj = Experts_Triton(
+            num_experts=self.num_experts,
+            in_features=config.intermediate_size // tp_world_size,
+            out_features=config.dim,
+        )
+
+    def _compute_experts(
+        self, hidden_states: torch.Tensor, router_weights: torch.Tensor, selected_experts: torch.Tensor
+    ) -> torch.Tensor:
+        with torch.no_grad():
+            sorted_expert_idxs, sorted_scattered_idxs = selected_experts.flatten().sort()
+            expert_offsets = contiguous_count_cute(x=sorted_expert_idxs, size=self.num_experts).cumsum(-1)
+
+        hidden_states = self.c_fc(
+            hidden_states,
+            self.top_k,
+            sorted_expert_idxs,
+            sorted_scattered_idxs,
+            expert_offsets,
+            grouped_out=True,
+        )
+
+        u, g = hidden_states.chunk(2, dim=-1)
+        hidden_states = F.silu(g) * u
+
+        hidden_states = self.c_proj(
+            hidden_states,
+            1,
+            sorted_expert_idxs,
+            sorted_scattered_idxs,
+            expert_offsets,
+            grouped_in=True,
+            gates=router_weights,
+        )
+        return hidden_states
 
 
 class Attention(nn.Module):

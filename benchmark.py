@@ -20,6 +20,8 @@ from gpt_fast import (
     GPTEnsemble,
     GPTLadder,
     GPTParallel,
+    LadderMoE,
+    MoE,
     ProcessGroupManager,
     _get_model_size,
     is_tracking_rank,
@@ -54,6 +56,8 @@ _MODELS = {
     "gpt_ensemble": GPTEnsemble,
     "gpt_parallel": GPTParallel,
     "gpt_ladder": GPTLadder,
+    "moe": MoE,
+    "moe_ladder": LadderMoE,
 }
 
 
@@ -178,7 +182,7 @@ def decode_n_tokens(
             )
 
     new_tokens, new_probs = [], []
-    
+
     for i in range(num_new_tokens):
         if pp_world_size > 1:
             if pp_rank == 0:
@@ -190,7 +194,7 @@ def decode_n_tokens(
         with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
             if pp_world_size > 1:
                 if pp_rank == 0:
-                    # print_rank_0(f"Starting decode with input of 0")                
+                    # print_rank_0(f"Starting decode with input of 0")
                     if is_ladder:
                         intermediate_hidden_states, intermediate_hidden_states1, intermediate_hidden_states2 = (
                             decode_one_token_ladder(model, cur_token, None, None, input_pos, **sampling_kwargs)
@@ -296,7 +300,7 @@ def generate(
                 )
 
     device_sync(device)
-    
+
     prefill_start = time.perf_counter()
     with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_mem_efficient=False, enable_math=True):
         if pp_world_size > 1:
@@ -337,7 +341,7 @@ def generate(
 
     device_sync(device)
     dist.barrier()
-    
+
     prefill_latency = time.perf_counter() - prefill_start
     print_rank_0(f"Prefill latency: {prefill_latency} sec")
 
@@ -351,10 +355,10 @@ def generate(
     generated_tokens, _ = decode_n_tokens(
         model, next_token.view(batch_size, -1), input_pos, max_new_tokens - 1, callback=callback, **sampling_kwargs
     )
-    
+
     device_sync(device)
     dist.barrier()
-    
+
     decode_latency = time.perf_counter() - decode_start
     print_rank_0(f"Decode latency: {decode_latency} sec")
 
@@ -522,7 +526,7 @@ def main(
     use_cuda_graphs: bool = False,
 ) -> None:
     """Generates text samples based on a pre-trained Transformer model and tokenizer."""
-    
+
     ProcessGroupManager(tensor_parallel_world_size=tp_world_size, pipeline_parallel_world_size=pp_world_size)
 
     print_rank_0(f"Using device={device}")
@@ -634,7 +638,7 @@ def main(
             print(f"Compilation time: {time.perf_counter() - t0:.2f} seconds")
 
         device_sync(device=device)  # MKG
-        
+
         if i < 0:
             continue
 
