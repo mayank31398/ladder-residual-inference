@@ -160,7 +160,7 @@ def decode_n_tokens(
     callback=lambda _: _,
     **sampling_kwargs,
 ):
-    is_ladder = isinstance(model, GPTLadder)
+    is_ladder = isinstance(model, GPTLadder) or isinstance(model, LadderMoE)
 
     pp_rank = ProcessGroupManager.get_pipeline_parallel_rank()
     pp_world_size = ProcessGroupManager.get_pipeline_parallel_world_size()
@@ -278,7 +278,7 @@ def generate(
         empty[:, :T] = prompt
     input_pos = torch.arange(0, T, device=device)
 
-    is_ladder = isinstance(model, GPTLadder)
+    is_ladder = isinstance(model, GPTLadder) or isinstance(model, LadderMoE)
 
     if pp_world_size > 1:
         if pp_rank == 0:
