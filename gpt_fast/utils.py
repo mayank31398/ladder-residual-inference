@@ -206,6 +206,27 @@ class MoE_Triton(nn.Module):
             out_features=config.dim,
         )
 
+        self.hidden_size = config.dim
+
+    def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        original_shape = hidden_states.shape
+
+        # hidden_states -> (batch_size, query_length, hidden_size)
+        hidden_states = hidden_states.view(-1, self.hidden_size)
+        # hidden_states -> (total_q, hidden_size)
+        router_logits, router_weights, selected_experts = self._compute_routing_weights(hidden_states)
+
+        # router_logits -> (total_q, num_experts)
+        # router_weights -> (total_q, top_k)
+        # selected_experts -> (total_q, top_k)
+
+        hidden_states = self._compute_experts(hidden_states, router_weights, selected_experts)
+        hidden_states = hidden_states.view(original_shape)
+
+        # hidden_states -> (batch_size, query_length, hidden_size)
+
+        return hidden_states
+
     def _compute_experts(
         self, hidden_states: torch.Tensor, router_weights: torch.Tensor, selected_experts: torch.Tensor
     ) -> torch.Tensor:
@@ -235,6 +256,29 @@ class MoE_Triton(nn.Module):
             gates=router_weights,
         )
         return hidden_states
+
+    def _compute_routing_weights(self, hidden_states: torch.Tensor) -> tuple[torch.Tensor]:
+        # hidden_states -> (total_q, hidden_size)
+        router_logits = self.gate(hidden_states)
+        # router_logits -> (total_q, num_experts)
+
+        router_weights, selected_experts = self._get_topk(router_logits)
+
+        # router_weights -> (total_q, top_k)
+        # selected_experts -> (total_q, top_k)
+
+        router_weights = F.softmax(router_weights.float(), dim=-1)
+        router_weights = router_weights.type_as(hidden_states)
+
+        return router_logits, router_weights, selected_experts
+
+    def _get_topk(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        if self.top_k == 1:
+            x, indices = x.max(dim=-1, keepdim=True)
+        else:
+            x, indices = x.topk(self.top_k, dim=-1)
+
+        return x, indices
 
 
 class Attention(nn.Module):

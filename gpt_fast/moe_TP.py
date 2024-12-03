@@ -34,6 +34,8 @@ class ModelArgs:
     norm_eps: float = 1e-5
     rope_scaling: Optional[dict] = None
     semi_compiled_model: bool = False
+    num_experts: int = None
+    num_experts_per_tok: int = None
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -48,6 +50,8 @@ class ModelArgs:
 
         assert self.dim % tp_world_size == 0
         assert self.intermediate_size % tp_world_size == 0
+        assert self.num_experts is not None
+        assert self.num_experts_per_tok is not None
 
     @classmethod
     def from_name(cls, name: str):
@@ -56,14 +60,14 @@ class ModelArgs:
 
 
 transformer_configs = {
-    "llama-3-70b": dict(
+    "mixtral-8x22b": dict(
         block_size=8192,
-        n_layer=80,
-        n_head=64,
+        n_layer=56,
+        n_head=48,
         n_local_heads=8,
-        dim=8192,
-        intermediate_size=28672,
-        vocab_size=128256,
+        dim=6144,
+        intermediate_size=16384,
+        vocab_size=65024,
         rope_base=500000,
         num_experts=8,
         num_experts_per_tok=2,

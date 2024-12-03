@@ -443,10 +443,13 @@ def _load_model(model_name, device, precision):
     model = model.to(dtype=precision)
     model = model.to_empty(device=device)
 
+    num_params = 0
     for p in model.parameters():
         torch.nn.init.normal_(p, mean=0, std=0.02)
+        num_params += p.numel()
 
     print_rank_0(model)
+    print_rank_0(num_params)
 
     return model.eval()
 
