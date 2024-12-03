@@ -37,6 +37,8 @@ class ModelArgs:
     norm_eps: float = 1e-5
     rope_scaling: Optional[dict] = None
     semi_compiled_model: bool = False
+    num_experts: int = None
+    num_experts_per_tok: int = None
 
     def __post_init__(self):
         if self.n_local_heads == -1:
@@ -51,6 +53,8 @@ class ModelArgs:
 
         assert self.dim % tp_world_size == 0
         assert self.intermediate_size % tp_world_size == 0
+        assert self.num_experts is not None
+        assert self.num_experts_per_tok is not None
 
     @classmethod
     def from_name(cls, name: str):
