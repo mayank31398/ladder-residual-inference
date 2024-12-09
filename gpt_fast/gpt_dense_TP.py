@@ -70,8 +70,8 @@ transformer_configs = {
     "3b": dict(
         block_size=2048,
         n_layer=40,
-        n_head=36,
-        n_local_heads=36,
+        n_head=72,
+        n_local_heads=72,
         dim=2304,
         intermediate_size=9216,
         vocab_size=49152,

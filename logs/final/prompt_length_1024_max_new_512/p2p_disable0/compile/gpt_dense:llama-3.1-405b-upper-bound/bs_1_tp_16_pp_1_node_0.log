@@ -1,0 +1,155 @@
+W1202 16:09:47.558000 98839 site-packages/torch/distributed/run.py:793] 
+W1202 16:09:47.558000 98839 site-packages/torch/distributed/run.py:793] *****************************************
+W1202 16:09:47.558000 98839 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1202 16:09:47.558000 98839 site-packages/torch/distributed/run.py:793] *****************************************
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+Using device=cuda
+Loading model ...
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank0]:     model = _load_model(model_name, device, precision)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank0]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank0]:     return cls(ModelArgs.from_name(name))
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank0]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank0]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+[rank0]:[W1202 16:09:54.337763572 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank1]:     model = _load_model(model_name, device, precision)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank1]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank1]:     return cls(ModelArgs.from_name(name))
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank1]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank1]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank3]:     model = _load_model(model_name, device, precision)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank3]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank3]:     return cls(ModelArgs.from_name(name))
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank3]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank3]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank5]:     main(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank5]:     model = _load_model(model_name, device, precision)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank5]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank5]:     return cls(ModelArgs.from_name(name))
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank5]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank5]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank7]:     main(
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank7]:     model = _load_model(model_name, device, precision)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank7]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank7]:     return cls(ModelArgs.from_name(name))
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank7]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank7]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank6]:     main(
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank6]:     model = _load_model(model_name, device, precision)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank6]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank6]:     return cls(ModelArgs.from_name(name))
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank6]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank6]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank4]:     main(
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank4]:     model = _load_model(model_name, device, precision)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank4]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank4]:     return cls(ModelArgs.from_name(name))
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank4]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank4]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank2]:     main(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank2]:     model = _load_model(model_name, device, precision)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank2]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank2]:     return cls(ModelArgs.from_name(name))
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 145, in __init__
+[rank2]:     self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
+[rank2]: AttributeError: 'NoneType' object has no attribute 'vocab_size'
+[rank1]:[W1202 16:09:54.556280436 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank5]:[W1202 16:09:54.648311667 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank3]:[W1202 16:09:54.665282611 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W1202 16:09:54.678635424 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank6]:[W1202 16:09:54.686160046 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank4]:[W1202 16:09:54.687939547 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank7]:[W1202 16:09:54.688785743 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W1202 16:09:55.177000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 98917 closing signal SIGTERM
+W1202 16:09:55.178000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 98918 closing signal SIGTERM
+W1202 16:09:55.178000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 98919 closing signal SIGTERM
+W1202 16:09:55.179000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 98920 closing signal SIGTERM
+W1202 16:09:55.179000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 98921 closing signal SIGTERM
+W1202 16:09:55.179000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 98922 closing signal SIGTERM
+W1202 16:09:55.179000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 98923 closing signal SIGTERM
+E1202 16:09:55.520000 98839 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 98916) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-12-02_16:09:55
+  host      : mk-xii-01.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 98916)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

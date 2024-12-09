@@ -1,13 +1,13 @@
-W1201 11:21:34.462000 456900 site-packages/torch/distributed/run.py:793] 
-W1201 11:21:34.462000 456900 site-packages/torch/distributed/run.py:793] *****************************************
-W1201 11:21:34.462000 456900 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W1201 11:21:34.462000 456900 site-packages/torch/distributed/run.py:793] *****************************************
-DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
-DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+W1202 11:51:47.006000 1558739 site-packages/torch/distributed/run.py:793] 
+W1202 11:51:47.006000 1558739 site-packages/torch/distributed/run.py:793] *****************************************
+W1202 11:51:47.006000 1558739 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1202 11:51:47.006000 1558739 site-packages/torch/distributed/run.py:793] *****************************************
 DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
 DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
 Using device=cuda
 Loading model ...
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
 GPTLadder(
   (layers): ModuleList(
     (0-39): 40 x LadderTransformerBlock(
@@ -27,435 +27,151 @@ GPTLadder(
   (norm): RMSNorm()
   (output): Linear(in_features=8192, out_features=128256, bias=False)
 )
-Time to load model: 0.13 seconds
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
+Time to load model: 0.10 seconds
 Compiling prefill with dynamic=False
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
   warnings.warn(
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
   warnings.warn(
-/home/charlie/skip-residual/gpt-fast/tmpkppd5kt_/main.c:422:1: fatal error: error writing to /tmp/cctNhjY5.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpm7wwnzey/main.c:422:1: fatal error: error writing to /tmp/ccj36GUf.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpegd58krc/main.c:422:1: fatal error: error writing to /tmp/ccQMsj5z.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
-[rank0]:     main(
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 622, in main
-[rank0]:     y, decode_latency, prefill_latency = generate(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank0]:     return func(*args, **kwargs)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 305, in generate
-[rank0]:     prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
-[rank0]:     return fn(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
-[rank0]:     return self._torchdynamo_orig_callable(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
-[rank0]:     return _compile(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
-[rank0]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
-[rank0]:     return _compile_inner(code, one_graph, hooks, transform)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
-[rank0]:     return function(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
-[rank0]:     out_code = transform_code_object(code, transform)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
-[rank0]:     transformations(instructions, code_options)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
-[rank0]:     return fn(*args, **kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
-[rank0]:     tracer.run()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
-[rank0]:     super().run()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
-[rank0]:     while self.step():
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
-[rank0]:     self.dispatch_table[inst.opcode](self, inst)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3103, in RETURN_VALUE
-[rank0]:     self._return(inst)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3088, in _return
-[rank0]:     self.output.compile_subgraph(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1110, in compile_subgraph
-[rank0]:     self.compile_and_call_fx_graph(tx, pass2.graph_output_vars(), root)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1346, in compile_and_call_fx_graph
-[rank0]:     compiled_fn = self.call_user_compiler(gm)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1396, in call_user_compiler
-[rank0]:     return self._call_user_compiler(gm)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1445, in _call_user_compiler
-[rank0]:     raise BackendCompilerFailed(self.compiler_fn, e).with_traceback(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1426, in _call_user_compiler
-[rank0]:     compiled_fn = compiler_fn(gm, self.example_inputs())
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/repro/after_dynamo.py", line 130, in __call__
-[rank0]:     compiled_gm = compiler_fn(gm, example_inputs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/repro/after_dynamo.py", line 130, in __call__
-[rank0]:     compiled_gm = compiler_fn(gm, example_inputs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/__init__.py", line 2301, in __call__
-[rank0]:     return compile_fx(model_, inputs_, config_patches=self.config)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1708, in compile_fx
-[rank0]:     return aot_autograd(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/backends/common.py", line 72, in __call__
-[rank0]:     cg = aot_module_simplified(gm, example_inputs, **self.kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1103, in aot_module_simplified
-[rank0]:     compiled_fn = dispatch_and_compile()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1079, in dispatch_and_compile
-[rank0]:     compiled_fn, _ = create_aot_dispatcher_function(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 527, in create_aot_dispatcher_function
-[rank0]:     return _create_aot_dispatcher_function(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 778, in _create_aot_dispatcher_function
-[rank0]:     compiled_fn, fw_metadata = compiler_fn(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/jit_compile_runtime_wrappers.py", line 197, in aot_dispatch_base
-[rank0]:     compiled_fw = compiler(fw_module, updated_flat_args)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1525, in fw_compiler_base
-[rank0]:     return _fw_compiler_base(model, example_inputs, is_inference)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1594, in _fw_compiler_base
-[rank0]:     return inner_compile(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 587, in compile_fx_inner
-[rank0]:     return wrap_compiler_debug(_compile_fx_inner, compiler_name="inductor")(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/repro/after_aot.py", line 102, in debug_wrapper
-[rank0]:     inner_compiled_fn = compiler_fn(gm, example_inputs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 744, in _compile_fx_inner
-[rank0]:     compiled_graph = FxGraphCache.load(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1504, in load
-[rank0]:     compiled_graph = compile_fx_fn(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 651, in codegen_and_compile
-[rank0]:     compiled_graph = fx_codegen_and_compile(gm, example_inputs, **fx_kwargs)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 962, in fx_codegen_and_compile
-[rank0]:     compiled_fn = graph.compile_to_fn()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2034, in compile_to_fn
-[rank0]:     return self.compile_to_module().call
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/graph.py", line 1954, in compile_to_module
-[rank0]:     return self._compile_to_module()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/graph.py", line 1988, in _compile_to_module
-[rank0]:     mod = PyCodeCache.load_by_key_path(
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 3058, in load_by_key_path
-[rank0]:     mod = _reload_python_module(key, path)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
-[rank0]:     exec(code, mod.__dict__, mod.__dict__)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/re/crepiifpigedzu6zhwwjrnvo4js2v23ntz3yji2gmjyq3tmpgqcm.py", line 716, in <module>
-[rank0]:     async_compile.wait(globals())
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/async_compile.py", line 319, in wait
-[rank0]:     scope[key] = result.result()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 3535, in result
-[rank0]:     result = self.future.result()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/concurrent/futures/_base.py", line 458, in result
-[rank0]:     return self.__get_result()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
-[rank0]:     raise self._exception
-[rank0]: torch._dynamo.exc.BackendCompilerFailed: backend='inductor' raised:
-[rank0]: SubprocException: An exception occurred in a subprocess:
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+Prefill latency: 99.70534474996384 sec
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 113.46176696999464 sec
+Compilation time: 213.14 seconds
+Compilation time: 213.13 seconds
+Compilation time: 213.17 seconds
+Compilation time: 213.12 seconds
+Prefill latency: 3.265742801944725 sec
+Decode latency: 18.942975701997057 sec
+Prefill latency: 3.2435997870052233 sec
+Decode latency: 18.944980648928322 sec
+Prefill latency: 3.2545875719515607 sec
+Decode latency: 18.94547181308735 sec
+Prefill latency: 3.2445420490112156 sec
+Decode latency: 18.93975135497749 sec
+Prefill latency: 3.2503772779600695 sec
+Decode latency: 18.9457104310859 sec
+Time for inference 1: 22.20 sec total, 369.03 tokens/sec
+Decode latency: 18.95 sec
+Prefill latency: 3.25 sec
+Bandwidth achieved: 13406.34 GB/s
+FLOPS achieved: 40.22 TF/s
 
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_worker/subproc_pool.py", line 280, in do_job
-[rank0]:     result = job()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 68, in _worker_compile_triton
-[rank0]:     load_kernel().precompile(warm_cache_only=True)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 13, in _reload_triton_kernel_in_subproc
-[rank0]:     return _module_to_triton_kernel(reload_module(), kernel_name)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 29, in _reload_python_module_in_subproc
-[rank0]:     return codecache.PyCodeCache.load_by_key_path(key, path)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 3058, in load_by_key_path
-[rank0]:     mod = _reload_python_module(key, path)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
-[rank0]:     exec(code, mod.__dict__, mod.__dict__)
-[rank0]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/tc/ctcivfl6mdaevorsollilm7gi2slgsdczjz2zkwxalhckx3tb5w4.py", line 9, in <module>
-[rank0]:     triton_helpers.set_driver_to_gpu()
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_helpers.py", line 57, in set_driver_to_gpu
-[rank0]:     driver.set_active(backend.driver())
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 371, in __init__
-[rank0]:     self.utils = CudaUtils()  # TODO: make static
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 80, in __init__
-[rank0]:     mod = compile_module_from_src(Path(os.path.join(dirname, "driver.c")).read_text(), "cuda_utils")
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 57, in compile_module_from_src
-[rank0]:     so = _build(name, src_path, tmpdir, library_dirs(), include_dir, libraries)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/build.py", line 48, in _build
-[rank0]:     ret = subprocess.check_call(cc_cmd)
-[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 369, in check_call
-[rank0]:     raise CalledProcessError(retcode, cmd)
-[rank0]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpkppd5kt_/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpkppd5kt_/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpkppd5kt_', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
+Prefill latency: 3.2624677980784327 sec
+Decode latency: 18.94096994108986 sec
+Time for inference 2: 22.21 sec total, 368.91 tokens/sec
+Decode latency: 18.94 sec
+Prefill latency: 3.26 sec
+Bandwidth achieved: 13401.97 GB/s
+FLOPS achieved: 40.21 TF/s
 
+Prefill latency: 3.2613447159528732 sec
+Decode latency: 18.93905933597125 sec
+Time for inference 3: 22.20 sec total, 368.96 tokens/sec
+Decode latency: 18.94 sec
+Prefill latency: 3.26 sec
+Bandwidth achieved: 13403.64 GB/s
+FLOPS achieved: 40.21 TF/s
 
-[rank0]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+Prefill latency: 3.2527096590492874 sec
+Decode latency: 18.941898021032102 sec
+Time for inference 4: 22.20 sec total, 369.06 tokens/sec
+Decode latency: 18.94 sec
+Prefill latency: 3.25 sec
+Bandwidth achieved: 13407.22 GB/s
+FLOPS achieved: 40.22 TF/s
 
+Prefill latency: 3.2556960340589285 sec
+Decode latency: 18.94566555507481 sec
+Time for inference 5: 22.20 sec total, 368.95 tokens/sec
+Decode latency: 18.95 sec
+Prefill latency: 3.26 sec
+Bandwidth achieved: 13403.11 GB/s
+FLOPS achieved: 40.21 TF/s
 
-[rank0]: You can suppress this exception and fall back to eager by setting:
-[rank0]:     import torch._dynamo
-[rank0]:     torch._dynamo.config.suppress_errors = True
+Prefill latency: 3.2532890089787543 sec
+Decode latency: 18.943918280070648 sec
+Time for inference 6: 22.20 sec total, 369.02 tokens/sec
+Decode latency: 18.94 sec
+Prefill latency: 3.25 sec
+Bandwidth achieved: 13405.71 GB/s
+FLOPS achieved: 40.22 TF/s
 
-/home/charlie/skip-residual/gpt-fast/tmp7w2dunen/main.c:422:1: fatal error: error writing to /tmp/ccwpexKO.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpdblcfujj/main.c:422:1: fatal error: error writing to /tmp/ccqEAOBd.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpct_ym5f2/main.c:422:1: fatal error: error writing to /tmp/ccl1J8AE.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp4m8s0h9m/main.c:422:1: fatal error: error writing to /tmp/ccIUkpRM.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmppjgrl4vk/main.c:422:1: fatal error: error writing to /tmp/ccgl9vz8.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp2__u7diy/main.c:422:1: fatal error: error writing to /tmp/ccMNxfLK.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp8hgz50cf/main.c:422:1: fatal error: error writing to /tmp/cco0EHr5.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp4pbfav80/main.c:422:1: fatal error: error writing to /tmp/cczXr56h.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmperzp4akv/main.c:422:1: fatal error: error writing to /tmp/ccZoFK1X.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpsexnih3w/main.c:422:1: fatal error: error writing to /tmp/ccCfO1l6.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpr6fx3bn6/main.c:422:1: fatal error: error writing to /tmp/ccWdahqW.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmp_z4f9344/main.c:422:1: fatal error: error writing to /tmp/ccemktgt.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpu2v9v3ux/main.c:422:1: fatal error: error writing to /tmp/cclZkr1R.s: No space left on device
-  422 | }
-      | ^
-/home/charlie/skip-residual/gpt-fast/tmprwquzvpe/main.c:422:1: fatal error: error writing to /tmp/cckzdCXc.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-compilation terminated.
-[rank1]: Traceback (most recent call last):
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
-[rank1]:     main(
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 622, in main
-[rank1]:     y, decode_latency, prefill_latency = generate(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank1]:     return func(*args, **kwargs)
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 305, in generate
-[rank1]:     prefill_intermediate, prefill_intermediate1, prefill_intermediate2 = prefill_ladder(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 556, in _fn
-[rank1]:     return fn(*args, **kwargs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 1395, in __call__
-[rank1]:     return self._torchdynamo_orig_callable(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 545, in __call__
-[rank1]:     return _compile(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 977, in _compile
-[rank1]:     guarded_code = compile_inner(code, one_graph, hooks, transform)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 706, in compile_inner
-[rank1]:     return _compile_inner(code, one_graph, hooks, transform)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_utils_internal.py", line 95, in wrapper_function
-[rank1]:     return function(*args, **kwargs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 741, in _compile_inner
-[rank1]:     out_code = transform_code_object(code, transform)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1348, in transform_code_object
-[rank1]:     transformations(instructions, code_options)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 229, in _fn
-[rank1]:     return fn(*args, **kwargs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 658, in transform
-[rank1]:     tracer.run()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2912, in run
-[rank1]:     super().run()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1120, in run
-[rank1]:     while self.step():
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1032, in step
-[rank1]:     self.dispatch_table[inst.opcode](self, inst)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3103, in RETURN_VALUE
-[rank1]:     self._return(inst)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 3088, in _return
-[rank1]:     self.output.compile_subgraph(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1110, in compile_subgraph
-[rank1]:     self.compile_and_call_fx_graph(tx, pass2.graph_output_vars(), root)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1346, in compile_and_call_fx_graph
-[rank1]:     compiled_fn = self.call_user_compiler(gm)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1396, in call_user_compiler
-[rank1]:     return self._call_user_compiler(gm)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1445, in _call_user_compiler
-[rank1]:     raise BackendCompilerFailed(self.compiler_fn, e).with_traceback(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/output_graph.py", line 1426, in _call_user_compiler
-[rank1]:     compiled_fn = compiler_fn(gm, self.example_inputs())
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/repro/after_dynamo.py", line 130, in __call__
-[rank1]:     compiled_gm = compiler_fn(gm, example_inputs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/repro/after_dynamo.py", line 130, in __call__
-[rank1]:     compiled_gm = compiler_fn(gm, example_inputs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/__init__.py", line 2301, in __call__
-[rank1]:     return compile_fx(model_, inputs_, config_patches=self.config)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1708, in compile_fx
-[rank1]:     return aot_autograd(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/backends/common.py", line 72, in __call__
-[rank1]:     cg = aot_module_simplified(gm, example_inputs, **self.kwargs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1103, in aot_module_simplified
-[rank1]:     compiled_fn = dispatch_and_compile()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 1079, in dispatch_and_compile
-[rank1]:     compiled_fn, _ = create_aot_dispatcher_function(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 527, in create_aot_dispatcher_function
-[rank1]:     return _create_aot_dispatcher_function(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/aot_autograd.py", line 778, in _create_aot_dispatcher_function
-[rank1]:     compiled_fn, fw_metadata = compiler_fn(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_functorch/_aot_autograd/jit_compile_runtime_wrappers.py", line 197, in aot_dispatch_base
-[rank1]:     compiled_fw = compiler(fw_module, updated_flat_args)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1525, in fw_compiler_base
-[rank1]:     return _fw_compiler_base(model, example_inputs, is_inference)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1594, in _fw_compiler_base
-[rank1]:     return inner_compile(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 587, in compile_fx_inner
-[rank1]:     return wrap_compiler_debug(_compile_fx_inner, compiler_name="inductor")(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_dynamo/repro/after_aot.py", line 102, in debug_wrapper
-[rank1]:     inner_compiled_fn = compiler_fn(gm, example_inputs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 744, in _compile_fx_inner
-[rank1]:     compiled_graph = FxGraphCache.load(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 1504, in load
-[rank1]:     compiled_graph = compile_fx_fn(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 651, in codegen_and_compile
-[rank1]:     compiled_graph = fx_codegen_and_compile(gm, example_inputs, **fx_kwargs)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 962, in fx_codegen_and_compile
-[rank1]:     compiled_fn = graph.compile_to_fn()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2034, in compile_to_fn
-[rank1]:     return self.compile_to_module().call
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/graph.py", line 1954, in compile_to_module
-[rank1]:     return self._compile_to_module()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/graph.py", line 1988, in _compile_to_module
-[rank1]:     mod = PyCodeCache.load_by_key_path(
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 3058, in load_by_key_path
-[rank1]:     mod = _reload_python_module(key, path)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
-[rank1]:     exec(code, mod.__dict__, mod.__dict__)
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/ia/ciacyhpgpurxfgymczncxttccvreljrbwqiqqdqdfhrunhwmdggy.py", line 716, in <module>
-[rank1]:     async_compile.wait(globals())
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/async_compile.py", line 319, in wait
-[rank1]:     scope[key] = result.result()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 3535, in result
-[rank1]:     result = self.future.result()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/concurrent/futures/_base.py", line 458, in result
-[rank1]:     return self.__get_result()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
-[rank1]:     raise self._exception
-[rank1]: torch._dynamo.exc.BackendCompilerFailed: backend='inductor' raised:
-[rank1]: SubprocException: An exception occurred in a subprocess:
+Prefill latency: 3.2646061530103907 sec
+Decode latency: 18.94686008291319 sec
+Time for inference 7: 22.21 sec total, 368.78 tokens/sec
+Decode latency: 18.95 sec
+Prefill latency: 3.26 sec
+Bandwidth achieved: 13396.99 GB/s
+FLOPS achieved: 40.19 TF/s
 
-[rank1]: Traceback (most recent call last):
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_worker/subproc_pool.py", line 280, in do_job
-[rank1]:     result = job()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 68, in _worker_compile_triton
-[rank1]:     load_kernel().precompile(warm_cache_only=True)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 13, in _reload_triton_kernel_in_subproc
-[rank1]:     return _module_to_triton_kernel(reload_module(), kernel_name)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 29, in _reload_python_module_in_subproc
-[rank1]:     return codecache.PyCodeCache.load_by_key_path(key, path)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/codecache.py", line 3058, in load_by_key_path
-[rank1]:     mod = _reload_python_module(key, path)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/compile_tasks.py", line 45, in _reload_python_module
-[rank1]:     exec(code, mod.__dict__, mod.__dict__)
-[rank1]:   File "/home/charlie/skip-residual/gpt-fast/torchinductor_charlie/qp/cqpxjd3wtm2cmcrpapd5s6rsveub6vahtqievthp4ku2k46injzd.py", line 9, in <module>
-[rank1]:     triton_helpers.set_driver_to_gpu()
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/runtime/triton_helpers.py", line 57, in set_driver_to_gpu
-[rank1]:     driver.set_active(backend.driver())
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 371, in __init__
-[rank1]:     self.utils = CudaUtils()  # TODO: make static
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 80, in __init__
-[rank1]:     mod = compile_module_from_src(Path(os.path.join(dirname, "driver.c")).read_text(), "cuda_utils")
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 57, in compile_module_from_src
-[rank1]:     so = _build(name, src_path, tmpdir, library_dirs(), include_dir, libraries)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/runtime/build.py", line 48, in _build
-[rank1]:     ret = subprocess.check_call(cc_cmd)
-[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/subprocess.py", line 369, in check_call
-[rank1]:     raise CalledProcessError(retcode, cmd)
-[rank1]: subprocess.CalledProcessError: Command '['/usr/bin/gcc', '/home/charlie/skip-residual/gpt-fast/tmpsexnih3w/main.c', '-O3', '-shared', '-fPIC', '-o', '/home/charlie/skip-residual/gpt-fast/tmpsexnih3w/cuda_utils.cpython-310-x86_64-linux-gnu.so', '-lcuda', '-L/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/lib', '-L/lib/x86_64-linux-gnu', '-I/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/triton/backends/nvidia/include', '-I/home/charlie/skip-residual/gpt-fast/tmpsexnih3w', '-I/home/charlie/anaconda3/envs/gpt-fast/include/python3.10']' returned non-zero exit status 1.
+Prefill latency: 3.261215426027775 sec
+Decode latency: 18.94571005704347 sec
+Time for inference 8: 22.21 sec total, 368.85 tokens/sec
+Decode latency: 18.95 sec
+Prefill latency: 3.26 sec
+Bandwidth achieved: 13399.75 GB/s
+FLOPS achieved: 40.20 TF/s
 
+Prefill latency: 3.252534109982662 sec
+Decode latency: 18.946721028070897 sec
+Time for inference 9: 22.20 sec total, 368.98 tokens/sec
+Decode latency: 18.95 sec
+Prefill latency: 3.25 sec
+Bandwidth achieved: 13404.46 GB/s
+FLOPS achieved: 40.21 TF/s
 
-[rank1]: Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+Prefill latency: 3.2585183050250635 sec
+Decode latency: 18.944401771994308 sec
+Time for inference 10: 22.21 sec total, 368.92 tokens/sec
+Decode latency: 18.94 sec
+Prefill latency: 3.26 sec
+Bandwidth achieved: 13402.22 GB/s
+FLOPS achieved: 40.21 TF/s
 
-
-[rank1]: You can suppress this exception and fall back to eager by setting:
-[rank1]:     import torch._dynamo
-[rank1]:     torch._dynamo.config.suppress_errors = True
-
-/home/charlie/skip-residual/gpt-fast/tmpzh61ah9e/main.c:422:1: fatal error: error writing to /tmp/cc7fYk39.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmphkj1ijae/main.c:422:1: fatal error: error writing to /tmp/cciCgMGI.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpitje2cjq/main.c:422:1: fatal error: error writing to /tmp/cc8ctbzO.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpj5hwloa4/main.c:422:1: fatal error: error writing to /tmp/cc5hsuPt.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-/home/charlie/skip-residual/gpt-fast/tmpafm8iqam/main.c:422:1: fatal error: error writing to /tmp/ccJW431u.s: No space left on device
-  422 | }
-      | ^
-compilation terminated.
-[rank0]:[W1201 11:22:14.117880397 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-[rank1]:[W1201 11:22:15.235709821 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-W1201 11:22:16.156000 456900 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 456972 closing signal SIGTERM
-W1201 11:22:16.156000 456900 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 456973 closing signal SIGTERM
-E1201 11:22:16.370000 456900 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 456970) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
-Traceback (most recent call last):
-  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
-    sys.exit(main())
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
-    return f(*args, **kwargs)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
-    run(args)
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
-    elastic_launch(
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
-    raise ChildFailedError(
-torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
-============================================================
-benchmark.py FAILED
-------------------------------------------------------------
-Failures:
-[1]:
-  time      : 2024-12-01_11:22:16
-  host      : mk-xii-22.cloud.together.ai
-  rank      : 1 (local_rank: 1)
-  exitcode  : 1 (pid: 456971)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-------------------------------------------------------------
-Root Cause (first observed failure):
-[0]:
-  time      : 2024-12-01_11:22:16
-  host      : mk-xii-22.cloud.together.ai
-  rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 456970)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-============================================================
+==========
+Batch Size: 16
+Prompt Length: 1024
+Generated tokens: 512
+Average decode latency: 18.9441 sec
+Average prefill latency: 3.2573 sec
+Average tokens/sec: 368.95
+Memory used: 52.95 GB
+Done. we are killing the process
+[rank1]:[W1202 12:00:38.106071227 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank0]:[W1202 12:00:38.199585440 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W1202 12:00:38.822870168 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())

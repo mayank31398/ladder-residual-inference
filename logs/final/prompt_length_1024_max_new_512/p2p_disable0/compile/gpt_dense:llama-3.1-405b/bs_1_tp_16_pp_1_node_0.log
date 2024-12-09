@@ -1,0 +1,251 @@
+W1202 16:10:28.986000 99226 site-packages/torch/distributed/run.py:793] 
+W1202 16:10:28.986000 99226 site-packages/torch/distributed/run.py:793] *****************************************
+W1202 16:10:28.986000 99226 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1202 16:10:28.986000 99226 site-packages/torch/distributed/run.py:793] *****************************************
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+Using device=cuda
+Loading model ...
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank0]:     model = _load_model(model_name, device, precision)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank0]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank0]:     return cls(ModelArgs.from_name(name))
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank0]:     self.layers = nn.ModuleList(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank0]:     self += modules
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank0]:     return self.extend(modules)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank0]:     for i, module in enumerate(modules):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank0]:     DenseTransformerBlock(config)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank0]:     self.attention = Attention(config)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank0]:     assert config.n_local_heads % tp_world_size == 0
+[rank0]: AssertionError
+[rank0]:[W1202 16:10:36.328115574 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank6]:     main(
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank6]:     model = _load_model(model_name, device, precision)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank6]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank6]:     return cls(ModelArgs.from_name(name))
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank6]:     self.layers = nn.ModuleList(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank6]:     self += modules
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank6]:     return self.extend(modules)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank6]:     for i, module in enumerate(modules):
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank6]:     DenseTransformerBlock(config)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank6]:     self.attention = Attention(config)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank6]:     assert config.n_local_heads % tp_world_size == 0
+[rank6]: AssertionError
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank3]:     model = _load_model(model_name, device, precision)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank3]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank3]:     return cls(ModelArgs.from_name(name))
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank3]:     self.layers = nn.ModuleList(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank3]:     self += modules
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank3]:     return self.extend(modules)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank3]:     for i, module in enumerate(modules):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank3]:     DenseTransformerBlock(config)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank3]:     self.attention = Attention(config)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank3]:     assert config.n_local_heads % tp_world_size == 0
+[rank3]: AssertionError
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank2]:     main(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank2]:     model = _load_model(model_name, device, precision)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank2]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank2]:     return cls(ModelArgs.from_name(name))
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank2]:     self.layers = nn.ModuleList(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank2]:     self += modules
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank2]:     return self.extend(modules)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank2]:     for i, module in enumerate(modules):
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank2]:     DenseTransformerBlock(config)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank2]:     self.attention = Attention(config)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank2]:     assert config.n_local_heads % tp_world_size == 0
+[rank2]: AssertionError
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank7]:     main(
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank7]:     model = _load_model(model_name, device, precision)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank7]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank7]:     return cls(ModelArgs.from_name(name))
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank7]:     self.layers = nn.ModuleList(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank7]:     self += modules
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank7]:     return self.extend(modules)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank7]:     for i, module in enumerate(modules):
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank7]:     DenseTransformerBlock(config)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank7]:     self.attention = Attention(config)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank7]:     assert config.n_local_heads % tp_world_size == 0
+[rank7]: AssertionError
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank1]:     model = _load_model(model_name, device, precision)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank1]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank1]:     return cls(ModelArgs.from_name(name))
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank1]:     self.layers = nn.ModuleList(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank1]:     self += modules
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank1]:     return self.extend(modules)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank1]:     for i, module in enumerate(modules):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank1]:     DenseTransformerBlock(config)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank1]:     self.attention = Attention(config)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank1]:     assert config.n_local_heads % tp_world_size == 0
+[rank1]: AssertionError
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank4]:     main(
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank4]:     model = _load_model(model_name, device, precision)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank4]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank4]:     return cls(ModelArgs.from_name(name))
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank4]:     self.layers = nn.ModuleList(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank4]:     self += modules
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank4]:     return self.extend(modules)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank4]:     for i, module in enumerate(modules):
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank4]:     DenseTransformerBlock(config)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank4]:     self.attention = Attention(config)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank4]:     assert config.n_local_heads % tp_world_size == 0
+[rank4]: AssertionError
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank5]:     main(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 533, in main
+[rank5]:     model = _load_model(model_name, device, precision)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 437, in _load_model
+[rank5]:     model = _MODELS[model_name.split(":")[0]].from_name(model_name.split(":")[1])
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 213, in from_name
+[rank5]:     return cls(ModelArgs.from_name(name))
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 149, in __init__
+[rank5]:     self.layers = nn.ModuleList(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 310, in __init__
+[rank5]:     self += modules
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 359, in __iadd__
+[rank5]:     return self.extend(modules)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/container.py", line 442, in extend
+[rank5]:     for i, module in enumerate(modules):
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 150, in <genexpr>
+[rank5]:     DenseTransformerBlock(config)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 219, in __init__
+[rank5]:     self.attention = Attention(config)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 160, in __init__
+[rank5]:     assert config.n_local_heads % tp_world_size == 0
+[rank5]: AssertionError
+[rank6]:[W1202 16:10:36.632283136 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank3]:[W1202 16:10:36.635058694 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W1202 16:10:36.667211268 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank1]:[W1202 16:10:36.714642421 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank4]:[W1202 16:10:36.717340254 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank7]:[W1202 16:10:36.742594638 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank5]:[W1202 16:10:37.772680370 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W1202 16:10:37.208000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 99309 closing signal SIGTERM
+W1202 16:10:37.209000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 99310 closing signal SIGTERM
+W1202 16:10:37.209000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 99311 closing signal SIGTERM
+W1202 16:10:37.210000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 99312 closing signal SIGTERM
+W1202 16:10:37.210000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 99313 closing signal SIGTERM
+W1202 16:10:37.210000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 99314 closing signal SIGTERM
+W1202 16:10:37.210000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 99315 closing signal SIGTERM
+E1202 16:10:37.539000 99226 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 99308) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-12-02_16:10:37
+  host      : mk-xii-01.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 99308)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

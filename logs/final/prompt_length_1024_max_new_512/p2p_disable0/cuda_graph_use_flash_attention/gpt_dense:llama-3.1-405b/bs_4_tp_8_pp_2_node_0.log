@@ -1,0 +1,265 @@
+W1202 17:19:29.089000 128451 site-packages/torch/distributed/run.py:793] 
+W1202 17:19:29.089000 128451 site-packages/torch/distributed/run.py:793] *****************************************
+W1202 17:19:29.089000 128451 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1202 17:19:29.089000 128451 site-packages/torch/distributed/run.py:793] *****************************************
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank0]:     main(
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank0]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank0]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank0]:     output = model(x, input_pos)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank0]:     x = self.tok_embeddings(x)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank0]:     return F.embedding(
+[rank0]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank0]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank0]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank3]:     main(
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank3]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank3]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank3]:     output = model(x, input_pos)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank3]:     x = self.tok_embeddings(x)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank3]:     return F.embedding(
+[rank3]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank3]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank3]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank5]:     main(
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank5]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank5]:     return func(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank5]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank5]:     output = model(x, input_pos)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank5]:     return forward_call(*args, **kwargs)
+[rank5]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank5]:     x = self.tok_embeddings(x)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank5]:     return forward_call(*args, **kwargs)
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank5]:     return F.embedding(
+[rank5]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank5]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank5]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank4]:     main(
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank4]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank4]:     return func(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank4]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank4]:     output = model(x, input_pos)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank4]:     x = self.tok_embeddings(x)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank4]:     return F.embedding(
+[rank4]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank4]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank4]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank2]:     main(
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank2]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank2]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank2]:     output = model(x, input_pos)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank2]:     x = self.tok_embeddings(x)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank2]:     return F.embedding(
+[rank2]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank2]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank2]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank1]:     main(
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank1]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank1]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank1]:     output = model(x, input_pos)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank1]:     x = self.tok_embeddings(x)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank1]:     return F.embedding(
+[rank1]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank1]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank1]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank6]:     main(
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank6]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank6]:     return func(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank6]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank6]:     output = model(x, input_pos)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank6]:     return forward_call(*args, **kwargs)
+[rank6]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank6]:     x = self.tok_embeddings(x)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank6]:     return forward_call(*args, **kwargs)
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank6]:     return F.embedding(
+[rank6]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank6]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank6]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank7]:     main(
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 570, in main
+[rank7]:     decode_graph, static_cur_token, static_decode_input_pos, static_next_token_decode = get_cuda_graphs_for_decode(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank7]:     return func(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 496, in get_cuda_graphs_for_decode
+[rank7]:     decode_one_token(model, static_cur_token, static_input_pos, **sampling_kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 125, in decode_one_token
+[rank7]:     output = model(x, input_pos)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank7]:     return forward_call(*args, **kwargs)
+[rank7]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 200, in forward
+[rank7]:     x = self.tok_embeddings(x)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank7]:     return forward_call(*args, **kwargs)
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+[rank7]:     return F.embedding(
+[rank7]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/functional.py", line 2551, in embedding
+[rank7]:     return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+[rank7]: RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)
+[rank3]:[W1202 17:19:46.833424667 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank6]:[W1202 17:19:46.837615692 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank0]:[W1202 17:19:46.847486571 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank4]:[W1202 17:19:46.869997923 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W1202 17:19:46.903484734 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank1]:[W1202 17:19:46.925644515 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank5]:[W1202 17:19:46.935493943 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank7]:[W1202 17:19:46.945299691 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W1202 17:19:47.387000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 128520 closing signal SIGTERM
+W1202 17:19:47.390000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 128521 closing signal SIGTERM
+W1202 17:19:47.392000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 128522 closing signal SIGTERM
+W1202 17:19:47.395000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 128523 closing signal SIGTERM
+W1202 17:19:47.397000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 128524 closing signal SIGTERM
+W1202 17:19:47.400000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 128525 closing signal SIGTERM
+W1202 17:19:47.402000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 128526 closing signal SIGTERM
+E1202 17:19:48.131000 128451 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 128519) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-12-02_17:19:47
+  host      : mk-xii-01.cloud.together.ai
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 128519)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

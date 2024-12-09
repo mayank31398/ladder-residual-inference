@@ -1,15 +1,13 @@
-W1201 23:20:50.944000 1338116 site-packages/torch/distributed/run.py:793] 
-W1201 23:20:50.944000 1338116 site-packages/torch/distributed/run.py:793] *****************************************
-W1201 23:20:50.944000 1338116 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W1201 23:20:50.944000 1338116 site-packages/torch/distributed/run.py:793] *****************************************
-DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
-DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+W1202 12:58:09.758000 1595178 site-packages/torch/distributed/run.py:793] 
+W1202 12:58:09.758000 1595178 site-packages/torch/distributed/run.py:793] *****************************************
+W1202 12:58:09.758000 1595178 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1202 12:58:09.758000 1595178 site-packages/torch/distributed/run.py:793] *****************************************
 DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
 DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
 Using device=cuda
 Loading model ...
-/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
-  self.gen = func(*args, **kwds)
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1], [2, 3]], mesh_dim_names=('pp', 'tp'))
 GPTEnsemble(
   (layers): ModuleList(
     (0-39): 40 x EnsembleTransformerBlock(
@@ -29,15 +27,25 @@ GPTEnsemble(
   (norm): RMSNorm()
   (output): Linear(in_features=8192, out_features=128256, bias=False)
 )
+Time to load model: 1.13 seconds
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
-Time to load model: 1.13 seconds
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
 Compiling prefill with dynamic=False
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
-Prefill latency: 31.975295287906192 sec
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/_inductor/compile_fx.py:222: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+Prefill latency: 72.265184343094 sec
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
@@ -62,108 +70,108 @@ Prefill latency: 31.975295287906192 sec
   self.gen = func(*args, **kwds)
 /home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
   self.gen = func(*args, **kwds)
-Decode latency: 31.78572622302454 secCompilation time: 63.88 seconds
-
-Compilation time: 63.96 seconds
-Compilation time: 63.83 seconds
-Compilation time: 63.76 seconds
-Prefill latency: 0.1897703770082444 sec
-Decode latency: 13.45540290500503 sec
-Prefill latency: 0.1857137141050771 sec
-Decode latency: 13.455750123946927 sec
-Prefill latency: 0.18713099299930036 sec
-Decode latency: 13.455618222011253 sec
-Prefill latency: 0.18592238903511316 sec
-Decode latency: 13.451956400997005 sec
-Prefill latency: 0.18582350201904774 sec
-Decode latency: 13.455966349109076 sec
-Time for inference 1: 13.64 sec total, 37.53 tokens/sec
+Decode latency: 93.46257511107251 sec
+Compilation time: 165.79 seconds
+Compilation time: 165.71 seconds
+Compilation time: 165.73 seconds
+Compilation time: 165.81 seconds
+Prefill latency: 0.18811305100098252 sec
+Decode latency: 13.459325379109941 sec
+Prefill latency: 0.18719209299888462 sec
+Decode latency: 13.459490449982695 sec
+Prefill latency: 0.1862168760271743 sec
+Decode latency: 13.459063906921074 sec
+Prefill latency: 0.1855600419221446 sec
+Decode latency: 13.458071097033098 sec
+Prefill latency: 0.18544358003418893 sec
+Decode latency: 13.458516373997554 sec
+Time for inference 1: 13.65 sec total, 37.52 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.27 GB/s
+Bandwidth achieved: 1363.02 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.18663136998657137 sec
-Decode latency: 13.455871793092228 sec
-Time for inference 2: 13.64 sec total, 37.52 tokens/sec
+Prefill latency: 0.18822764500509948 sec
+Decode latency: 13.457871228107251 sec
+Time for inference 2: 13.65 sec total, 37.51 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.19 GB/s
+Bandwidth achieved: 1362.80 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.18617420899681747 sec
-Decode latency: 13.454869004082866 sec
-Time for inference 3: 13.64 sec total, 37.53 tokens/sec
-Decode latency: 13.45 sec
-Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.32 GB/s
-FLOPS achieved: 4.09 TF/s
-
-Prefill latency: 0.18636200902983546 sec
-Decode latency: 13.45576806308236 sec
-Time for inference 4: 13.64 sec total, 37.53 tokens/sec
+Prefill latency: 0.18630633200518787 sec
+Decode latency: 13.45773319201544 sec
+Time for inference 3: 13.65 sec total, 37.52 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.23 GB/s
+Bandwidth achieved: 1363.01 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.18587770697195083 sec
-Decode latency: 13.456925573991612 sec
-Time for inference 5: 13.64 sec total, 37.52 tokens/sec
+Prefill latency: 0.18717357295099646 sec
+Decode latency: 13.457317664055154 sec
+Time for inference 4: 13.65 sec total, 37.52 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.16 GB/s
+Bandwidth achieved: 1362.96 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.18823199591133744 sec
-Decode latency: 13.455111113958992 sec
-Time for inference 6: 13.65 sec total, 37.52 tokens/sec
+Prefill latency: 0.1882065850077197 sec
+Decode latency: 13.456730050034821 sec
+Time for inference 5: 13.65 sec total, 37.52 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.13 GB/s
+Bandwidth achieved: 1362.91 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.1857807250926271 sec
-Decode latency: 13.455958672915585 sec
-Time for inference 7: 13.64 sec total, 37.53 tokens/sec
+Prefill latency: 0.1863588800188154 sec
+Decode latency: 13.462131822947413 sec
+Time for inference 6: 13.65 sec total, 37.51 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.26 GB/s
+Bandwidth achieved: 1362.58 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.18953030498232692 sec
-Decode latency: 13.459454435040243 sec
-Time for inference 8: 13.65 sec total, 37.50 tokens/sec
+Prefill latency: 0.18280862004030496 sec
+Decode latency: 13.461569419014268 sec
+Time for inference 7: 13.65 sec total, 37.52 tokens/sec
+Decode latency: 13.46 sec
+Prefill latency: 0.18 sec
+Bandwidth achieved: 1362.95 GB/s
+FLOPS achieved: 4.09 TF/s
+
+Prefill latency: 0.18625136103946716 sec
+Decode latency: 13.46061789500527 sec
+Time for inference 8: 13.65 sec total, 37.51 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1362.46 GB/s
+Bandwidth achieved: 1362.65 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.18521752103697509 sec
-Decode latency: 13.45383207499981 sec
-Time for inference 9: 13.64 sec total, 37.53 tokens/sec
-Decode latency: 13.45 sec
-Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.54 GB/s
+Prefill latency: 0.18438335310202092 sec
+Decode latency: 13.459480438032188 sec
+Time for inference 9: 13.65 sec total, 37.52 tokens/sec
+Decode latency: 13.46 sec
+Prefill latency: 0.18 sec
+Bandwidth achieved: 1363.05 GB/s
 FLOPS achieved: 4.09 TF/s
 
-Prefill latency: 0.18800427799578756 sec
-Decode latency: 13.455100139020942 sec
-Time for inference 10: 13.65 sec total, 37.52 tokens/sec
+Prefill latency: 0.18723391299135983 sec
+Decode latency: 13.45869680296164 sec
+Time for inference 10: 13.65 sec total, 37.51 tokens/sec
 Decode latency: 13.46 sec
 Prefill latency: 0.19 sec
-Bandwidth achieved: 1363.13 GB/s
+Bandwidth achieved: 1362.84 GB/s
 FLOPS achieved: 4.09 TF/s
 
 ==========
 Batch Size: 1
 Prompt Length: 1024
 Generated tokens: 512
-Average decode latency: 13.4559 sec
-Average prefill latency: 0.1868 sec
+Average decode latency: 13.4591 sec
+Average prefill latency: 0.1862 sec
 Average tokens/sec: 37.52
-Memory used: 37.63 GB
+Memory used: 37.70 GB
 Done. we are killing the process
-[rank0]:[W1201 23:25:11.655823849 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-[rank1]:[W1201 23:25:11.786154011 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-[rank2]:[W1201 23:25:12.207032880 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank0]:[W1202 13:04:14.158303955 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank1]:[W1202 13:04:14.256268439 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W1202 13:04:14.264212565 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())

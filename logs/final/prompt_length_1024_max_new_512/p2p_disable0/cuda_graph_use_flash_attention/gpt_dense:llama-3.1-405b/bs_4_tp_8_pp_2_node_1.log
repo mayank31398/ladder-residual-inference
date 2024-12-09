@@ -1,0 +1,377 @@
+W1202 17:19:29.736000 3431517 site-packages/torch/distributed/run.py:793] 
+W1202 17:19:29.736000 3431517 site-packages/torch/distributed/run.py:793] *****************************************
+W1202 17:19:29.736000 3431517 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1202 17:19:29.736000 3431517 site-packages/torch/distributed/run.py:793] *****************************************
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+Using device=cuda
+Loading model ...
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+DeviceMesh('cuda', [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]], mesh_dim_names=('pp', 'tp'))
+GPTDense(
+  (layers): ModuleList(
+    (0-62): 63 x DenseTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=16384, out_features=2560, bias=False)
+        (wo): Linear(in_features=2048, out_features=16384, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=16384, out_features=13312, bias=False)
+        (w2): Linear(in_features=6656, out_features=16384, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=16384, out_features=128256, bias=False)
+)
+Time to load model: 1.37 seconds
+CUDA_GRAPH are activate
+[rank8]: Traceback (most recent call last):
+[rank8]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank8]:     main(
+[rank8]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank8]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank8]:     return func(*args, **kwargs)
+[rank8]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank8]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank8]:     return func(*args, **kwargs)
+[rank8]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank8]:     output = model(x, input_pos)
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank8]:     return self._call_impl(*args, **kwargs)
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank8]:     return forward_call(*args, **kwargs)
+[rank8]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank8]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank8]:     return self._call_impl(*args, **kwargs)
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank8]:     return forward_call(*args, **kwargs)
+[rank8]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank8]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank8]:     return self._call_impl(*args, **kwargs)
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank8]:     return forward_call(*args, **kwargs)
+[rank8]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank8]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank8]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank8]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank8]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank8]:     return fn(ctx, *args, **kwargs)
+[rank8]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank8]:     X.shape[1] == W.shape[0]
+[rank8]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+[rank8]:[W1202 17:19:35.678493401 ProcessGroupNCCL.cpp:1374] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank13]: Traceback (most recent call last):
+[rank13]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank13]:     main(
+[rank13]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank13]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank13]:     return func(*args, **kwargs)
+[rank13]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank13]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank13]:     return func(*args, **kwargs)
+[rank13]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank13]:     output = model(x, input_pos)
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank13]:     return self._call_impl(*args, **kwargs)
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank13]:     return forward_call(*args, **kwargs)
+[rank13]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank13]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank13]:     return self._call_impl(*args, **kwargs)
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank13]:     return forward_call(*args, **kwargs)
+[rank13]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank13]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank13]:     return self._call_impl(*args, **kwargs)
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank13]:     return forward_call(*args, **kwargs)
+[rank13]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank13]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank13]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank13]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank13]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank13]:     return fn(ctx, *args, **kwargs)
+[rank13]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank13]:     X.shape[1] == W.shape[0]
+[rank13]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+[rank10]: Traceback (most recent call last):
+[rank10]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank10]:     main(
+[rank10]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank10]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank10]:     return func(*args, **kwargs)
+[rank10]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank10]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank10]:     return func(*args, **kwargs)
+[rank10]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank10]:     output = model(x, input_pos)
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank10]:     return self._call_impl(*args, **kwargs)
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank10]:     return forward_call(*args, **kwargs)
+[rank10]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank10]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank10]:     return self._call_impl(*args, **kwargs)
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank10]:     return forward_call(*args, **kwargs)
+[rank10]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank10]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank10]:     return self._call_impl(*args, **kwargs)
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank10]:     return forward_call(*args, **kwargs)
+[rank10]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank10]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank10]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank10]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank10]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank10]:     return fn(ctx, *args, **kwargs)
+[rank10]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank10]:     X.shape[1] == W.shape[0]
+[rank10]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+[rank14]: Traceback (most recent call last):
+[rank14]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank14]:     main(
+[rank14]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank14]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank14]:     return func(*args, **kwargs)
+[rank14]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank14]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank14]:     return func(*args, **kwargs)
+[rank14]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank14]:     output = model(x, input_pos)
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank14]:     return self._call_impl(*args, **kwargs)
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank14]:     return forward_call(*args, **kwargs)
+[rank14]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank14]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank14]:     return self._call_impl(*args, **kwargs)
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank14]:     return forward_call(*args, **kwargs)
+[rank14]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank14]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank14]:     return self._call_impl(*args, **kwargs)
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank14]:     return forward_call(*args, **kwargs)
+[rank14]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank14]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank14]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank14]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank14]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank14]:     return fn(ctx, *args, **kwargs)
+[rank14]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank14]:     X.shape[1] == W.shape[0]
+[rank14]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+[rank15]: Traceback (most recent call last):
+[rank15]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank15]:     main(
+[rank15]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank15]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank15]:     return func(*args, **kwargs)
+[rank15]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank15]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank15]:     return func(*args, **kwargs)
+[rank15]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank15]:     output = model(x, input_pos)
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank15]:     return self._call_impl(*args, **kwargs)
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank15]:     return forward_call(*args, **kwargs)
+[rank15]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank15]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank15]:     return self._call_impl(*args, **kwargs)
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank15]:     return forward_call(*args, **kwargs)
+[rank15]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank15]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank15]:     return self._call_impl(*args, **kwargs)
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank15]:     return forward_call(*args, **kwargs)
+[rank15]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank15]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank15]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank15]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank15]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank15]:     return fn(ctx, *args, **kwargs)
+[rank15]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank15]:     X.shape[1] == W.shape[0]
+[rank15]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+[rank11]: Traceback (most recent call last):
+[rank11]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank11]:     main(
+[rank11]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank11]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank11]:     return func(*args, **kwargs)
+[rank11]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank11]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank11]:     return func(*args, **kwargs)
+[rank11]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank11]:     output = model(x, input_pos)
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank11]:     return self._call_impl(*args, **kwargs)
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank11]:     return forward_call(*args, **kwargs)
+[rank11]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank11]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank11]:     return self._call_impl(*args, **kwargs)
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank11]:     return forward_call(*args, **kwargs)
+[rank11]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank11]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank11]:     return self._call_impl(*args, **kwargs)
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank11]:     return forward_call(*args, **kwargs)
+[rank11]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank11]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank11]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank11]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank11]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank11]:     return fn(ctx, *args, **kwargs)
+[rank11]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank11]:     X.shape[1] == W.shape[0]
+[rank11]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+[rank9]: Traceback (most recent call last):
+[rank9]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank9]:     main(
+[rank9]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank9]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank9]:     return func(*args, **kwargs)
+[rank9]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank9]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank9]:     return func(*args, **kwargs)
+[rank9]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank9]:     output = model(x, input_pos)
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank9]:     return self._call_impl(*args, **kwargs)
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank9]:     return forward_call(*args, **kwargs)
+[rank9]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank9]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank9]:     return self._call_impl(*args, **kwargs)
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank9]:     return forward_call(*args, **kwargs)
+[rank9]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank9]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank9]:     return self._call_impl(*args, **kwargs)
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank9]:     return forward_call(*args, **kwargs)
+[rank9]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank9]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank9]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank9]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank9]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank9]:     return fn(ctx, *args, **kwargs)
+[rank9]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank9]:     X.shape[1] == W.shape[0]
+[rank9]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+[rank12]: Traceback (most recent call last):
+[rank12]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 708, in <module>
+[rank12]:     main(
+[rank12]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 562, in main
+[rank12]:     prefill_graph, static_x, static_input_pos, static_next_token_prefill = get_cuda_graphs_for_prefill(
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank12]:     return func(*args, **kwargs)
+[rank12]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 467, in get_cuda_graphs_for_prefill
+[rank12]:     static_next_token = prefill(model, static_x.view(batch_size, -1), static_input_pos, **sampling_kwargs)
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank12]:     return func(*args, **kwargs)
+[rank12]:   File "/home/charlie/skip-residual/gpt-fast/benchmark.py", line 94, in prefill
+[rank12]:     output = model(x, input_pos)
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank12]:     return self._call_impl(*args, **kwargs)
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank12]:     return forward_call(*args, **kwargs)
+[rank12]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 203, in forward
+[rank12]:     x = layer(x, input_pos, freqs_cis, mask)
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank12]:     return self._call_impl(*args, **kwargs)
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank12]:     return forward_call(*args, **kwargs)
+[rank12]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/gpt_dense_TP.py", line 256, in forward
+[rank12]:     x = x + all_reduce_func(self.attention(self.attention_norm(x), freqs_cis, mask, input_pos), clone=False)[0]
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1740, in _wrapped_call_impl
+[rank12]:     return self._call_impl(*args, **kwargs)
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _call_impl
+[rank12]:     return forward_call(*args, **kwargs)
+[rank12]:   File "/home/charlie/skip-residual/gpt-fast/gpt_fast/utils.py", line 70, in forward
+[rank12]:     output = LigerRMSNormFunction.apply(x, self.weight, self.eps)
+[rank12]:   File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/autograd/function.py", line 575, in apply
+[rank12]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank12]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/utils.py", line 18, in wrapper
+[rank12]:     return fn(ctx, *args, **kwargs)
+[rank12]:   File "/home/charlie/.local/lib/python3.10/site-packages/liger_kernel/ops/rms_norm.py", line 237, in forward
+[rank12]:     X.shape[1] == W.shape[0]
+[rank12]: AssertionError: Incompatible hidden size dimension between tensor1.shape[1] and tensor2.shape[0]
+W1202 17:19:36.671000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3431585 closing signal SIGTERM
+W1202 17:19:36.672000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3431586 closing signal SIGTERM
+W1202 17:19:36.672000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3431587 closing signal SIGTERM
+W1202 17:19:36.672000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3431588 closing signal SIGTERM
+W1202 17:19:36.673000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3431589 closing signal SIGTERM
+W1202 17:19:36.673000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3431590 closing signal SIGTERM
+W1202 17:19:36.673000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3431591 closing signal SIGTERM
+E1202 17:19:37.251000 3431517 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 3431584) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+benchmark.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-12-02_17:19:36
+  host      : mk-xii-19.cloud.together.ai
+  rank      : 8 (local_rank: 0)
+  exitcode  : 1 (pid: 3431584)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
