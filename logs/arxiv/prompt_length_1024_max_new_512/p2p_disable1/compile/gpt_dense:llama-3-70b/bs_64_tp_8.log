@@ -1,0 +1,290 @@
+W1210 16:15:26.843000 1075870 site-packages/torch/distributed/run.py:793] 
+W1210 16:15:26.843000 1075870 site-packages/torch/distributed/run.py:793] *****************************************
+W1210 16:15:26.843000 1075870 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1210 16:15:26.843000 1075870 site-packages/torch/distributed/run.py:793] *****************************************
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 8
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 8
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 8
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 8
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 8
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 8
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 8
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 8
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 8
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 8
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 8
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 8
+flash_kv_decode is set to False
+rank: 0, global_rank: 0, world_size: 8, global_world_size: 8
+our world size=8
+Using device=cuda
+Loading model ...
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 8
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 8
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 8
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 8
+rank: 4, global_rank: 4, world_size: 8, global_world_size: 8
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 8
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 8
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 8
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 8
+rank: 2, global_rank: 2, world_size: 8, global_world_size: 8
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 8
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 8
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 8
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 8
+rank: 1, global_rank: 1, world_size: 8, global_world_size: 8
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 8
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 8
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 8
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 8
+rank: 6, global_rank: 6, world_size: 8, global_world_size: 8
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 8
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 8
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 8
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 8
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 8
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 8
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 8
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 8
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 8
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 8
+rank: 7, global_rank: 7, world_size: 8, global_world_size: 8
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 8
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 8
+rank: 5, global_rank: 5, world_size: 8, global_world_size: 8
+rank: 3, global_rank: 3, world_size: 8, global_world_size: 8
+GPTDense(
+  (tok_embeddings): Embedding(128256, 8192)
+  (layers): ModuleList(
+    (0-79): 80 x DenseTransformerBlock(
+      semi_compiled = False
+      (attention): Attention(
+        (wqkv): Linear(in_features=8192, out_features=1280, bias=False)
+        (wo): Linear(in_features=1024, out_features=8192, bias=False)
+      )
+      (feed_forward): FeedForward(
+        (w1): Linear(in_features=8192, out_features=7168, bias=False)
+        (w2): Linear(in_features=3584, out_features=8192, bias=False)
+      )
+      (ffn_norm): RMSNorm()
+      (attention_norm): RMSNorm()
+    )
+  )
+  (norm): RMSNorm()
+  (output): Linear(in_features=8192, out_features=128256, bias=False)
+)
+Time to load model: 1.61 seconds
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Compiling prefill with dynamic=False
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Prefill latency: 63.398169505409896 sec
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/contextlib.py:103: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+Decode latency: 63.49119751621038 sec
+Compilation time: 127.00 seconds
+Compilation time: 126.75 seconds
+Compilation time: 126.75 seconds
+Compilation time: 126.76 seconds
+Compilation time: 126.86 seconds
+Compilation time: 126.75 seconds
+Compilation time: 126.85 seconds
+Compilation time: 126.89 seconds
+Prefill latency: 4.254483059979975 sec
+Decode latency: 18.196448497474194 sec
+Prefill latency: 4.264113215729594 sec
+Decode latency: 18.178674122318625 sec
+Prefill latency: 4.270365900360048 sec
+Decode latency: 18.123746526427567 sec
+Prefill latency: 4.268278367817402 sec
+Decode latency: 18.309241726994514 sec
+Prefill latency: 4.261883134953678 sec
+Decode latency: 18.26967315096408 sec
+Time for inference 1: 22.53 sec total, 1454.16 tokens/sec
+Decode latency: 18.27 sec
+Prefill latency: 4.26 sec
+Bandwidth achieved: 27944.25 GB/s
+FLOPS achieved: 83.83 TF/s
+
+[mk-xii-21:1075947:0:1075947] Caught signal 11 (Segmentation fault: address not mapped to object at address 0x5e0)
+[rank4]:[E1210 16:20:33.695189911 ProcessGroupNCCL.cpp:627] [Rank 4] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60021 milliseconds before timing out.
+[rank4]:[E1210 16:20:33.695469042 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 4]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1369, last completed work: 1367
+[rank4]:[E1210 16:20:33.695477602 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank6]:[E1210 16:20:33.704042836 ProcessGroupNCCL.cpp:627] [Rank 6] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60030 milliseconds before timing out.
+[rank6]:[E1210 16:20:33.704119955 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 6]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1368, last completed work: 1367
+[rank6]:[E1210 16:20:33.704125332 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank7]:[E1210 16:20:33.709094199 ProcessGroupNCCL.cpp:627] [Rank 7] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60035 milliseconds before timing out.
+[rank7]:[E1210 16:20:33.709455002 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 7]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1369, last completed work: 1367
+[rank7]:[E1210 16:20:33.709461592 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank2]:[E1210 16:20:33.724246322 ProcessGroupNCCL.cpp:627] [Rank 2] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60052 milliseconds before timing out.
+[rank2]:[E1210 16:20:33.724684133 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 2]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1440, last completed work: 1367
+[rank2]:[E1210 16:20:33.724691881 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank0]:[E1210 16:20:33.731153601 ProcessGroupNCCL.cpp:627] [Rank 0] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60059 milliseconds before timing out.
+[rank0]:[E1210 16:20:33.731572104 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 0]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1440, last completed work: 1367
+[rank0]:[E1210 16:20:33.731578823 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank3]:[E1210 16:20:33.734524497 ProcessGroupNCCL.cpp:627] [Rank 3] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60063 milliseconds before timing out.
+[rank3]:[E1210 16:20:33.734961242 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 3]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1440, last completed work: 1367
+[rank3]:[E1210 16:20:33.734968698 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank1]:[E1210 16:20:33.738776969 ProcessGroupNCCL.cpp:627] [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60067 milliseconds before timing out.
+[rank1]:[E1210 16:20:33.739047979 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 1]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1440, last completed work: 1367
+[rank1]:[E1210 16:20:33.739054960 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+[rank5]:[E1210 16:20:33.745983378 ProcessGroupNCCL.cpp:627] [Rank 5] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1368, OpType=ALLREDUCE, NumelIn=536870912, NumelOut=536870912, Timeout(ms)=60000) ran for 60072 milliseconds before timing out.
+[rank5]:[E1210 16:20:33.746145595 ProcessGroupNCCL.cpp:2007] [PG ID 0 PG GUID 0(default_pg) Rank 5]  failure detected by watchdog at work sequence id: 1368 PG status: last enqueued work: 1369, last completed work: 1367
+[rank5]:[E1210 16:20:33.746151861 ProcessGroupNCCL.cpp:665] Stack trace of the failed collective not found, potentially because FlightRecorder is disabled. You can enable it by setting TORCH_NCCL_TRACE_BUFFER_SIZE to a non-zero value.
+Prefill latency: 174.285060480237 sec
+==== backtrace (tid:1075947) ====
+ 0 0x0000000000042520 __sigaction()  ???:0
+ 1 0x0000000000049b8a ncclMemoryPoolAlloc<ncclProxyOp>()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/include/utils.h:280
+ 2 0x0000000000049b8a addProxyOpIfNeeded()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:180
+ 3 0x0000000000049b8a addProxyOpIfNeeded()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:176
+ 4 0x000000000004c496 addCBDCollToPlan()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:481
+ 5 0x000000000004f5bd ncclLaunchPrepare()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:844
+ 6 0x000000000004f5bd ncclLaunchPrepare()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:1260
+ 7 0x0000000000053d4b groupLaunch()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:129
+ 8 0x0000000000053d4b groupLaunch()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:339
+ 9 0x0000000000054f88 ncclGroupEndInternal()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:418
+10 0x0000000000054f88 ncclGroupEndInternal()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/group.cc:368
+11 0x000000000004d74f ncclEnqueueCheck()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/enqueue.cc:2032
+12 0x00000000000452af ncclAllReduce()  /dvs/p4/build/sw/gpgpu/nccl/gitfusion/stable/src/collectives.cc:50
+13 0x000000000125c922 c10d::ProcessGroupNCCL::collective<c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}, c10d::ProcessGroupNCCL::collective<c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}>(at::Tensor&, at::Tensor&, c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}, c10d::OpType, char const*, bool, bool)::{lambda(c10::cuda::CUDAStream&, c10::intrusive_ptr<c10d::ProcessGroupNCCL::WorkNCCL, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroupNCCL::WorkNCCL> >&)#1}, c10d::ProcessGroupNCCL::collective<c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}>(at::Tensor&, at::Tensor&, c10d::ProcessGroupNCCL::allreduce_impl(at::Tensor&, c10d::AllreduceOptions const&)::{lambda(at::Tensor&, at::Tensor&, ncclComm*, c10::cuda::CUDAStream&)#1}, c10d::OpType, char const*, bool, bool)::{lambda(c10::cuda::CUDAStream&, c10::intrusive_ptr<c10d::ProcessGroupNCCL::WorkNCCL, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroupNCCL::WorkNCCL> >&)#2}>()  ProcessGroupNCCL.cpp:0
+14 0x000000000125d9fc c10d::ProcessGroupNCCL::allreduce_impl()  ???:0
+15 0x000000000125e283 c10d::ProcessGroupNCCL::allreduce()  ???:0
+16 0x000000000629407e c10d::ops::(anonymous namespace)::allreduce_CUDA()  Ops.cpp:0
+17 0x000000000629eb54 c10::impl::call_functor_with_args_from_stack_<c10::impl::detail::WrapFunctionIntoRuntimeFunctor_<std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > > (*)(c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long), std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > >, c10::guts::typelist::typelist<c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long> >, false, 0ul, 1ul, 2ul, 3ul, 4ul, c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long>()  :0
+18 0x000000000629f8d9 c10::impl::make_boxed_from_unboxed_functor<c10::impl::detail::WrapFunctionIntoRuntimeFunctor_<std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > > (*)(c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long), std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > >, c10::guts::typelist::typelist<c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long> >, false>::call()  :0
+19 0x00000000058a83bb c10::OperatorHandle::redispatchBoxed()  :0
+20 0x00000000058a5c39 torch::autograd::basicAutogradNotImplementedFallbackImpl()  autograd_not_implemented_fallback.cpp:0
+21 0x0000000001aa3808 c10::BoxedKernel::make_boxed_function<&(anonymous namespace)::autograd_fallback>()  VariableFallbackKernel.cpp:0
+22 0x00000000062a7385 c10::impl::BoxedKernelWrapper<std::tuple<std::vector<at::Tensor, std::allocator<at::Tensor> >, c10::intrusive_ptr<c10d::Work, c10::detail::intrusive_target_default_null_type<c10d::Work> > > (c10::ArrayRef<at::Tensor>, c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::intrusive_ptr<c10d::ReduceOp, c10::detail::intrusive_target_default_null_type<c10d::ReduceOp> > const&, std::optional<at::Tensor> const&, long), void>::call()  :0
+23 0x00000000062b58cd c10d::ProcessGroup::allreduce()  :0
+24 0x0000000006275480 (anonymous namespace)::all_reduce_()  Functional.cpp:0
+25 0x0000000006282f17 c10::impl::call_functor_with_args_from_stack_<c10::impl::detail::WrapFunctionIntoRuntimeFunctor_<at::Tensor& (*)(at::Tensor&, std::string, std::string), at::Tensor&, c10::guts::typelist::typelist<at::Tensor&, std::string, std::string> >, false, 0ul, 1ul, 2ul, at::Tensor&, std::string, std::string>()  :0
+26 0x0000000006283085 c10::impl::make_boxed_from_unboxed_functor<c10::impl::detail::WrapFunctionIntoRuntimeFunctor_<at::Tensor& (*)(at::Tensor&, std::string, std::string), at::Tensor&, c10::guts::typelist::typelist<at::Tensor&, std::string, std::string> >, false>::call()  :0
+27 0x00000000058a83bb c10::OperatorHandle::redispatchBoxed()  :0
+28 0x00000000058a5c39 torch::autograd::basicAutogradNotImplementedFallbackImpl()  autograd_not_implemented_fallback.cpp:0
+29 0x0000000001aa3808 c10::BoxedKernel::make_boxed_function<&(anonymous namespace)::autograd_fallback>()  VariableFallbackKernel.cpp:0
+30 0x0000000000cff908 c10::Dispatcher::callBoxed()  ???:0
+31 0x0000000000a89c46 torch::jit::invokeOperatorFromPython()  ???:0
+32 0x0000000000a89fa7 torch::jit::_get_operation_for_overload_or_packet()  ???:0
+33 0x000000000097ada2 pybind11::cpp_function::initialize<torch::jit::initJITBindings(_object*)::{lambda(std::string const&, std::string const&)#214}::operator()(std::string const&, std::string const&) const::{lambda(pybind11::args const&, pybind11::kwargs const&)#1}, pybind11::object, pybind11::args const&, pybind11::kwargs const&>(torch::jit::initJITBindings(_object*)::{lambda(std::string const&, std::string const&)#214}::operator()(std::string const&, std::string const&) const::{lambda(pybind11::args const&, pybind11::kwargs const&)#1}&&, pybind11::object (*)(pybind11::args const&, pybind11::kwargs const&))::{lambda(pybind11::detail::function_call&)#3}::_FUN()  init.cpp:0
+34 0x00000000004d9367 pybind11::cpp_function::dispatcher()  :0
+35 0x00000000004fdc87 cfunction_call()  /usr/local/src/conda/python-3.10.14/Objects/methodobject.c:543
+36 0x00000000004fdc87 _Py_CheckFunctionResult()  /usr/local/src/conda/python-3.10.14/Objects/call.c:39
+37 0x00000000004fdc87 cfunction_call()  /usr/local/src/conda/python-3.10.14/Objects/methodobject.c:554
+38 0x000000000050a659 _PyObject_Call()  /usr/local/src/conda/python-3.10.14/Objects/call.c:305
+39 0x000000000050a659 _PyObject_Call()  /usr/local/src/conda/python-3.10.14/Objects/call.c:307
+40 0x000000000050a659 PyObject_Call()  /usr/local/src/conda/python-3.10.14/Objects/call.c:317
+41 0x00000000004f3b64 do_call_core()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5917
+42 0x00000000004f3b64 _PyEval_EvalFrameDefault()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:4277
+43 0x00000000004f676d _PyEval_EvalFrame()  /usr/local/src/conda/python-3.10.14/Include/internal/pycore_ceval.h:46
+44 0x00000000004f676d _PyEval_Vector()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5074
+45 0x00000000004f676d _PyFunction_Vectorcall()  /usr/local/src/conda/python-3.10.14/Objects/call.c:342
+46 0x00000000004f676d _PyObject_FastCallDictTstate()  /usr/local/src/conda/python-3.10.14/Objects/call.c:142
+47 0x0000000000507f36 _PyObject_Call_Prepend()  /usr/local/src/conda/python-3.10.14/Objects/call.c:431
+48 0x00000000005cf883 slot_tp_call()  /usr/local/src/conda/python-3.10.14/Objects/typeobject.c:7494
+49 0x00000000005cf883 slot_tp_call()  /usr/local/src/conda/python-3.10.14/Objects/typeobject.c:7500
+50 0x00000000004f741b _PyObject_MakeTpCall()  /usr/local/src/conda/python-3.10.14/Objects/call.c:215
+51 0x00000000004f741b _PyObject_MakeTpCall()  /usr/local/src/conda/python-3.10.14/Objects/call.c:216
+52 0x00000000004f34c6 _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:112
+53 0x00000000004f34c6 _PyObject_VectorcallTstate()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:99
+54 0x00000000004f34c6 PyObject_Vectorcall()  /usr/local/src/conda/python-3.10.14/Include/cpython/abstract.h:123
+55 0x00000000004f34c6 call_function()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:5893
+56 0x00000000004f34c6 _PyEval_EvalFrameDefault()  /usr/local/src/conda/python-3.10.14/Python/ceval.c:4181
+=================================
+W1210 16:24:35.254000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1075941 closing signal SIGTERM
+W1210 16:24:35.259000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1075942 closing signal SIGTERM
+W1210 16:24:35.262000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1075943 closing signal SIGTERM
+W1210 16:24:35.267000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1075944 closing signal SIGTERM
+W1210 16:24:35.270000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1075945 closing signal SIGTERM
+W1210 16:24:35.274000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1075946 closing signal SIGTERM
+W1210 16:24:35.277000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1075948 closing signal SIGTERM
+E1210 16:24:41.058000 1075870 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: -11) local_rank: 6 (pid: 1075947) of binary: /home/charlie/anaconda3/envs/gpt-fast/bin/python
+Traceback (most recent call last):
+  File "/home/charlie/anaconda3/envs/gpt-fast/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/charlie/anaconda3/envs/gpt-fast/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+=========================================================
+benchmark.py FAILED
+---------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+---------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-12-10_16:24:35
+  host      : mk-xii-21.cloud.together.ai
+  rank      : 6 (local_rank: 6)
+  exitcode  : -11 (pid: 1075947)
+  error_file: <N/A>
+  traceback : Signal 11 (SIGSEGV) received by PID 1075947
+=========================================================

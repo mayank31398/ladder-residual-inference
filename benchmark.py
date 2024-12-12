@@ -380,8 +380,8 @@ def main(
             top_k=top_k,
         )
 
-    aggregate_metrics = {"tokens_per_sec": [], "decode_latency": [], "prefill_latency": []}
-    start = -5
+    aggregate_metrics = {'tokens_per_sec': [], 'decode_latency': [], 'prefill_latency': []}
+    start = 0 if profile else -5
 
     for i in range(start, num_samples):
         device_sync(device=device)  # MKG
