@@ -152,6 +152,15 @@ transformer_configs = {
             factor=8.0, low_freq_factor=1.0, high_freq_factor=4.0, original_max_position_embeddings=8192
         ),
     ),
+    "bloom-176b": dict(
+        block_size=8192,
+        n_layer=70,
+        n_head=112,
+        dim=14336,
+        itermediate_size=50176,
+        vocab_size=250880,
+        rope_base=500000,
+    ),
 }
 
 

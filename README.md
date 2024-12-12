@@ -1,4 +1,8 @@
-# gpt-fast
+# Ladder-Residual-Inference
+This repository contains the code for the paper "LADDER RESIDUAL: REDEFINING TENSOR PARALLELISM IN TRANSFORMERS FOR ACCELERATED INFERENCE" 
+## Abstract
+
+<!-- # gpt-fast
 Simple and efficient pytorch-native transformer text generation.
 
 Featuring:
@@ -218,4 +222,4 @@ Thanks to:
 * Lightning AI for supporting pytorch and work in flash attention, int8 quantization, and LoRA fine-tuning.
 * GGML for driving forward fast, on device inference of LLMs
 * Karpathy for spearheading simple, interpretable and fast LLM implementations
-* MLC-LLM for pushing 4-bit quantization performance on heterogeneous hardware
+* MLC-LLM for pushing 4-bit quantization performance on heterogeneous hardware -->

@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import sys
 import time
+import argparse
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -14,31 +15,25 @@ import torch._inductor.config
 import torch.distributed as dist
 
 from gpt_fast.utils import _get_model_size, set_flash_attention
+from gpt_fast import GPTDense, GPTEnsemble, GPTLadder, GPTParallel
 
 
 def print_rank_0(*args, **kwargs):
     if dist.get_rank() == 0:
         print(*args, **kwargs)
 
-
-import argparse
-
 torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
-# Experimental features to reduce compilation times, will be on by default in future
+# experimental features to reduce compilation times, will be on by default in future
 torch._inductor.config.fx_graph_cache = True
 # torch._functorch.config.enable_autograd_cache = True
-
-# allows overlap
-torch._inductor.config.reorder_for_compute_comm_overlap = True
+torch._inductor.config.reorder_for_compute_comm_overlap = True # allows overlap
 
 default_device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # support running without installing as a package
 wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
-
-from gpt_fast import GPTDense, GPTEnsemble, GPTLadder, GPTParallel
 
 _MODELS = {
     "gpt_dense": GPTDense,
@@ -249,9 +244,7 @@ def _load_model(model_name, device, precision):
 
     return model.eval()
 
-
 B_INST, E_INST = "[INST]", "[/INST]"
-
 
 @torch.no_grad()
 def get_cuda_graphs_for_prefill(model: torch.nn.Module, prompt: torch.Tensor, batch_size: int, **sampling_kwargs):

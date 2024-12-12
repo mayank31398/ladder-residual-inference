@@ -1,21 +1,21 @@
 import itertools
 import math
-from contextlib import contextmanager
-from typing import Optional
 
 import torch
 import torch.distributed as dist
 import torch.distributed._functional_collectives as funcol
 import torch.nn as nn
 import torch.nn.functional as F
+
 from flash_attn import flash_attn_func, flash_attn_varlen_func, flash_attn_with_kvcache
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
 from torch import Tensor
 
+from contextlib import contextmanager
+from typing import Optional
 from .tp import maybe_init_dist
 
 _USE_FLASH_ATTENTION: bool = False
-
 
 @contextmanager
 def set_flash_attention(enable: bool):
@@ -209,9 +209,9 @@ class Attention(nn.Module):
                 y = flash_attn_with_kvcache(
                     q,  # (batch_size, seqlen_q, n_heads, head_dim)
                     k_cache,  # (batch_size, seqlen_cache, n_local_heads, head_dim)
-                    v_cache,
+                    v_cache, # (batch_size, seqlen_new, n_local_heads, head_dim)
                     k=k,  # (batch_size, seqlen_new, n_local_heads, head_dim)
-                    v=v,
+                    v=v, # (batch_size, seqlen_new, n_local_heads, head_dim)
                     cache_seqlens=cache_seqlens,
                     cache_batch_idx=None,
                     cache_leftpad=None,
@@ -230,7 +230,6 @@ class Attention(nn.Module):
                     k, v = map(lambda x: x.transpose(1, 2), (k, v))
                     k, v = self.kv_cache.update(input_pos, k, v)
                     k, v = map(lambda x: x.transpose(1, 2), (k, v))
-                # y = flash_attn_func(q, k, v, causal=True)
                 q_var = q.reshape(-1, q.shape[-2], q.shape[-1])
                 k_var = k.reshape(-1, k.shape[-2], k.shape[-1])
                 v_var = v.reshape(-1, v.shape[-2], v.shape[-1])
@@ -323,18 +322,19 @@ class FuseAttentionMLP(nn.Module):
         if is_flash_attention_enabled():
             device = q.device
 
-            if seqlen <= 1:  # decode time
-                k_cache = self.kv_cache.k_cache  # (batch_size, n_local_heads, seqlen_cache, head_dim)
+            if seqlen <= 1:  # decode
+                k_cache = self.kv_cache.k_cache
                 k_cache = k_cache.transpose(1, 2)
                 v_cache = self.kv_cache.v_cache
                 v_cache = v_cache.transpose(1, 2)
                 cache_seqlens = k_cache.size(1)
+                
                 y = flash_attn_with_kvcache(
-                    q,  # (batch_size, seqlen_q, n_heads, head_dim)
-                    k_cache,  # (batch_size, seqlen_cache, n_local_heads, head_dim)
-                    v_cache,
-                    k=k,  # (batch_size, seqlen_new, n_local_heads, head_dim)
-                    v=v,
+                    q, # (batch_size, seqlen_q, n_heads, head_dim)
+                    k_cache, # (batch_size, seqlen_cache, n_local_heads, head_dim)
+                    v_cache, # (batch_size, seqlen_cache, n_local_heads, head_dim)
+                    k=k, # (batch_size, seqlen_new, n_local_heads, head_dim)
+                    v=v, # (batch_size, seqlen_new, n_local_heads, head_dim)
                     cache_seqlens=cache_seqlens,
                     cache_batch_idx=None,
                     cache_leftpad=None,
@@ -344,6 +344,7 @@ class FuseAttentionMLP(nn.Module):
                     softmax_scale=None,
                     causal=True,
                 )
+                
                 k_cache = k_cache.transpose(1, 2)
                 v_cache = v_cache.transpose(1, 2)
                 self.kv_cache.k_cache = k_cache
@@ -353,7 +354,7 @@ class FuseAttentionMLP(nn.Module):
                     k, v = map(lambda x: x.transpose(1, 2), (k, v))
                     k, v = self.kv_cache.update(input_pos, k, v)
                     k, v = map(lambda x: x.transpose(1, 2), (k, v))
-                # y = flash_attn_func(q, k, v, causal=True)
+                
                 q_var = q.reshape(-1, q.shape[-2], q.shape[-1])
                 k_var = k.reshape(-1, k.shape[-2], k.shape[-1])
                 v_var = v.reshape(-1, v.shape[-2], v.shape[-1])
@@ -370,6 +371,7 @@ class FuseAttentionMLP(nn.Module):
                 )
         else:
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
+            
             if self.kv_cache is not None:
                 k, v = self.kv_cache.update(input_pos, k, v)
 
