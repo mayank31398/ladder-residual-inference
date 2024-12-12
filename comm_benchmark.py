@@ -1,25 +1,30 @@
-import torch
-import torch.distributed as dist
+import os
 import time
 from typing import Optional
-import os
+
+import torch
+import torch.distributed as dist
+
 
 def print_rank_0(*args, **kwargs):
     if dist.get_rank() == 0:
         print(*args, **kwargs)
 
+
 def _get_rank() -> int:
     return int(os.environ.get("LOCAL_RANK", "0"))
 
+
 def _get_world_size() -> int:
     return int(os.environ.get("LOCAL_WORLD_SIZE", "1"))
+
 
 def maybe_init_dist() -> Optional[int]:
     try:
         # provided by torchrun
         rank = _get_rank()
         world_size = _get_world_size()
-        
+
     except KeyError:
         # not run via torchrun, no-op
         return None
@@ -29,6 +34,7 @@ def maybe_init_dist() -> Optional[int]:
         dist.init_process_group(backend="nccl", rank=rank, world_size=world_size)
 
     return rank
+
 
 """ Initialize distributed environment """
 rank = maybe_init_dist()
@@ -54,5 +60,3 @@ avg_latency = (end_time - start_time) / num_iters
 
 if rank == 0:
     print_rank_0(f"Average all_reduce latency over {num_iters} iterations: {avg_latency * 1000:.4f} ms")
-
-

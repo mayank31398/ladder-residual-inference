@@ -1,18 +1,21 @@
-import torch
+import itertools
+import math
 from contextlib import contextmanager
+from typing import Optional
+
+import torch
+import torch.distributed as dist
+import torch.distributed._functional_collectives as funcol
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Optional
-from torch import Tensor
-import math
+from flash_attn import flash_attn_func, flash_attn_varlen_func, flash_attn_with_kvcache
 from liger_kernel.ops.rms_norm import LigerRMSNormFunction
-import torch.distributed as dist
-from flash_attn import flash_attn_func, flash_attn_with_kvcache, flash_attn_varlen_func
+from torch import Tensor
+
 from .tp import maybe_init_dist
-import torch.distributed._functional_collectives as funcol
-import itertools
 
 _USE_FLASH_ATTENTION: bool = False
+
 
 @contextmanager
 def set_flash_attention(enable: bool):
@@ -36,12 +39,13 @@ tp_rank = dist.get_rank()
 tp_world_size = dist.get_world_size()
 tp_group = list(range(tp_world_size))
 
+
 class KVCache(nn.Module):
     def __init__(self, max_batch_size, max_seq_length, n_heads, head_dim, dtype=torch.bfloat16):
         super().__init__()
         cache_shape = (max_batch_size, n_heads, max_seq_length, head_dim)
-        self.register_buffer('k_cache', torch.zeros(cache_shape, dtype=dtype))
-        self.register_buffer('v_cache', torch.zeros(cache_shape, dtype=dtype))
+        self.register_buffer("k_cache", torch.zeros(cache_shape, dtype=dtype))
+        self.register_buffer("v_cache", torch.zeros(cache_shape, dtype=dtype))
 
     def update(self, input_pos, k_val, v_val):
         # input_pos: [S], k_val: [B, H, S, D]
@@ -73,6 +77,7 @@ class RMSNorm(nn.Module):
 
         return output
 
+
 def apply_rope_scaling(freqs: torch.Tensor, rope_scaling: Optional[dict] = None):
     factor = rope_scaling["factor"]
     low_freq_factor = rope_scaling["low_freq_factor"]
@@ -96,7 +101,9 @@ def apply_rope_scaling(freqs: torch.Tensor, rope_scaling: Optional[dict] = None)
 
 
 def precompute_freqs_cis(
-    seq_len: int, n_elem: int, base: int = 10000,
+    seq_len: int,
+    n_elem: int,
+    base: int = 10000,
     dtype: torch.dtype = torch.bfloat16,
     rope_scaling: Optional[dict] = None,
 ) -> Tensor:
@@ -124,13 +131,14 @@ def apply_rotary_emb(x: Tensor, freqs_cis: Tensor) -> Tensor:
     x_out2 = x_out2.flatten(3)
     return x_out2.type_as(x)
 
+
 class FeedForward(nn.Module):
     def __init__(self, config) -> None:
         super().__init__()
 
         assert config.intermediate_size % tp_world_size == 0
         assert config.dim % tp_world_size == 0
-        
+
         self.w1 = nn.Linear(config.dim, 2 * config.intermediate_size // tp_world_size, bias=False)
         self.w2 = nn.Linear(config.intermediate_size // tp_world_size, config.dim, bias=False)
 
@@ -188,29 +196,29 @@ class Attention(nn.Module):
 
         q = apply_rotary_emb(q, freqs_cis)
         k = apply_rotary_emb(k, freqs_cis)
-        
+
         if is_flash_attention_enabled():
             device = q.device
 
-            if seqlen <= 1: # decode time 
-                k_cache = self.kv_cache.k_cache # (batch_size, n_local_heads, seqlen_cache, head_dim)
+            if seqlen <= 1:  # decode time
+                k_cache = self.kv_cache.k_cache  # (batch_size, n_local_heads, seqlen_cache, head_dim)
                 k_cache = k_cache.transpose(1, 2)
                 v_cache = self.kv_cache.v_cache
                 v_cache = v_cache.transpose(1, 2)
                 cache_seqlens = k_cache.size(1)
                 y = flash_attn_with_kvcache(
-                    q,                      # (batch_size, seqlen_q, n_heads, head_dim)
-                    k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
+                    q,  # (batch_size, seqlen_q, n_heads, head_dim)
+                    k_cache,  # (batch_size, seqlen_cache, n_local_heads, head_dim)
                     v_cache,
-                    k=k,                    # (batch_size, seqlen_new, n_local_heads, head_dim)
+                    k=k,  # (batch_size, seqlen_new, n_local_heads, head_dim)
                     v=v,
                     cache_seqlens=cache_seqlens,
-                    cache_batch_idx=None,   
+                    cache_batch_idx=None,
                     cache_leftpad=None,
                     block_table=None,
-                    rotary_cos=None,        
+                    rotary_cos=None,
                     rotary_sin=None,
-                    softmax_scale=None,     
+                    softmax_scale=None,
                     causal=True,
                 )
                 k_cache = k_cache.transpose(1, 2)
@@ -234,7 +242,9 @@ class Attention(nn.Module):
                         torch.cumsum(lens, dim=0, dtype=torch.int32),
                     ]
                 ).int()
-                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens, cu_seqlens, q.size(1), k.size(1), causal=True)
+                y = flash_attn_varlen_func(
+                    q_var, k_var, v_var, cu_seqlens, cu_seqlens, q.size(1), k.size(1), causal=True
+                )
         else:
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:
@@ -265,10 +275,12 @@ class FuseAttentionMLP(nn.Module):
         assert config.n_local_heads % tp_world_size == 0
 
         # key, query, value projections for all heads, but in a batch
-        self.wqkv1 = nn.Linear(config.dim, total_head_dim // tp_world_size + 2 * config.intermediate_size // tp_world_size, bias=False)
+        self.wqkv1 = nn.Linear(
+            config.dim, total_head_dim // tp_world_size + 2 * config.intermediate_size // tp_world_size, bias=False
+        )
         self.wo = nn.Linear(config.dim // tp_world_size, config.dim, bias=False)
         self.w2 = nn.Linear(config.intermediate_size // tp_world_size, config.dim, bias=False)
-        
+
         self.kv_cache = None
 
         self.n_head = config.n_head
@@ -279,7 +291,7 @@ class FuseAttentionMLP(nn.Module):
         self.n_head = self.n_head // tp_world_size
         self.dim = self.dim // tp_world_size
         self.n_local_heads = self.n_local_heads // tp_world_size
-        
+
         self.intermediate_size = config.intermediate_size // tp_world_size
 
         self._register_load_state_dict_pre_hook(self.load_hook)
@@ -297,7 +309,9 @@ class FuseAttentionMLP(nn.Module):
         kv_size = self.n_local_heads * self.head_dim
         # q, k, v = self.wqkv1(x).split([self.dim, kv_size, kv_size], dim=-1)
         # use fuse qkv1
-        q, k, v, u, g = self.wqkv1(x).split([self.dim, kv_size, kv_size, self.intermediate_size, self.intermediate_size], dim=-1)
+        q, k, v, u, g = self.wqkv1(x).split(
+            [self.dim, kv_size, kv_size, self.intermediate_size, self.intermediate_size], dim=-1
+        )
 
         q = q.view(bsz, seqlen, self.n_head, self.head_dim)
         k = k.view(bsz, seqlen, self.n_local_heads, self.head_dim)
@@ -305,29 +319,29 @@ class FuseAttentionMLP(nn.Module):
 
         q = apply_rotary_emb(q, freqs_cis)
         k = apply_rotary_emb(k, freqs_cis)
-        
+
         if is_flash_attention_enabled():
             device = q.device
 
-            if seqlen <= 1: # decode time 
-                k_cache = self.kv_cache.k_cache # (batch_size, n_local_heads, seqlen_cache, head_dim)
+            if seqlen <= 1:  # decode time
+                k_cache = self.kv_cache.k_cache  # (batch_size, n_local_heads, seqlen_cache, head_dim)
                 k_cache = k_cache.transpose(1, 2)
                 v_cache = self.kv_cache.v_cache
                 v_cache = v_cache.transpose(1, 2)
                 cache_seqlens = k_cache.size(1)
                 y = flash_attn_with_kvcache(
-                    q,                      # (batch_size, seqlen_q, n_heads, head_dim)
-                    k_cache,                # (batch_size, seqlen_cache, n_local_heads, head_dim)
+                    q,  # (batch_size, seqlen_q, n_heads, head_dim)
+                    k_cache,  # (batch_size, seqlen_cache, n_local_heads, head_dim)
                     v_cache,
-                    k=k,                    # (batch_size, seqlen_new, n_local_heads, head_dim)
+                    k=k,  # (batch_size, seqlen_new, n_local_heads, head_dim)
                     v=v,
                     cache_seqlens=cache_seqlens,
-                    cache_batch_idx=None,   
+                    cache_batch_idx=None,
                     cache_leftpad=None,
                     block_table=None,
-                    rotary_cos=None,        
+                    rotary_cos=None,
                     rotary_sin=None,
-                    softmax_scale=None,     
+                    softmax_scale=None,
                     causal=True,
                 )
                 k_cache = k_cache.transpose(1, 2)
@@ -351,7 +365,9 @@ class FuseAttentionMLP(nn.Module):
                         torch.cumsum(lens, dim=0, dtype=torch.int32),
                     ]
                 ).int()
-                y = flash_attn_varlen_func(q_var, k_var, v_var, cu_seqlens, cu_seqlens, q.size(1), k.size(1), causal=True)
+                y = flash_attn_varlen_func(
+                    q_var, k_var, v_var, cu_seqlens, cu_seqlens, q.size(1), k.size(1), causal=True
+                )
         else:
             q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
             if self.kv_cache is not None:
@@ -365,9 +381,10 @@ class FuseAttentionMLP(nn.Module):
         y = y.transpose(1, 2).contiguous().view(bsz, seqlen, self.dim)
         y = self.wo(y)
         y = self.w2(F.silu(g) * u) + y
-        
+
         return y
-    
+
+
 def all_reduce_func(x: torch.Tensor, clone: bool, async_op=False) -> torch.Tensor:
     if torch.compiler.is_compiling() or clone:
         x = funcol.all_reduce(x, reduceOp="sum", group=tp_group)
@@ -384,15 +401,7 @@ def _get_model_size(model):
     for name, child in model.named_children():
         if not isinstance(child, torch.nn.Embedding):
             model_size += sum(
-                [
-                    p.numel() * p.dtype.itemsize
-                    for p in itertools.chain(child.parameters(), child.buffers())
-                ]
+                [p.numel() * p.dtype.itemsize for p in itertools.chain(child.parameters(), child.buffers())]
             )
-            params += sum(
-                [
-                    p.numel()
-                    for p in itertools.chain(child.parameters(), child.buffers())
-                ]
-            )
+            params += sum([p.numel() for p in itertools.chain(child.parameters(), child.buffers())])
     return model_size, params
