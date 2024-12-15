@@ -7,7 +7,7 @@ master_addr= # please fill the master_addr
 for P2P_DISABLE in 0 1
 do
     export NCCL_P2P_DISABLE=${P2P_DISABLE}
-    for model_name in "gpt_dense:llama-3-405b" "gpt_ladder:llama-3-405b" "gpt_ensemble:llama-3-405b-upper-bound" "gpt_parallel:llama-3-405b"
+    for model_name in "gpt_dense:llama-3-405b" "gpt_ladder:llama-3-405b" "gpt_desync:llama-3-405b-upper-bound" "gpt_parallel:llama-3-405b"
     do
         folder=./logs/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
         mkdir -p ${folder}

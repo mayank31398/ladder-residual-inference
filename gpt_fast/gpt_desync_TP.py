@@ -249,13 +249,13 @@ transformer_configs = {
 }
 
 
-class GPTEnsemble(nn.Module):
+class GPTDesync(nn.Module):
     def __init__(self, config: ModelArgs) -> None:
         super().__init__()
         self.config = config
 
         self.tok_embeddings = nn.Embedding(config.vocab_size, config.dim)
-        self.layers = nn.ModuleList(EnsembleTransformerBlock(config, layer_idx=i) for i in range(config.n_layer))
+        self.layers = nn.ModuleList(DesyncTransformerBlock(config, layer_idx=i) for i in range(config.n_layer))
         self.norm = RMSNorm(config.dim, eps=config.norm_eps)
         self.output = nn.Linear(config.dim, config.vocab_size, bias=False)
 
@@ -308,7 +308,7 @@ class GPTEnsemble(nn.Module):
         return cls(ModelArgs.from_name(name))
 
 
-class EnsembleTransformerBlock(nn.Module):
+class DesyncTransformerBlock(nn.Module):
     def __init__(self, config: ModelArgs, layer_idx: int) -> None:
         super().__init__()
         self.attention = Attention(config)

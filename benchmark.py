@@ -1,11 +1,12 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # All rights reserved.
 
+import argparse
+
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 import sys
 import time
-import argparse
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -14,20 +15,21 @@ import torch._dynamo.config
 import torch._inductor.config
 import torch.distributed as dist
 
+from gpt_fast import GPTDense, GPTDesync, GPTLadder, GPTParallel
 from gpt_fast.utils import _get_model_size, set_flash_attention
-from gpt_fast import GPTDense, GPTEnsemble, GPTLadder, GPTParallel
 
 
 def print_rank_0(*args, **kwargs):
     if dist.get_rank() == 0:
         print(*args, **kwargs)
 
+
 torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
 # experimental features to reduce compilation times, will be on by default in future
 torch._inductor.config.fx_graph_cache = True
 # torch._functorch.config.enable_autograd_cache = True
-torch._inductor.config.reorder_for_compute_comm_overlap = True # allows overlap
+torch._inductor.config.reorder_for_compute_comm_overlap = True  # allows overlap
 
 default_device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -37,7 +39,7 @@ sys.path.append(str(wd))
 
 _MODELS = {
     "gpt_dense": GPTDense,
-    "gpt_ensemble": GPTEnsemble,
+    "gpt_desync": GPTDesync,
     "gpt_parallel": GPTParallel,
     "gpt_ladder": GPTLadder,
 }
@@ -244,7 +246,9 @@ def _load_model(model_name, device, precision):
 
     return model.eval()
 
+
 B_INST, E_INST = "[INST]", "[/INST]"
+
 
 @torch.no_grad()
 def get_cuda_graphs_for_prefill(model: torch.nn.Module, prompt: torch.Tensor, batch_size: int, **sampling_kwargs):
@@ -373,7 +377,7 @@ def main(
             top_k=top_k,
         )
 
-    aggregate_metrics = {'tokens_per_sec': [], 'decode_latency': [], 'prefill_latency': []}
+    aggregate_metrics = {"tokens_per_sec": [], "decode_latency": [], "prefill_latency": []}
     start = 0 if profile else -5
 
     for i in range(start, num_samples):

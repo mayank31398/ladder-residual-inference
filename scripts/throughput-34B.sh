@@ -7,7 +7,7 @@ max_new_tokens=512
 for P2P_DISABLE in 0 1
 do
     export NCCL_P2P_DISABLE=${P2P_DISABLE}
-    for model_name in "gpt_dense:34B" "gpt_ladder:34B" "gpt_ensemble:34B-upper-bound" "gpt_parallel:34B"
+    for model_name in "gpt_dense:34B" "gpt_ladder:34B" "gpt_desync:34B-upper-bound" "gpt_parallel:34B"
     do
         folder=./logs/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
         mkdir -p ${folder}
