@@ -4,16 +4,16 @@ prompt_length=1024
 max_new_tokens=512
 # --master_addr=104.171.200.62
 # --node_rank=1
-for P2P_DISABLE in 0
+for P2P_DISABLE in 0 1
 do
     export NCCL_P2P_DISABLE=${P2P_DISABLE}
-    for model_name in "gpt_dense:llama-3-70b" "gpt_ladder:llama-3-70b" "gpt_ensemble:llama-3-70b-upper-bound" "gpt_parallel:llama-3-70b"
+    for model_name in "gpt_dense:bloom-176b" "gpt_ladder:bloom-176b"
     do
-        folder=./logs/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
+        folder=./logs/12-14/prompt_length_${prompt_length}_max_new_${max_new_tokens}/p2p_disable${P2P_DISABLE}/${mode}/${model_name}
         mkdir -p ${folder}
-        for bssize in 1 4 16 64
+        for bssize in 4
         do
-            for tpsize in 2
+            for tpsize in 8
             do
                 echo "Running with P2P_DISABLE=${P2P_DISABLE} bs=${bssize} tp=${tpsize}"
                 ENABLE_INTRA_NODE_COMM=1 NCCL_NVLS_ENABLE=1 NCCL_P2P_DISABLE=${P2P_DISABLE} torchrun --standalone --nproc_per_node=${tpsize} --nnodes=${nodenum} --master_port=15328 benchmark.py \
