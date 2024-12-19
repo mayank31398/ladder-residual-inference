@@ -2,7 +2,9 @@ mode=compile
 nodenum=2
 prompt_length=1024
 max_new_tokens=512
-master_addr= # please fill the master_addr
+master_addr= # please specify the master_addr
+
+echo "the master_addr has been set to ${master_addr} and I am in the rank $1"
 
 for P2P_DISABLE in 0 1
 do

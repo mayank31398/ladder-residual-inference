@@ -2,8 +2,7 @@ mode=compile
 nodenum=1
 prompt_length=1024
 max_new_tokens=512
-# --master_addr=104.171.200.62
-# --node_rank=1
+
 for P2P_DISABLE in 0
 do
     export NCCL_P2P_DISABLE=${P2P_DISABLE}

@@ -328,6 +328,7 @@ def main(
 
     print_rank_0(f"our world size={dist.get_world_size()}")
     print_rank_0(f"Using device={device}")
+    
     precision = torch.float16
 
     print_rank_0("Loading model ...")
@@ -448,7 +449,7 @@ def main(
         print_rank_0(f"Time for inference {i + 1}: {t:.02f} sec total, {generated_tokens_sec:.02f} tokens/sec")
         print_rank_0(f"Decode latency: {decode_latency:.02f} sec")
         print_rank_0(f"Prefill latency: {prefill_latency:.02f} sec")
-        print_rank_0(f"Bandwidth achieved: {model_size * generated_tokens_sec / 1e9:.02f} GB/s")
+        print_rank_0(f"Bandwidth achieved: {model_size * generated_tokens_sec / 1e9 / dist.get_world_size():.02f} GB/s")
         total_tokens_sec = y.numel() / t
         print_rank_0(f"FLOPS achieved: {params * total_tokens_sec * 2 / 1e12:.02f} TF/s")
         print_rank_0()
