@@ -328,7 +328,7 @@ def main(
 
     print_rank_0(f"our world size={dist.get_world_size()}")
     print_rank_0(f"Using device={device}")
-    
+
     precision = torch.float16
 
     print_rank_0("Loading model ...")
@@ -378,7 +378,12 @@ def main(
             top_k=top_k,
         )
 
-    aggregate_metrics = {"tokens_per_sec": [], "decode_latency": [], "prefill_latency": []}
+    aggregate_metrics = {
+        "tokens_per_sec_per_user": [],
+        "total_tokens_per_sec": [],
+        "decode_latency": [],
+        "prefill_latency": [],
+    }
     start = 0 if profile else -5
 
     for i in range(start, num_samples):
@@ -441,15 +446,24 @@ def main(
 
         t = time.perf_counter() - t0
 
-        tokens_generated = (y.size(-1) - prompt_length) * y.size(0)  # seq length * batch_size
-        generated_tokens_sec = tokens_generated / t
-        aggregate_metrics["tokens_per_sec"].append(generated_tokens_sec)
+        num_users = y.size(0)
+
+        tokens_generated_per_user = y.size(-1) - prompt_length
+        tokens_generated_per_user_per_sec = tokens_generated_per_user / t
+
+        total_tokens_generated_per_sec = tokens_generated_per_user_per_sec * num_users
+
+        aggregate_metrics["tokens_per_sec_per_user"].append(tokens_generated_per_user_per_sec)
+        aggregate_metrics["total_tokens_per_sec"].append(total_tokens_generated_per_sec)
         aggregate_metrics["decode_latency"].append(decode_latency)
         aggregate_metrics["prefill_latency"].append(prefill_latency)
-        print_rank_0(f"Time for inference {i + 1}: {t:.02f} sec total, {generated_tokens_sec:.02f} tokens/sec")
+
+        print_rank_0(f"Time for inference {i + 1}: {t:.02f} sec total")
+        print_rank_0(f"Tokens per second per user: {tokens_generated_per_user_per_sec:.02f} tokens/sec/user")
+        print_rank_0(f"Total tokens per second: {total_tokens_generated_per_sec:.02f} tokens/sec")
         print_rank_0(f"Decode latency: {decode_latency:.02f} sec")
         print_rank_0(f"Prefill latency: {prefill_latency:.02f} sec")
-        print_rank_0(f"Bandwidth achieved: {model_size * generated_tokens_sec / 1e9 / dist.get_world_size():.02f} GB/s")
+        print_rank_0(f"Bandwidth achieved: {model_size * tokens_generated_per_user_per_sec / 1e9:.02f} GB/s")
         total_tokens_sec = y.numel() / t
         print_rank_0(f"FLOPS achieved: {params * total_tokens_sec * 2 / 1e12:.02f} TF/s")
         print_rank_0()
@@ -465,7 +479,12 @@ def main(
     print_rank_0(
         f"Average prefill latency: {torch.mean(torch.tensor(aggregate_metrics['prefill_latency'])).item():.04f} sec"
     )
-    print_rank_0(f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec'])).item():.2f}")
+    print_rank_0(
+        f"Average tokens/sec/user: {torch.mean(torch.tensor(aggregate_metrics['tokens_per_sec_per_user'])).item():.2f}"
+    )
+    print_rank_0(
+        f"Average tokens/sec: {torch.mean(torch.tensor(aggregate_metrics['total_tokens_per_sec'])).item():.2f}"
+    )
     print_rank_0(f"Memory used: {torch.cuda.max_memory_reserved() / 1e9:.02f} GB")
 
     dist.barrier()
