@@ -1,5 +1,5 @@
 # Ladder-Residual-Inference
-This repository contains the code for inference benchmarking for the paper [Ladder Residual: Redifining Tensor Parallelism in Transformers for Accelerated Inference]().
+This repository contains the code for inference benchmarking for the paper [Ladder-residual: parallelism-aware architecture for accelerating large model inference with communication overlapping](https://arxiv.org/abs/2501.06589).
 
 If you are interested in training the Ladder Residual models, you can find the training code in [dolomite-engine](https://github.com/IBM/dolomite-engine).
 
