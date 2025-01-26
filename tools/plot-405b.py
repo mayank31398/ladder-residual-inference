@@ -25,6 +25,7 @@ plt.xticks(batch_sizes)
 plt.title("NVLink enabled (TP = 16)")
 plt.ylabel(y_label)
 plt.xlabel(x_label)
+plt.grid(True, linestyle=':', color='gray', linewidth=0.5)
 plt.savefig("405b-nvl.png", dpi=300)
 
 
@@ -40,4 +41,5 @@ plt.xticks(batch_sizes)
 plt.title("NVLink disabled (TP = 16)")
 plt.ylabel(y_label)
 plt.xlabel(x_label)
+plt.grid(True, linestyle=':', color='gray', linewidth=0.5)
 plt.savefig("405b-no-nvl.png", dpi=300)
