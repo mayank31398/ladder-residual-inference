@@ -23,6 +23,7 @@ def plot(
     plt.plot(tp_world_size, upper_bound, marker=marker, markersize=markersize, label="upper bound")
 
     plt.xticks(tp_world_size)
+    plt.xlim(1.5, 8.5)
 
     plt.title(title.format(batch_size=batch_size))
     plt.ylabel(y_label)
@@ -47,4 +48,20 @@ plot(
     ladder=[126.09, 204.3, 331.45],
     upper_bound=[130.77, 213.73, 355.8],
     parallel=[123.66, 201.62, 307.34],
+)
+
+plot(
+    batch_size=16,
+    standard=[float("nan"), 335.81, 475.04],
+    ladder=[float("nan"), 373.33, 596.73],
+    upper_bound=[float("nan"), 389.03, 646.18],
+    parallel=[float("nan"), 363.29, 555.88],
+)
+
+plot(
+    batch_size=64,
+    standard=[float("nan"), 1249.67, 1940.99],
+    ladder=[float("nan"), 1358.65, 2242.1],
+    upper_bound=[float("nan"), 1433.53, 2474.49],
+    parallel=[float("nan"), 1311.54, 2259.38],
 )
