@@ -15,9 +15,9 @@ ladder_no_nvl = [1.489855072, 1.565769112, 1.434301985, 1.461046963]
 parallel_no_nvl = [1.396618357, 1.439028165, 1.415040616, 1.398749487]
 upper_bound_no_nvl = [2.106763285, 2.274682761, 2.270580353, 2.15964584]
 
-plt.plot(batch_sizes, ladder_nvl, marker=marker, markersize=markersize)
-plt.plot(batch_sizes, parallel_nvl, marker=marker, markersize=markersize)
-plt.plot(batch_sizes, upper_bound_nvl, marker=marker, markersize=markersize)
+plt.plot(batch_sizes, ladder_nvl, marker=marker, markersize=markersize, label="ladder transformer")
+plt.plot(batch_sizes, parallel_nvl, marker=marker, markersize=markersize, label="parallel attn")
+plt.plot(batch_sizes, upper_bound_nvl, marker=marker, markersize=markersize, label="upper bound")
 
 plt.ylim(1, 2.5)
 plt.xticks(batch_sizes)
@@ -26,14 +26,16 @@ plt.title("NVLink enabled (TP = 16)")
 plt.ylabel(y_label)
 plt.xlabel(x_label)
 plt.grid(True, linestyle=":", color="gray", linewidth=0.5)
+plt.legend(loc="upper center", ncol=3)
+plt.tight_layout()
 plt.savefig("405b-nvl.png", dpi=300)
 
 
 plt.figure()
 
-plt.plot(batch_sizes, ladder_no_nvl, marker=marker, markersize=markersize)
-plt.plot(batch_sizes, parallel_no_nvl, marker=marker, markersize=markersize)
-plt.plot(batch_sizes, upper_bound_no_nvl, marker=marker, markersize=markersize)
+plt.plot(batch_sizes, ladder_no_nvl, marker=marker, markersize=markersize, label="ladder transformer")
+plt.plot(batch_sizes, parallel_no_nvl, marker=marker, markersize=markersize, label="parallel attn")
+plt.plot(batch_sizes, upper_bound_no_nvl, marker=marker, markersize=markersize, label="upper bound")
 
 plt.ylim(1, 2.5)
 plt.xticks(batch_sizes)
@@ -42,4 +44,6 @@ plt.title("NVLink disabled (TP = 16)")
 plt.ylabel(y_label)
 plt.xlabel(x_label)
 plt.grid(True, linestyle=":", color="gray", linewidth=0.5)
+plt.legend(loc="upper center", ncol=3)
+plt.tight_layout()
 plt.savefig("405b-no-nvl.png", dpi=300)
