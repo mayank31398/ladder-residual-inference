@@ -22,7 +22,7 @@ plt.plot(batch_sizes, upper_bound_nvl, marker=marker, markersize=markersize, lab
 plt.ylim(1, 2.5)
 plt.xticks(batch_sizes)
 
-plt.title("NVLink enabled (TP = 16)")
+plt.title("P2P enabled (TP = 16)")
 plt.ylabel(y_label)
 plt.xlabel(x_label)
 plt.grid(True, linestyle=":", color="gray", linewidth=0.5)
@@ -40,7 +40,7 @@ plt.plot(batch_sizes, upper_bound_no_nvl, marker=marker, markersize=markersize, 
 plt.ylim(1, 2.5)
 plt.xticks(batch_sizes)
 
-plt.title("NVLink disabled (TP = 16)")
+plt.title("P2P disabled (TP = 16)")
 plt.ylabel(y_label)
 plt.xlabel(x_label)
 plt.grid(True, linestyle=":", color="gray", linewidth=0.5)

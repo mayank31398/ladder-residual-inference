@@ -25,13 +25,13 @@ def plot(
 ) -> None:
     plt.figure()
 
-    plt.plot(tp_world_size, standard_nvl, marker=marker, markersize=markersize, label="standard transformer NVL=1", linestyle="-", color=blue)
-    plt.plot(tp_world_size, standard_no_nvl, marker=marker, markersize=markersize, label="standard transformer NVL=0", linestyle="--", color=blue)
-    plt.plot(tp_world_size, ladder_nvl, marker=marker, markersize=markersize, label="ladder transformer NVL=1", linestyle="-", color=orange)
-    plt.plot(tp_world_size, ladder_no_nvl, marker=marker, markersize=markersize, label="ladder transformer NVL=0", linestyle="--", color=orange)
-    plt.plot(tp_world_size, parallel_nvl, marker=marker, markersize=markersize, label="parallel attn NVL=1", linestyle="-", color=green)
-    plt.plot(tp_world_size, parallel_no_nvl, marker=marker, markersize=markersize, label="parallel attn NVL=0", linestyle="--", color=green)
-    plt.plot(tp_world_size, upper_bound_nvl, marker=marker, markersize=markersize, label="upper bound NVL=1", linestyle="-", color=red)
+    plt.plot(tp_world_size, standard_nvl, marker=marker, markersize=markersize, label="standard transformer P2P=1", linestyle="-", color=blue)
+    plt.plot(tp_world_size, standard_no_nvl, marker=marker, markersize=markersize, label="standard transformer P2P=0", linestyle="--", color=blue)
+    plt.plot(tp_world_size, ladder_nvl, marker=marker, markersize=markersize, label="ladder transformer P2P=1", linestyle="-", color=orange)
+    plt.plot(tp_world_size, ladder_no_nvl, marker=marker, markersize=markersize, label="ladder transformer P2P=0", linestyle="--", color=orange)
+    plt.plot(tp_world_size, parallel_nvl, marker=marker, markersize=markersize, label="parallel attn P2P=1", linestyle="-", color=green)
+    plt.plot(tp_world_size, parallel_no_nvl, marker=marker, markersize=markersize, label="parallel attn P2P=0", linestyle="--", color=green)
+    plt.plot(tp_world_size, upper_bound_nvl, marker=marker, markersize=markersize, label="upper bound P2P=1", linestyle="-", color=red)
 
     plt.xticks(tp_world_size)
     plt.xlim(1.5, 8.5)
