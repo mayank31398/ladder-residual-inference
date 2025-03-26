@@ -36,7 +36,7 @@ class LlamaLadderConfig(LlamaConfig):
             **kwargs,
         )
         if ladder_layers is None:
-            self.ladder_layers = None
+            self.ladder_layers = []
         elif isinstance(ladder_layers, int):
             self.ladder_layers = list(range(self.num_hidden_layers - ladder_layers, self.num_hidden_layers))
         elif isinstance(ladder_layers, list):
