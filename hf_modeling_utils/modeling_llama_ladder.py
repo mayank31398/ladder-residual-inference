@@ -53,7 +53,8 @@ from .configuration_llama_ladder import LlamaLadderConfig
 logger = logging.get_logger(__name__)
 
 _CHECKPOINT_FOR_DOC = "meta-llama/Llama-2-7b-hf"
-_CONFIG_FOR_DOC = "LlamaConfig"
+_CONFIG_FOR_DOC = "LlamaLadderConfig"
+# HF version of this file: 4.47.0
 
 
 class LlamaRMSNorm(nn.Module):
