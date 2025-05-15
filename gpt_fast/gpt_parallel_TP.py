@@ -75,8 +75,8 @@ transformer_configs = {
     "3b": dict(
         block_size=2048,
         n_layer=40,
-        n_head=36,
-        n_local_heads=36,
+        n_head=32,
+        n_local_heads=32,
         dim=2304,
         intermediate_size=9216,
         vocab_size=49152,
@@ -95,6 +95,8 @@ transformer_configs = {
     "Mistral-7B": dict(n_layer=32, n_head=32, n_local_heads=8, dim=4096, intermediate_size=14336, vocab_size=32000),
     "stories15M": dict(n_layer=6, n_head=6, dim=288),
     "stories110M": dict(n_layer=12, n_head=12, dim=768),
+    "llama-3.2-1b": dict(n_layer=16, n_head=32, dim=2048, intermediate_size=8192, vocab_size=128256),
+    "llama-3.2-3b": dict(n_layer=28, n_head=24, dim=3072, intermediate_size=8192, vocab_size=128256),
     "llama-3-8b": dict(
         block_size=8192,
         n_layer=32,
