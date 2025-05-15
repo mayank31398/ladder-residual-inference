@@ -55,9 +55,9 @@ def maybe_init_dist() -> Optional[int]:
         torch.cuda.set_device(rank)
         if global_world_size > 1:
             dist.init_process_group(
-                backend="nccl", rank=global_rank, world_size=global_world_size, timeout=timedelta(seconds=60)
+                backend="nccl", rank=global_rank, world_size=global_world_size, timeout=timedelta(seconds=600)
             )
         else:
-            dist.init_process_group(backend="nccl", rank=rank, world_size=world_size, timeout=timedelta(seconds=60))
+            dist.init_process_group(backend="nccl", rank=rank, world_size=world_size, timeout=timedelta(seconds=600))
 
     return rank
