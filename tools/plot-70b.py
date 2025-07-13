@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 marker = "."
 markersize = 8
 y_label = "tokens/sec"
-x_label = "batch size"
-title = "batch size = {batch_size}, 70B model"
+x_label = "TP degree"
+title = "TP degree = {batch_size}, 70B model"
 tp_world_size = [2, 4, 8]
 
 blue = "#1f77b4"
